@@ -32,7 +32,7 @@ casper.test.begin('Related articles', function (test) {
                 .waitForUrl(/admin/)
                 .waitForSelector('.dashboard', function () {
                     this.click(xPath(cms.getXPathForAdminSection({
-                        section: 'Aldryn News & Blog',
+                        section: 'JumpSuite Articles',
                         row: 'Articles',
                         link: 'Add'
                     })));

@@ -4,7 +4,7 @@
 Installation and set-up
 #######################
 
-You can install Aldryn News & Blog either on `Aldryn <http://www.aldryn.com>`_
+You can install JumpSuite Articles either on `Aldryn <http://www.aldryn.com>`_
 or by hand into your own project.
 
 
@@ -51,7 +51,7 @@ django CMS documentation
 <http://docs.django-cms.org/en/latest/introduction/install.html#use-the-django-cms-installer>`_, which
 will get you started in less than five minutes.
 
-Once you have created a django CMS project, you can install Aldryn News & Blog in it.
+Once you have created a django CMS project, you can install JumpSuite Articles in it.
 
 
 settings.py
@@ -86,7 +86,7 @@ Additional Configuration
 Aldryn Boilerplate support
 --------------------------
 
-Aldryn News & Blog supports `Aldryn Boilerplates
+JumpSuite Articles supports `Aldryn Boilerplates
 <https://github.com/aldryn/aldryn-boilerplates/>`_, and has a set of templates that work with the
 `Bootstrap 3 boilerplate
 <http://aldryn-boilerplate-bootstrap3.readthedocs.org/en/latest/index.html>`_.
@@ -109,7 +109,7 @@ If your site uses a boilerplate, you'll need to make some changes to your ``sett
 Django Filer
 ------------
 
-Aldryn News & Blog *requires* the use of the "subject location" processor from Django Filer for
+JumpSuite Articles *requires* the use of the "subject location" processor from Django Filer for
 Easy Thumbnails. This requires setting the ``THUMBNAIL_PROCESSORS`` tuple in your project's
 settings to:
 
@@ -136,13 +136,13 @@ For more information on this optional processor, see the
 Database migrations
 *******************
 
-Aldryn News & Blog includes new models that require database migrations. Run ``python manage.py
+JumpSuite Articles includes new models that require database migrations. Run ``python manage.py
 syncdb`` if you have not already done so, followed by ``python manage.py migrate`` to prepare the
 database for the new applications.
 
 .. note::
 
-    Aldryn News & Blog supports both South and Django migrations.
+    JumpSuite Articles supports both South and Django migrations.
 
 
 .. _django-cms-setup:
@@ -151,12 +151,12 @@ database for the new applications.
 django CMS set-up
 *****************
 
-In order to use Aldryn News & Blog, your django CMS project needs to have at least one page set up
-with an Aldryn News & Blog `apphook <http://docs.django-cms.org/en/develop/how_to/apphooks.html>`_.
+In order to use JumpSuite Articles, your django CMS project needs to have at least one page set up
+with an JumpSuite Articles `apphook <http://docs.django-cms.org/en/develop/how_to/apphooks.html>`_.
 
 To do this:
 
 #. Create a django CMS page in the normal way.
 #. In *Advanced settings...* > *Application* settings, select *NewsBlog*.
 
-You're now ready to begin using Aldryn News & Blog in earnest - see :ref:`basic_usage` for the next steps.
+You're now ready to begin using JumpSuite Articles in earnest - see :ref:`basic_usage` for the next steps.

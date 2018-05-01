@@ -9,7 +9,7 @@ example, a company website might have a news section for publishing press releas
 publishing more informal articles.
 
 To do this, you need to create a django CMS page for each news/weblog section, and add an apphook
-for Aldryn News & Blog to each of them. You will also need to create a separate apphook
+for JumpSuite Articles to each of them. You will also need to create a separate apphook
 configuration for each of them - apphook configurations cannot be shared between apphook instances.
 
 .. note:
@@ -57,7 +57,7 @@ Other fields are self-explanatory.
 
 Apphook configurations can also be created and edited in other ways:
 
-* from the Django Admin, in *Aldryn News & Blog* > *Application configuration*
+* from the Django Admin, in *JumpSuite Articles* > *Application configuration*
 * from the option *Configure addon...* in the apphook's menu in the django CMS toolbar
 
 

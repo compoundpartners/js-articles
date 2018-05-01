@@ -1,10 +1,10 @@
 #################################
-Aldryn News & Blog for django CMS
+JumpSuite Articles for django CMS
 #################################
 
 |PyPI Version| |Build Status| |Coverage Status| |codeclimate| |requires_io|
 
-Aldryn News & Blog is an `Aldryn <http://aldryn.com>`_-compatible news and
+JumpSuite Articles is an `Aldryn <http://aldryn.com>`_-compatible news and
 weblog application for `django CMS <http://django-cms.org>`_.
 
 **Content editors** looking for documentation on how to use the editing
@@ -14,7 +14,7 @@ interface should refer to our `user manual`_ section.
 how to install, configure and customize it for their own projects should
 refer to the `documentation`_ sections.
 
-Aldryn News & Blog is intended to serve as a model of good practice for
+JumpSuite Articles is intended to serve as a model of good practice for
 development of django CMS and Aldryn applications.
 
 .. _user manual: http://aldryn-newsblog.readthedocs.io/en/latest/
@@ -25,7 +25,7 @@ Installation & Updates
 ======================
 
 Please head over to our `documentation`_ for all the details on how to install,
-configure and use Aldryn News & Blog.
+configure and use JumpSuite Articles.
 
 You can also find instructions on `how to upgrade`_ from earlier versions.
 
