@@ -25,7 +25,7 @@ casper.test.begin('Creation / deletion of the apphook', function (test) {
             test.assertVisible('#content', 'Admin loaded');
             this.click(
                 xPath(cms.getXPathForAdminSection({
-                    section: 'Aldryn News & Blog',
+                    section: 'JumpSuite Articles',
                     row: 'Sections',
                     link: 'Add'
                 }))
@@ -122,7 +122,7 @@ casper.test.begin('Creation / deletion of the article', function (test) {
             test.assertVisible('#content', 'Admin loaded');
             this.click(
                 xPath(cms.getXPathForAdminSection({
-                    section: 'Aldryn News & Blog',
+                    section: 'JumpSuite Articles',
                     row: 'Articles',
                     link: 'Add'
                 }))
@@ -161,7 +161,7 @@ casper.test.begin('Creation / deletion of the article', function (test) {
         .waitUntilVisible('#content', function () {
             this.click(
                 xPath(cms.getXPathForAdminSection({
-                    section: 'Aldryn News & Blog',
+                    section: 'JumpSuite Articles',
                     row: 'Articles'
                 }))
             );
@@ -215,7 +215,7 @@ casper.test.begin('Latest articles plugin', function (test) {
                 .waitForUrl(/admin/)
                 .waitForSelector('.dashboard', function () {
                     this.click(xPath(cms.getXPathForAdminSection({
-                        section: 'Aldryn News & Blog',
+                        section: 'JumpSuite Articles',
                         row: 'Articles',
                         link: 'Add'
                     })));
@@ -279,7 +279,7 @@ casper.test.begin('Latest articles plugin', function (test) {
                 .waitForUrl(/admin/)
                 .waitForSelector('.dashboard', function () {
                     this.click(xPath(cms.getXPathForAdminSection({
-                        section: 'Aldryn News & Blog',
+                        section: 'JumpSuite Articles',
                         row: 'Articles'
                     })));
                 })

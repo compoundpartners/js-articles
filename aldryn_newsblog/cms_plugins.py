@@ -28,7 +28,7 @@ class TemplatePrefixMixin(object):
 
 
 class NewsBlogPlugin(TemplatePrefixMixin, CMSPluginBase):
-    module = 'News & Blog'
+    module = 'JumpSuite Articles'
 
 
 class AdjustableCacheMixin(object):

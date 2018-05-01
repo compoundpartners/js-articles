@@ -10,7 +10,7 @@
 # Jannik V. <me@exploide.net>, 2016
 msgid ""
 msgstr ""
-"Project-Id-Version: Aldryn News & Blog\n"
+"Project-Id-Version: JumpSuite Articles\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-02 07:59-0500\n"
 "PO-Revision-Date: 2017-03-02 13:18+0000\n"

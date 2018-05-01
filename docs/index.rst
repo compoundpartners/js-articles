@@ -27,14 +27,14 @@
 
 
 ##################
-Aldryn News & Blog
+JumpSuite Articles
 ##################
 
 ********
 Overview
 ********
 
-Aldryn News & Blog is an `Aldryn <http://aldryn.com>`_-compatible news and weblog application for
+JumpSuite Articles is an `Aldryn <http://aldryn.com>`_-compatible news and weblog application for
 `django CMS <http://django-cms.org>`_.
 
 .. rst-class:: clearfix row
@@ -61,7 +61,7 @@ Publishing news and weblog articles with News & Blog
 Features
 ***************
 
-* guaranteed support and development - Aldryn News & Blog is a key application in the django
+* guaranteed support and development - JumpSuite Articles is a key application in the django
   CMS/Aldryn ecosystem, and is backed by commercial support
 * one-click installation on the Aldryn platform
 * multi-lingual by default

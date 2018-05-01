@@ -43,7 +43,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Aldryn News & Blog'
+project = u'JumpSuite Articles'
 copyright = u'2014, Divio AG'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -214,7 +214,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [(
-    'index', 'AldrynNewsblog.tex', u'Aldryn News & Blog Documentation',
+    'index', 'AldrynNewsblog.tex', u'JumpSuite Articles Documentation',
     u'Divio AG', 'manual'
 )]
 
@@ -244,7 +244,7 @@ latex_documents = [(
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'aldrynnewsblog', u'Aldryn News & Blog Documentation',
+    ('index', 'aldrynnewsblog', u'JumpSuite Articles Documentation',
      [u'Divio AG'], 1)
 ]
 
@@ -258,8 +258,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [(
-    'index', 'AldrynNewsblog', u'Aldryn News & Blog Documentation',
-    u'Divio AG', 'AldrynNewsblog', 'Aldryn News & Blog is an Aldryn-compatible'
+    'index', 'AldrynNewsblog', u'JumpSuite Articles Documentation',
+    u'Divio AG', 'AldrynNewsblog', 'JumpSuite Articles is an Aldryn-compatible'
     ' news and weblog application for django CMS.',
     'Miscellaneous'
 )]

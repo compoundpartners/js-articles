@@ -4,7 +4,7 @@
 Using plugins
 ###################################
 
-Aldryn News & Blog comes with a set of useful plugins. They are mostly self-explanatory.
+JumpSuite Articles comes with a set of useful plugins. They are mostly self-explanatory.
 
 
 ********************

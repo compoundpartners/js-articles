@@ -41,7 +41,7 @@ If this option is not provided, all languages will be processed.
 Aldryn Search and Haystack
 **************************
 
-Aldryn News & Blog supports `Aldryn Search <https://github.com/aldryn/aldryn-search>`_ and `Django
+JumpSuite Articles supports `Aldryn Search <https://github.com/aldryn/aldryn-search>`_ and `Django
 Haystack <http://django-haystack.readthedocs.org>`_.
 
 If you have Aldryn Search and Haystack installed and configured in your project, News & Blog's
@@ -59,7 +59,7 @@ Per-apphook indexing
 ====================
 
 If you have configured your system for Aldryn Search and Haystack support and have enabled it for
-Aldryn News & Blog, you can control it on a per-apphook basis. That is, you can turn it on or off
+JumpSuite Articles, you can control it on a per-apphook basis. That is, you can turn it on or off
 for the articles belonging to a particular apphook, using the *Include in search index?* setting of
 the apphook configuration.
 

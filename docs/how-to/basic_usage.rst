@@ -1,10 +1,10 @@
 .. _basic_usage:
 
 ###################################
-Creating Aldryn News & Blog content
+Creating JumpSuite Articles content
 ###################################
 
-Before using Aldryn News & Blog, you need to :ref:`set up your django CMS project appropriately
+Before using JumpSuite Articles, you need to :ref:`set up your django CMS project appropriately
 <django-cms-setup>` (in short, making sure that you have a page with a News & Blog apphook - this
 only takes a moment).
 
@@ -19,7 +19,7 @@ There are various different ways to create a new article:
 * If you're on a page with a News & Blog apphook, select *News & Blog* > *Add new article...* from
   the django CMS toolbar.
 
-* Add a new article in the Django Admin, in the *Aldryn News & Blog* section.
+* Add a new article in the Django Admin, in the *JumpSuite Articles* section.
 
 
 ******
@@ -86,7 +86,7 @@ Shared content
 If you're using one of the default templates, you'll find that your article also contains another
 placeholder, called *Newsblog Social*. This is a *Static placeholder* - it's shared between all
 templates that contain it; in other words, between all News & Blog articles. If you add or change
-plugins in that placeholder, *all* your Aldryn News & Blog articles will display them.
+plugins in that placeholder, *all* your JumpSuite Articles articles will display them.
 
 In this template, it's intended to be a convenient way for you to add social media links and buttons
 to all your News & Blog articles.
