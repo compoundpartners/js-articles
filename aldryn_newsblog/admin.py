@@ -12,6 +12,10 @@ from parler.forms import TranslatableModelForm
 
 from . import models
 
+from .constants import (
+    SHOW_RELATED_ARTICLES
+)
+
 from cms.admin.placeholderadmin import PlaceholderAdminMixin
 
 
@@ -114,6 +118,25 @@ class ArticleAdmin(
         make_featured, make_not_featured,
         make_published, make_unpublished,
     )
+
+
+    advanced_settings_fields = (
+        'tags',
+        'categories',
+    )
+
+    if SHOW_RELATED_ARTICLES == True:
+        advanced_settings_fields += (
+            'related',
+        )
+
+    advanced_settings_fields += (
+        'owner',
+        'app_config',
+    )
+
+
+
     fieldsets = (
         (None, {
             'fields': (
@@ -137,15 +160,12 @@ class ArticleAdmin(
         }),
         (_('Advanced Settings'), {
             'classes': ('collapse',),
-            'fields': (
-                'tags',
-                'categories',
-                'related',
-                'owner',
-                'app_config',
-            )
+            'fields': advanced_settings_fields
         }),
     )
+
+
+
     filter_horizontal = [
         'categories',
     ]

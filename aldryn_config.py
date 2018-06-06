@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
 from aldryn_client import forms
 
-
 class Form(forms.BaseForm):
 
-    def to_settings(self, data, settings):
-        # from functools import partial
-        # from aldryn_addons.utils import boolean_ish, djsenv
-        # env = partial(djsenv, settings=settings)
+    show_related_articles = forms.CheckboxField(
+        "Show Related Articles Selector",
+        required=False,
+        initial=True)
 
-        settings['INSTALLED_APPS'].extend([
+    def to_settings(self, data, settings_dict):
+
+        if data['show_related_articles']:
+            settings_dict['SHOW_RELATED_ARTICLES'] = int(data['show_related_articles'])
+
+        settings_dict['INSTALLED_APPS'].extend([
             'aldryn_apphooks_config',
             'aldryn_boilerplates',
             'aldryn_categories',
@@ -23,4 +27,5 @@ class Form(forms.BaseForm):
             'taggit',
             'treebeard'
         ])
-        return settings
+
+        return settings_dict
