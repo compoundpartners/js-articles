@@ -66,3 +66,8 @@ class NewsBlogTagsPluginForm(AutoAppConfigFormMixin, forms.ModelForm):
 class NewsBlogRelatedPluginForm(forms.ModelForm):
     class Meta:
         fields = ['cache_duration']
+
+
+class NewsBlogSpecificPluginForm(forms.ModelForm):
+    class Meta:
+        fields = ['cache_duration']

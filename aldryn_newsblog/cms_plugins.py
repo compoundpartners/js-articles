@@ -187,6 +187,34 @@ class NewsBlogRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
 
 
 @plugin_pool.register_plugin
+class NewsBlogSpecificPlugin(AdjustableCacheMixin, NewsBlogPlugin):
+    render_template = 'aldryn_newsblog/plugins/specific_articles.html'
+    name = _('Specific Articles')
+    model = models.NewsBlogSpecificPlugin
+    form = forms.NewsBlogSpecificPluginForm
+
+    def get_article(self, request):
+        if request and request.resolver_match:
+            view_name = request.resolver_match.view_name
+            namespace = request.resolver_match.namespace
+            if view_name == '{0}:article-detail'.format(namespace):
+                article = models.Article.objects.active_translations(
+                    slug=request.resolver_match.kwargs['slug'])
+                if article.count() == 1:
+                    return article[0]
+        return None
+
+    def render(self, context, instance, placeholder):
+        request = context.get('request')
+        context['instance'] = instance
+        article = self.get_article(request)
+        if article:
+            context['article'] = article
+            context['article_list'] = instance.get_articles(article, request)
+        return context
+
+
+@plugin_pool.register_plugin
 class NewsBlogTagsPlugin(NewsBlogPlugin):
     render_template = 'aldryn_newsblog/plugins/tags.html'
     name = _('Tags')

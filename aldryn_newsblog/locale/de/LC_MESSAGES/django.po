@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # Translators:
 # Angelo Dini <finalangeljp@hotmail.com>, 2016-2017
@@ -69,12 +69,14 @@ msgstr "Nächster Artikel"
 #: boilerplates/bootstrap3/templates/aldryn_newsblog/plugins/authors.html:10
 #: boilerplates/bootstrap3/templates/aldryn_newsblog/plugins/latest_articles.html:7
 #: boilerplates/bootstrap3/templates/aldryn_newsblog/plugins/related_articles.html:12
+#: boilerplates/bootstrap3/templates/aldryn_newsblog/plugins/specific_articles.html:12
 #: templates/aldryn_newsblog/article_list.html:8
 #: templates/aldryn_newsblog/plugins/archive.html:22
 #: templates/aldryn_newsblog/plugins/authors.html:9
 #: templates/aldryn_newsblog/plugins/featured_articles.html:6
 #: templates/aldryn_newsblog/plugins/latest_articles.html:6
 #: templates/aldryn_newsblog/plugins/related_articles.html:11
+#: templates/aldryn_newsblog/plugins/specific_articles.html:11
 msgid "No items available"
 msgstr "Keine Artikel vorhanden"
 
@@ -135,7 +137,9 @@ msgid "All"
 msgstr "Alle"
 
 #: boilerplates/bootstrap3/templates/aldryn_newsblog/plugins/related_articles.html:9
+#: boilerplates/bootstrap3/templates/aldryn_newsblog/plugins/specific_articles.html:9
 #: templates/aldryn_newsblog/plugins/related_articles.html:8
+#: templates/aldryn_newsblog/plugins/specific_articles.html:8
 msgid "by"
 msgstr "von"
 
