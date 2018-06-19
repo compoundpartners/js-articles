@@ -2,8 +2,14 @@
 
 from django.conf import settings
 
-SHOW_RELATED_ARTICLES = getattr(
+HIDE_RELATED_ARTICLES = getattr(
     settings,
-    'SHOW_RELATED_ARTICLES',
+    'HIDE_RELATED_ARTICLES',
+    True,
+)
+
+HIDE_TAGS = getattr(
+    settings,
+    'HIDE_TAGS',
     True,
 )

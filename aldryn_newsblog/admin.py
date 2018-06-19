@@ -121,11 +121,15 @@ class ArticleAdmin(
 
 
     advanced_settings_fields = (
-        'tags',
         'categories',
     )
 
-    if SHOW_RELATED_ARTICLES == True:
+    if HIDE_TAGS == 0:
+        advanced_settings_fields += (
+            'tags',
+        )
+
+    if HIDE_RELATED_ARTICLES == 0:
         advanced_settings_fields += (
             'related',
         )
@@ -134,8 +138,6 @@ class ArticleAdmin(
         'owner',
         'app_config',
     )
-
-
 
     fieldsets = (
         (None, {

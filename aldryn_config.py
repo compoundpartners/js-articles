@@ -3,15 +3,23 @@ from aldryn_client import forms
 
 class Form(forms.BaseForm):
 
-    show_related_articles = forms.CheckboxField(
-        "Show Related Articles Selector",
+    hide_related_articles = forms.CheckboxField(
+        "Hide Related Articles Selector",
+        required=False,
+        initial=True)
+
+    hide_tags = forms.CheckboxField(
+        "Hide Tags",
         required=False,
         initial=True)
 
     def to_settings(self, data, settings_dict):
 
-        if data['show_related_articles']:
-            settings_dict['SHOW_RELATED_ARTICLES'] = int(data['show_related_articles'])
+        if data['hide_related_articles']:
+            settings_dict['HIDE_RELATED_ARTICLES'] = int(data['hide_related_articles'])
+
+        if data['hide_tags']:
+            settings_dict['HIDE_TAGS'] = int(data['hide_tags'])
 
         settings_dict['INSTALLED_APPS'].extend([
             'aldryn_apphooks_config',
