@@ -5,11 +5,11 @@ from django.conf import settings
 HIDE_RELATED_ARTICLES = getattr(
     settings,
     'HIDE_RELATED_ARTICLES',
-    True,
+    False,
 )
 
 HIDE_TAGS = getattr(
     settings,
     'HIDE_TAGS',
-    True,
+    False,
 )

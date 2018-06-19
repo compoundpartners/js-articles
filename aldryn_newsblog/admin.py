@@ -13,7 +13,7 @@ from parler.forms import TranslatableModelForm
 from . import models
 
 from .constants import (
-    SHOW_RELATED_ARTICLES
+    HIDE_TABS
 )
 
 from cms.admin.placeholderadmin import PlaceholderAdminMixin
