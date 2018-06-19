@@ -91,9 +91,9 @@ class Article(TranslatedAutoSlugifyMixin,
                 'Clear it to have it re-created automatically.'),
         ),
         lead_in=HTMLField(
-            verbose_name=_('lead'), default='',
+            verbose_name=_('Summary'), default='',
             help_text=_(
-                'The lead gives the reader the main idea of the story, this '
+                'The Summary gives the reader the main idea of the story, this '
                 'is useful in overviews, lists or as an introduction to your '
                 'article.'
             ),
