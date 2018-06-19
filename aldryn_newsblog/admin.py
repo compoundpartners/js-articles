@@ -13,6 +13,7 @@ from parler.forms import TranslatableModelForm
 from . import models
 
 from .constants import (
+    HIDE_RELATED_ARTICLES,
     HIDE_TABS
 )
 
