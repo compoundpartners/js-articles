@@ -14,7 +14,7 @@ from . import models
 
 from .constants import (
     HIDE_RELATED_ARTICLES,
-    HIDE_TABS
+    HIDE_TAGS
 )
 
 from cms.admin.placeholderadmin import PlaceholderAdminMixin
