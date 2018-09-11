@@ -19,6 +19,8 @@ from aldryn_translation_tools.utils import (
 from .models import Article
 from .cms_appconfig import NewsBlogConfig
 
+from cms.cms_toolbars import ADMIN_MENU_IDENTIFIER, ADMINISTRATION_BREAK
+
 
 @toolbar_pool.register
 class NewsBlogToolbar(CMSToolbar):
@@ -59,6 +61,13 @@ class NewsBlogToolbar(CMSToolbar):
 
         if user and view_name:
             language = get_language_from_request(self.request, check_path=True)
+
+
+            # get existing admin menu
+            admin_menu = self.toolbar.get_or_create_menu(ADMIN_MENU_IDENTIFIER)
+
+            # add new Articles item
+            admin_menu.add_sideframe_item(_('Articles'), url='/admin/aldryn_newsblog/article/', position=0)
 
             # If we're on an Article detail page, then get the article
             if view_name == '{0}:article-detail'.format(config.namespace):
