@@ -115,6 +115,10 @@ class Article(TranslatedAutoSlugifyMixin,
                                related_name='newsblog_article_content')
     author = models.ForeignKey(Person, null=True, blank=True,
                                verbose_name=_('author'))
+    author_2 = models.ForeignKey(Person, related_name='author_2', null=True, blank=True,
+                               verbose_name=_('second author'))
+    author_3 = models.ForeignKey(Person, related_name='author_3', null=True, blank=True,
+                               verbose_name=_('third author'))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('owner'))
     app_config = AppHookConfigField(
         NewsBlogConfig,
