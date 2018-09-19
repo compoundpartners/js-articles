@@ -145,6 +145,8 @@ class ArticleAdmin(
             'fields': (
                 'title',
                 'author',
+                'author_2',
+                'author_3',
                 'publishing_date',
                 'is_published',
                 'is_featured',
