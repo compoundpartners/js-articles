@@ -31,6 +31,8 @@
     <p>{{ article.publishing_date|date }}</p>
 
     {% include "aldryn_newsblog/includes/author.html" with author=article.author %}
+    {% include "aldryn_newsblog/includes/author.html" with author=article.author_2 %}
+    {% include "aldryn_newsblog/includes/author.html" with author=article.author_3 %}
 
     {% if article.tags %}
         <p>
