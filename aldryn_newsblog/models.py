@@ -151,7 +151,7 @@ class Article(TranslatedAutoSlugifyMixin,
     # which in the end causes to add reversed releted-to entry as well:
     #
     # https://github.com/django/django/blob/1.8.4/django/db/models/fields/related.py#L977
-    related = SortedManyToManyField('self', verbose_name=_('related articles'),
+    related = SortedManyToManyField('self', verbose_name=_('specific articles'),
                                     blank=True, symmetrical=False)
 
     objects = RelatedManager()
@@ -503,7 +503,7 @@ class NewsBlogRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
         return qs
 
     def __str__(self):
-        return ugettext('Related articles')
+        return ugettext('Specific articles')
 
 
 

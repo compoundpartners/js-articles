@@ -4,7 +4,7 @@ from aldryn_client import forms
 class Form(forms.BaseForm):
 
     hide_related_articles = forms.CheckboxField(
-        "Hide Related Articles Selector",
+        "Hide Specific Articles Selector",
         required=False,
         initial=True)
 
