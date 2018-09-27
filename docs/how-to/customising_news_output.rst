@@ -66,8 +66,8 @@ See :ref:`plugins` for more details of the different plugins available.
 Customising News & Blog article templates
 *******************************************
 
-Articles can be similarly customised. For example you might add a *Related articles* plugin to the
-static placeholder of your articles, so that each article will display a list of related articles.
+Articles can be similarly customised. For example you might add a *Specific articles* plugin to the
+static placeholder of your articles, so that each article will display a list of specific articles.
 
 
 ************************
