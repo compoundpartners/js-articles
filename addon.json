@@ -1,4 +1,4 @@
 {
     "package-name": "js-articles",
-    "installed-apps": []
+    "installed-apps": ["aldryn_newsblog"]
 }
