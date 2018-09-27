@@ -508,28 +508,35 @@ class NewsBlogRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
 
 
 @python_2_unicode_compatible
-class NewsBlogSpecificPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
+class NewsBlogJSRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
                             CMSPlugin):
     # NOTE: This one does NOT subclass NewsBlogCMSPlugin. This is because this
     # plugin can really only be placed on the article detail view in an apphook.
     cmsplugin_ptr = models.OneToOneField(
         CMSPlugin, related_name='+', parent_link=True)
 
-    def get_articles(self, article, request):
-        """
-        Returns a queryset of articles that are related to the given article.
-        """
-        languages = get_valid_languages_from_request(
-            article.app_config.namespace, request)
-        if self.language not in languages:
-            return Article.objects.none()
-        qs = article.related.translated(*languages)
-        if not self.get_edit_mode(request):
-            qs = qs.published()
-        return qs
+    related_types = models.ForeignKey(NewsBlogConfig, null=True, blank=True, verbose_name=_('related articles'))
+    related_categories = SortedManyToManyField(Category, verbose_name=_('related categories'), blank=True, symmetrical=False)
+    related_authors = SortedManyToManyField(Person, verbose_name=_('related authors'), blank=True, symmetrical=False)
+
+    # def copy_relations(self, oldinstance):
+    #     self.related_types = oldinstance.related_types.all()
+
+    # def get_articles(self, article, request):
+    #     """
+    #     Returns a queryset of articles that are related to the given article.
+    #     """
+    #     languages = get_valid_languages_from_request(
+    #         article.app_config.namespace, request)
+    #     if self.language not in languages:
+    #         return Article.objects.none()
+    #     qs = article.related.translated(*languages)
+    #     if not self.get_edit_mode(request):
+    #         qs = qs.published()
+    #     return qs
 
     def __str__(self):
-        return ugettext('Specific articles')
+        return ugettext('Related articles')
 
 
 @python_2_unicode_compatible

@@ -187,30 +187,30 @@ class NewsBlogRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
 
 
 @plugin_pool.register_plugin
-class NewsBlogSpecificPlugin(AdjustableCacheMixin, NewsBlogPlugin):
-    render_template = 'aldryn_newsblog/plugins/specific_articles.html'
-    name = _('Specific Articles')
-    model = models.NewsBlogSpecificPlugin
-    form = forms.NewsBlogSpecificPluginForm
-
-    def get_article(self, request):
-        if request and request.resolver_match:
-            view_name = request.resolver_match.view_name
-            namespace = request.resolver_match.namespace
-            if view_name == '{0}:article-detail'.format(namespace):
-                article = models.Article.objects.active_translations(
-                    slug=request.resolver_match.kwargs['slug'])
-                if article.count() == 1:
-                    return article[0]
-        return None
+class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
+    render_template = 'aldryn_newsblog/plugins/js_related_articles.html'
+    name = _('Related Articles')
+    model = models.NewsBlogJSRelatedPlugin
+    form = forms.NewsBlogJSRelatedPluginForm
+    # change_form_template = "aldryn_newsblog/plugins/js_related_articles_admin.html"
 
     def render(self, context, instance, placeholder):
-        request = context.get('request')
         context['instance'] = instance
-        article = self.get_article(request)
-        if article:
-            context['article'] = article
-            context['article_list'] = instance.get_articles(article, request)
+
+        related_types = instance.related_types
+        related_authors = instance.related_authors.all()
+        related_categories = instance.related_categories.all()
+
+        qs = models.Article.objects.all()
+        if related_types:
+            qs = qs.filter(app_config=related_types)
+        if related_authors:
+            qs = qs.filter(author__in=related_authors.all())
+        if related_categories:
+            qs = qs.filter(categories__in=related_categories.all())
+        related_articles = qs[:5]  #TODO; form field to select limit
+
+        context['related_articles'] = related_articles
         return context
 
 

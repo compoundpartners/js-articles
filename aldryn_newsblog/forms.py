@@ -68,6 +68,14 @@ class NewsBlogRelatedPluginForm(forms.ModelForm):
         fields = ['cache_duration']
 
 
-class NewsBlogSpecificPluginForm(forms.ModelForm):
+class NewsBlogJSRelatedPluginForm(forms.ModelForm):
+
+    from aldryn_people.models import Person
+    from django.contrib.admin.widgets import FilteredSelectMultiple
+    related_authors = forms.ModelMultipleChoiceField(queryset=Person.objects.all(), required=False, widget=FilteredSelectMultiple("Related authors", is_stacked=False))
+
+    from aldryn_categories.models import Category
+    related_categories = forms.ModelMultipleChoiceField(queryset=Category.objects.all(), required=False, widget=FilteredSelectMultiple("Related categories", is_stacked=False))
+
     class Meta:
-        fields = ['cache_duration']
+        fields = ['related_types', 'related_authors', 'related_categories']
