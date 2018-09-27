@@ -188,7 +188,7 @@ class NewsBlogRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
 
 @plugin_pool.register_plugin
 class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
-    render_template = 'aldryn_newsblog/plugins/js_related_articles.html'
+    # render_template = 'aldryn_newsblog/plugins/js_related_articles.html'
     name = _('Related Articles')
     model = models.NewsBlogJSRelatedPlugin
     form = forms.NewsBlogJSRelatedPluginForm
@@ -209,8 +209,14 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
         if related_categories:
             qs = qs.filter(categories__in=related_categories.all())
         related_articles = qs[:5]  #TODO; form field to select limit
-
         context['related_articles'] = related_articles
+
+        if related_types:
+            template_title_segment = '{}'.format(related_types.app_title).replace(' ', '_').replace('-', '_').lower()
+            self.render_template = 'aldryn_newsblog/plugins/js_related_articles__{}.html'.format(template_title_segment)
+        else:
+            self.render_template = 'aldryn_newsblog/plugins/js_related_articles.html'
+
         return context
 
 
