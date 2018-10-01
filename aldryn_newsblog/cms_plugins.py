@@ -208,7 +208,7 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
             qs = qs.filter(author__in=related_authors.all())
         if related_categories:
             qs = qs.filter(categories__in=related_categories.all())
-        related_articles = qs[:5]  #TODO; form field to select limit
+        related_articles = qs[:3]  #TODO; form field to select limit
         context['related_articles'] = related_articles
 
         if related_types:
