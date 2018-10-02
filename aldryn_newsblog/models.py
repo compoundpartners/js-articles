@@ -517,7 +517,7 @@ class NewsBlogJSRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
     cmsplugin_ptr = models.OneToOneField(
         CMSPlugin, related_name='+', parent_link=True)
 
-    related_types = models.ForeignKey(NewsBlogConfig, null=True, blank=True, verbose_name=_('related articles'))
+    related_types = SortedManyToManyField(NewsBlogConfig, verbose_name=_('related articles'), blank=True, symmetrical=False)
     related_categories = SortedManyToManyField(Category, verbose_name=_('related categories'), blank=True, symmetrical=False)
     related_authors = SortedManyToManyField(Person, verbose_name=_('related authors'), blank=True, symmetrical=False)
 

@@ -203,7 +203,7 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
 
         qs = models.Article.objects.all()
         if related_types:
-            qs = qs.filter(app_config=related_types)
+            qs = qs.filter(app_config__in=related_types.all())
         if related_authors:
             qs = qs.filter(author__in=related_authors.all())
         if related_categories:

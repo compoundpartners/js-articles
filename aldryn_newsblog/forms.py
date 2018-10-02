@@ -69,9 +69,13 @@ class NewsBlogRelatedPluginForm(forms.ModelForm):
 
 
 class NewsBlogJSRelatedPluginForm(forms.ModelForm):
+    from django.contrib.admin.widgets import FilteredSelectMultiple
+
+    from aldryn_newsblog.models import NewsBlogConfig
+    related_types = forms.ModelMultipleChoiceField(queryset=NewsBlogConfig.objects.all(), required=False,
+                                                     widget=FilteredSelectMultiple("Related sections", is_stacked=False))
 
     from aldryn_people.models import Person
-    from django.contrib.admin.widgets import FilteredSelectMultiple
     related_authors = forms.ModelMultipleChoiceField(queryset=Person.objects.all(), required=False, widget=FilteredSelectMultiple("Related authors", is_stacked=False))
 
     from aldryn_categories.models import Category
