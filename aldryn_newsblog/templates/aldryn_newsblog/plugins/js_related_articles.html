@@ -1,24 +1,35 @@
-{% load i18n %}
+{% load i18n thumbnail %}
 
-    <ul>
-        {% for article in related_articles %}
-            <li>
-                <h3><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h3>
-                <p>
-                    {% if article.author %}
-                        {% trans "by" %} <a href="#">{{ article.author }}</a>
-                    {% endif %}
-                    {% if article.author_2 %}
-                        {% if article.author_3 %},{% else %}and{% endif %}
-                        <a href="#">{{ article.author_2 }}</a>
-                    {% endif %}
-                    {% if article.author_3 %}
-                        {% trans "and" %} <a href="#">{{ article.author_3 }}</a>
-                    {% endif %}
-                     {{ article.publishing_date|date }}
-                </p>
-            </li>
-        {% empty %}
-            <li>{% trans "No related articles found" %}</li>
-        {% endfor %}
-    </ul>
+<div class="related-articles cols-layout">
+  {# <h3></h3>#}
+  <a href="#" class="btn btn-info">See all</a>
+  <ul class="row">
+    {% for article in related_articles %}
+        <li class="col-md-4">
+            <div class="image">
+            {% if article.featured_image %}
+              {% thumbnail article.featured_image "235x150" crop="center" as im %}
+              <img src="{{ im.url }}" alt="{{ article.featured_image_alt }}" class="img-responsive media-object">
+            {% endif %}
+            </div>
+            <h4><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h4>
+            <p>
+                {% if article.author %}
+                    {% trans "by" %} <a href="#">{{ article.author }}</a>
+                {% endif %}
+                {% if article.author_2 %}
+                    {% if article.author_3 %},{% else %}and{% endif %}
+                    <a href="#">{{ article.author_2 }}</a>
+                {% endif %}
+                {% if article.author_3 %}
+                    {% trans "and" %} <a href="#">{{ article.author_3 }}</a>
+                {% endif %}
+                 {{ article.publishing_date|date }}
+            </p>
+            <p>{% if article.lead_in %}{{ article.lead_in }}{% endif %}</p>
+        </li>
+    {% empty %}
+        <li class="col-md-4">{% trans "No related articles found" %}</li>
+    {% endfor %}
+  </ul>
+</div>
