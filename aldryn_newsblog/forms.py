@@ -71,6 +71,8 @@ class NewsBlogRelatedPluginForm(forms.ModelForm):
 class NewsBlogJSRelatedPluginForm(forms.ModelForm):
     from django.contrib.admin.widgets import FilteredSelectMultiple
 
+    layout = forms.ChoiceField([('columns', 'Columns'), ('rows', 'Rows')])
+
     from aldryn_newsblog.models import NewsBlogConfig
     related_types = forms.ModelMultipleChoiceField(queryset=NewsBlogConfig.objects.all(), required=False,
                                                      widget=FilteredSelectMultiple("Related sections", is_stacked=False))
@@ -82,4 +84,4 @@ class NewsBlogJSRelatedPluginForm(forms.ModelForm):
     related_categories = forms.ModelMultipleChoiceField(queryset=Category.objects.all(), required=False, widget=FilteredSelectMultiple("Related categories", is_stacked=False))
 
     class Meta:
-        fields = ['related_types', 'related_authors', 'related_categories']
+        fields = ['layout', 'related_types', 'related_authors', 'related_categories']

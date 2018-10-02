@@ -197,6 +197,7 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
     def render(self, context, instance, placeholder):
         context['instance'] = instance
 
+        layout = instance.layout
         related_types = instance.related_types
         related_authors = instance.related_authors.all()
         related_categories = instance.related_categories.all()
@@ -211,11 +212,10 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
         related_articles = qs[:3]  #TODO; form field to select limit
         context['related_articles'] = related_articles
 
-        if related_types:
-            template_title_segment = '{}'.format(related_types.app_title).replace(' ', '_').replace('-', '_').lower()
-            self.render_template = 'aldryn_newsblog/plugins/js_related_articles__{}.html'.format(template_title_segment)
-        else:
-            self.render_template = 'aldryn_newsblog/plugins/js_related_articles.html'
+        if layout == 'columns':
+            self.render_template = 'aldryn_newsblog/plugins/js_related_articles__cols.html'
+        elif layout == 'rows':
+            self.render_template = 'aldryn_newsblog/plugins/js_related_articles__rows.html'
 
         return context
 
