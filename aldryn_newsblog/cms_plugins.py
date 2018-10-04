@@ -197,6 +197,7 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
     def render(self, context, instance, placeholder):
         context['instance'] = instance
 
+        context['title'] = instance.title
         layout = instance.layout
         related_types = instance.related_types
         related_authors = instance.related_authors.all()

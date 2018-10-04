@@ -517,6 +517,7 @@ class NewsBlogJSRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
     cmsplugin_ptr = models.OneToOneField(
         CMSPlugin, related_name='+', parent_link=True)
 
+    title = models.CharField(max_length=255, blank=True, verbose_name=_('Title'))
     layout = models.CharField(max_length=30, verbose_name=_('layout'))
     related_types = SortedManyToManyField(NewsBlogConfig, verbose_name=_('related articles'), blank=True, symmetrical=False)
     related_categories = SortedManyToManyField(Category, verbose_name=_('related categories'), blank=True, symmetrical=False)
