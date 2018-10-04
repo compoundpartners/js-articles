@@ -71,7 +71,13 @@ class NewsBlogRelatedPluginForm(forms.ModelForm):
 class NewsBlogJSRelatedPluginForm(forms.ModelForm):
     from django.contrib.admin.widgets import FilteredSelectMultiple
 
-    layout = forms.ChoiceField([('columns', 'Columns'), ('rows', 'Rows')])
+    CHOICES = [
+        ('columns', 'Columns'),
+        ('rows', 'Rows'),
+        ('hero', 'Hero'),
+        ('articles', 'Articles'),
+    ]
+    layout = forms.ChoiceField(CHOICES)
 
     from aldryn_newsblog.models import NewsBlogConfig
     related_types = forms.ModelMultipleChoiceField(queryset=NewsBlogConfig.objects.all(), required=False,

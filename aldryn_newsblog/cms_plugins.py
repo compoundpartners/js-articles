@@ -217,6 +217,10 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
             self.render_template = 'aldryn_newsblog/plugins/js_related_articles__cols.html'
         elif layout == 'rows':
             self.render_template = 'aldryn_newsblog/plugins/js_related_articles__rows.html'
+        elif layout == 'hero':
+            self.render_template = 'aldryn_newsblog/plugins/js_related_articles__hero.html'
+        elif layout == 'articles':
+            self.render_template = 'aldryn_newsblog/plugins/js_related_articles__articles.html'
 
         return context
 
