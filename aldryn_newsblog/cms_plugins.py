@@ -199,6 +199,7 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
 
         context['title'] = instance.title
         layout = instance.layout
+        featured = instance.featured
         related_types = instance.related_types
         related_authors = instance.related_authors.all()
         related_categories = instance.related_categories.all()
@@ -210,6 +211,8 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
             qs = qs.filter(author__in=related_authors.all())
         if related_categories:
             qs = qs.filter(categories__in=related_categories.all())
+        if featured:
+            qs = qs.filter(is_featured=True)
         related_articles = qs[:int(instance.number_of_articles)]
         context['related_articles'] = related_articles
 
