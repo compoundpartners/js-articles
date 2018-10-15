@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
+import datetime
 
 from distutils.version import LooseVersion
 from django.utils.translation import ugettext_lazy as _
@@ -204,7 +205,7 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
         related_authors = instance.related_authors.all()
         related_categories = instance.related_categories.all()
 
-        qs = models.Article.objects.all().filter(is_published=True)
+        qs = models.Article.objects.all().filter(is_published=True).filter(publishing_date__lte=datetime.datetime.now())
         if related_types.exists():
             qs = qs.filter(app_config__in=related_types.all())
         if related_authors:
