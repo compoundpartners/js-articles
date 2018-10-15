@@ -204,7 +204,7 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
         related_authors = instance.related_authors.all()
         related_categories = instance.related_categories.all()
 
-        qs = models.Article.objects.all()
+        qs = models.Article.objects.all().filter(is_published=True)
         if related_types.exists():
             qs = qs.filter(app_config__in=related_types.all())
         if related_authors:
