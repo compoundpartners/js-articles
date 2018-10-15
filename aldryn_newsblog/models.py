@@ -525,8 +525,10 @@ class NewsBlogJSRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
     related_categories = SortedManyToManyField(Category, verbose_name=_('related categories'), blank=True, symmetrical=False)
     related_authors = SortedManyToManyField(Person, verbose_name=_('related authors'), blank=True, symmetrical=False)
 
-    # def copy_relations(self, oldinstance):
-    #     self.related_types = oldinstance.related_types.all()
+    def copy_relations(self, oldinstance):
+        self.related_types = oldinstance.related_types.all()
+        self.related_categories = oldinstance.related_categories.all()
+        self.related_authors = oldinstance.related_authors.all()
 
     # def get_articles(self, article, request):
     #     """
