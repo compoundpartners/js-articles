@@ -215,6 +215,10 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
         if featured:
             qs = qs.filter(is_featured=True)
         related_articles = qs[:int(instance.number_of_articles)]
+
+        # Update context
+        for article in related_articles:
+            article.type = article.app_config.namespace  # Section machine name
         context['related_articles'] = related_articles
 
         if layout == 'columns':
