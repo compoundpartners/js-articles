@@ -218,7 +218,7 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
 
         # Update context
         for article in related_articles:
-            article.type = article.app_config.namespace  # Section machine name
+            article.type = article.app_config.namespace.lower()  # Section machine name
         context['related_articles'] = related_articles
 
         if layout == 'columns':
