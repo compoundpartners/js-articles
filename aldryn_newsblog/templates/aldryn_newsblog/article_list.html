@@ -1,12 +1,32 @@
-{% extends "aldryn_newsblog/base.html" %}
-{% load i18n %}
+{% extends "aldryn_newsblog/two_column.html" %}
+{% load i18n cms_tags staticfiles %}
+
+{% block ograph %}
+  <meta property="og:title" content="Gateley Plc HR Hub - ADD LIST DETAILS ">
+  <meta property="og:description" content="{% page_attribute "meta_description" %}">
+  <meta property="og:image" content="https://{{ request.get_host }}{% static 'img/gateleyplc-og.png' %}">
+{% endblock %}
 
 {% block newsblog_content %}
+  <section class="col-sm-8 col-md-9 col-lg-10 row related-articles articles-layout">
+
     {% for article in article_list %}
-        {% include "aldryn_newsblog/includes/article.html" %}
+        {% include "aldryn_newsblog/includes/article-item.html" %}
     {% empty %}
-        <p>{% trans "No items available" %}</p>
+        {% trans "No items available" %}
     {% endfor %}
 
+  </section>
+{% endblock %}
+
+{% block newsblog_sidebar %}
+  <nav class="col-sm-4 col-md-3 col-lg-2">
+    {% include "aldryn_newsblog/includes/sidebar.html" %}
+  </nav>
+{% endblock %}
+
+{% block newsblog_footer %}
+  <nav class="col-md-12">
     {% include "aldryn_newsblog/includes/pagination.html" %}
+  </nav>
 {% endblock %}

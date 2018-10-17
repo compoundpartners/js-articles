@@ -22,3 +22,12 @@ class NewsBlogApp(CMSConfigApp):
 
 
 apphook_pool.register(NewsBlogApp)
+
+
+@apphook_pool.register
+class RelatedArticlesApp(CMSConfigApp):
+    name = _('Related Articles')
+    app_name = 'related_articles'
+
+    def get_urls(self, *args, **kwargs):
+        return ['aldryn_newsblog.urls_related_articles']

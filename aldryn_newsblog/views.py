@@ -25,6 +25,7 @@ from aldryn_categories.models import Category
 from aldryn_people.models import Person
 
 from aldryn_newsblog.utils.utilities import get_valid_languages_from_request
+from .cms_appconfig import NewsBlogConfig
 from .models import Article
 from .utils import add_prefix_to_path
 
@@ -402,3 +403,38 @@ class DayArticleList(DateRangeArticleList):
             int(kwargs['year']), int(kwargs['month']), int(kwargs['day']))
         date_to = date_from + relativedelta(days=1)
         return date_from, date_to
+
+
+class RelatedArticles(ListView):
+    model = Article
+    template_name = 'aldryn_newsblog/article_list.html'
+
+    type_url_kwarg = 'type'
+    category_url_kwarg = 'category'
+    author_url_kwarg = 'author'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['type_filter_list'] = NewsBlogConfig.objects.all()
+        context['category_filter_list'] = Category.objects.all()
+        context['author_filter_list'] = Person.objects.all()
+        context['split_path'] = self.request.path_info.split('/')[1:-1]  # Drop leading & trailing slash
+        return context
+
+    def get_queryset(self):
+        type = self.kwargs.get(self.type_url_kwarg, 'all')
+        category = self.kwargs.get(self.category_url_kwarg, 'all')
+        author = self.kwargs.get(self.author_url_kwarg, 'all')
+
+        qs = Article.objects.all().filter(is_published=True).filter(
+            publishing_date__lte=datetime.now()).distinct()
+        if type != 'all':
+            qs_type = NewsBlogConfig.objects.all().filter(namespace__iexact=type)
+            qs = qs.filter(app_config__in=qs_type)
+        if category != 'all':
+            qs_category = Category.objects.all().filter(translations__slug__iexact=category)
+            qs = qs.filter(categories__in=qs_category.all())
+        if author != 'all':
+            qs_author = Person.objects.all().filter(translations__slug=author)
+            qs = qs.filter(author__in=qs_author.all())
+        return qs

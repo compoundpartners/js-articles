@@ -1,0 +1,17 @@
+{% load i18n apphooks_config_tags cms_tags sekizai_tags staticfiles thumbnail %}
+
+<article class="col-sm-12 col-md-6">
+  <a href="{{ article.get_absolute_url }}">
+
+    <h2>{{ article.title }}</h2>
+
+    {% if article.featured_image_id %}
+      <img src="{% thumbnail article.featured_image 200x200 crop subject_location=article.featured_image.subject_location %}" alt="{{ article.featured_image.alt }}" class="img-responsive">
+    {% endif %}
+
+    {% include "aldryn_newsblog/includes/author.html" with author=article.author %}
+
+    {{ article.lead_in }}
+
+  </a>
+</article>
