@@ -33,6 +33,21 @@ You can also find instructions on `how to upgrade`_ from earlier versions.
 .. _how to upgrade: http://aldryn-newsblog.readthedocs.io/en/latest/upgrade.html
 
 
+
+========================
+Related Articles Apphook
+========================
+
+The Related Articles Apphook page features a full directory of the site's articles, along
+with filters on the right-side for type, category, and author.
+
+The Related Articles Apphook works in tandem with the Related Articles Plugin.
+The plugin will display a "See All" button in the top right if the Apphook page
+is setup correctly.
+Assign the Related Articles Apphook to a page, and set it's ID to: "related_articles".
+If this is not done; the "See All" button will be disabled and will not appear.
+
+
 ============
 Contributing
 ============

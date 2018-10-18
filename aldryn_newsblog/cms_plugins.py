@@ -221,6 +221,20 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
             article.type = article.app_config.namespace.lower()  # Section machine name
         context['related_articles'] = related_articles
 
+        related_types_first = instance.related_types.first()
+        if related_types_first is not None:
+            context['related_types_first'] = related_types_first.namespace
+        else:
+            context['related_types_first'] = 'all'
+        related_categories_first = instance.related_categories.all().first()
+        if related_categories_first is not None:
+            context['related_categories_first'] = related_categories_first.slug
+        else:
+            context['related_categories_first'] = 'all'
+        related_authors_first = instance.related_authors.all().first()
+        if related_authors_first is not None:
+            context['related_authors_first'] = related_authors_first.slug
+
         if layout == 'columns':
             self.render_template = 'aldryn_newsblog/plugins/js_related_articles__cols.html'
         elif layout == 'rows':

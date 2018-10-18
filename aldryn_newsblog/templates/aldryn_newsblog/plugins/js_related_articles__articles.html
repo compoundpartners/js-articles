@@ -1,42 +1,41 @@
-{% load i18n thumbnail %}
+{% load cms_tags i18n thumbnail %}
 
-<div>
-    <div class="row related-articles articles-layout">
-        <div class="col-md-12">
-            <div class="header">
-                <h3>{% if title %}{{ title }}{% endif %}</h3>
-                <a href="#" class="btn btn-info">See all</a>
-            </div>
-            <ul class="row">
-                {% for article in related_articles %}
-                    <li class="col-md-6">
-                        <div class="image">
-                            {% if article.featured_image %}
-                                {% thumbnail article.featured_image "370x223" crop="center" as im %}
-                                <a href="{{ article.get_absolute_url }}">
-                                    <img src="{{ im.url }}" alt="{{ article.featured_image_alt }}"
-                                    class="img-responsive media-object">
-                                </a>
-                            {% endif %}
-                        </div>
-                        <div>
-                            <h4><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h4>
-                        </div>
-                        <div>
-                            <p>
-                                {% if article.lead_in %}
-                                    {{ article.lead_in|truncatewords:17 }}
-                                    {% ifnotequal article.lead_in|truncatewords_html:17|length article.lead_in|truncatewords_html:18|length %}
-                                        <a href="article.get_absolute_url">Read more ></a>
-                                    {% endifnotequal %}
-                                {% endif %}
-                            </p>
-                        </div>
-                    </li>
-                {% empty %}
-                    <li class="col-md-6">{% trans "No related articles found" %}</li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
+<div class="related-articles two-by-two">
+
+  {% if title %}
+    <h3>{{ title }}</h3>
+  {% endif %}
+
+  {% page_url 'related_articles' as apphook_id %}
+  {% if apphook_id %}
+    <a href="{{ apphook_id }}{{ related_types_first|lower|slugify }}/{{ related_categories_first|lower|slugify }}/{{ related_authors_first|lower|slugify }}" class="btn btn-info">See all</a>
+  {% endif %}
+
+  <ul class="row">
+
+    {% for article in related_articles %}
+
+      {% if article.featured_image %}
+        {% thumbnail article.featured_image "370x223" crop="center" as im %}
+        <li class="col-md-6 {{ article.type }}" style="background-image:url({{ im.url }});">
+      {% else %}
+        <li class="col-md-6">
+      {% endif %}
+
+          <a href="{{ article.get_absolute_url }}">
+            <h4>{{ article.title }}</h4>
+
+            {% if article.lead_in %}
+              <p>{{ article.lead_in|striptags|safe }}</p>
+            {% endif %}
+          </a>
+
+        </li>
+
+    {% empty %}
+        <li class="col-md-6">{% trans "No related articles found" %}</li>
+    {% endfor %}
+
+  </ul>
+
 </div>
