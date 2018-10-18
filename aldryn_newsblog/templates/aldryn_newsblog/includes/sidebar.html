@@ -14,7 +14,7 @@
     <ul>
         <li><a href="/{{ split_path.0 }}/all">Any</a></li>
         {% for item in category_filter_list %}
-            <li><a href="/{{ split_path.0 }}/all/{{ item|lower|slugify }}">{{ item }}</a></li>
+            <li><a href="/{{ split_path.0 }}/all/{{ item.slug|lower|slugify }}">{{ item }}</a></li>
         {% endfor %}
     </ul>
 
@@ -22,7 +22,7 @@
     <ul>
         <li><a href="/{{ split_path.0 }}/all/all">Any</a></li>
         {% for item in author_filter_list %}
-            <li><a href="/{{ split_path.0 }}/all/all/{{ item|lower|slugify }}">{{ item }}</a></li>
+            <li><a href="/{{ split_path.0 }}/all/all/{{ item.slug|lower|slugify }}">{{ item }}</a></li>
         {% endfor %}
     </ul>
 
@@ -40,7 +40,7 @@
     <ul>
         <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}">Any</a></li>
         {% for item in category_filter_list %}
-            <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/{{ item|lower|slugify }}">{{ item }}</a></li>
+            <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/{{ item.slug|lower|slugify }}">{{ item }}</a></li>
         {% endfor %}
     </ul>
 
@@ -48,7 +48,7 @@
     <ul>
         <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/all">Any</a></li>
         {% for item in author_filter_list %}
-            <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/all/{{ item|lower|slugify }}">{{ item }}</a></li>
+            <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/all/{{ item.slug|lower|slugify }}">{{ item }}</a></li>
         {% endfor %}
     </ul>
 
@@ -66,7 +66,7 @@
     <ul>
         <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}">Any</a></li>
         {% for item in category_filter_list %}
-            <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/{{ item|lower|slugify }}">{{ item }}</a></li>
+            <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/{{ item.slug|lower|slugify }}">{{ item }}</a></li>
         {% endfor %}
     </ul>
 
@@ -74,7 +74,7 @@
     <ul>
         <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/{{ split_path.2|slugify }}">Any</a></li>
         {% for item in author_filter_list %}
-            <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/{{ split_path.2|slugify }}/{{ item|lower|slugify }}">{{ item }}</a></li>
+            <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/{{ split_path.2|slugify }}/{{ item.slug|lower|slugify }}">{{ item }}</a></li>
         {% endfor %}
     </ul>
 
@@ -92,7 +92,7 @@
     <ul>
         <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/all/{{ split_path.3|slugify }}">Any</a></li>
         {% for item in category_filter_list %}
-            <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/{{ item|lower|slugify }}/{{ split_path.3|slugify }}">{{ item }}</a></li>
+            <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/{{ item.slug|lower|slugify }}/{{ split_path.3|slugify }}">{{ item }}</a></li>
         {% endfor %}
     </ul>
 
@@ -100,7 +100,7 @@
     <ul>
         <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/{{ split_path.2|slugify }}">Any</a></li>
         {% for item in author_filter_list %}
-            <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/{{ split_path.2|slugify }}/{{ item|lower|slugify }}">{{ item }}</a></li>
+            <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/{{ split_path.2|slugify }}/{{ item.slug|lower|slugify }}">{{ item }}</a></li>
         {% endfor %}
     </ul>
 
