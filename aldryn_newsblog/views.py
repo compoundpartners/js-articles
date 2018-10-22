@@ -439,7 +439,8 @@ class RelatedArticles(ListView):
         qs = self.get_queryset()
         for article in qs:
             article.type = article.app_config
-            article.type_slug = context['split_path'][1]
+            if len(context['split_path']) > 2:
+                article.type_slug = context['split_path'][1]
         context['article_list'] = qs
 
         return context

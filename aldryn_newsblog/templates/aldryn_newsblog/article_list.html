@@ -41,16 +41,38 @@
       </a>
       <meta property="position" content="1">
     </li>
+    {% if split_path|length >= 1 %}
     <li property="itemListElement" typeof="ListItem">
-      <a property="item" typeof="WebPage" href="/resources/">
+      <a property="item" typeof="WebPage" href="{% page_url 'related_articles' %}">
         <span property="name">Resources</span>
       </a>
       <meta property="position" content="2">
     </li>
+    {% endif %}
+    {% if split_path|length >= 2 %}
     <li property="itemListElement" typeof="ListItem">
-      <span property="name">Award Winners</span>
+      <a property="item" typeof="WebPage" href="{% page_url 'related_articles' %}{{ split_path.1 }}">
+        <span property="name">{{ type_filter_active.0 }}</span>
+      </a>
       <meta property="position" content="3">
     </li>
+    {% endif %}
+    {% if split_path|length >= 3 %}
+    <li property="itemListElement" typeof="ListItem">
+      <a property="item" typeof="WebPage" href="{% page_url 'related_articles' %}{{ split_path.1 }}/{{ split_path.2 }}">
+        <span property="name">{{ category_filter_active.0 }}</span>
+      </a>
+      <meta property="position" content="4">
+    </li>
+    {% endif %}
+    {% if split_path|length >= 4 %}
+    <li property="itemListElement" typeof="ListItem">
+      <a property="item" typeof="WebPage" href="{% page_url 'related_articles' %}{{ split_path.1 }}/{{ split_path.2 }}/{{ split_path.3 }}">
+        <span property="name">{{ author_filter_active.0 }}</span>
+      </a>
+      <meta property="position" content="4">
+    </li>
+    {% endif %}
   </ol>
 
   <div class="col-sm-8 col-lg-9 related-articles two-by-two">
