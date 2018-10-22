@@ -420,7 +420,7 @@ class RelatedArticles(ListView):
         author_url = self.kwargs.get(self.author_url_kwarg, 'all')
 
         context['type_filter_list'] = NewsBlogConfig.objects.all()
-        context['category_filter_list'] = Category.objects.all()
+        context['category_filter_list'] = Category.objects.all().exclude(translations__slug__iexact='hr-hub')
         context['author_filter_list'] = Person.objects.all()
         context['split_path'] = self.request.path_info.split('/')[1:-1]  # Drop leading & trailing slash
         if type_url != 'all':
