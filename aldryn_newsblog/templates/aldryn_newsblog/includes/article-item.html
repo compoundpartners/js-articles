@@ -1,17 +1,19 @@
 {% load i18n apphooks_config_tags cms_tags sekizai_tags staticfiles thumbnail %}
 
-<article class="col-sm-12 col-md-6">
-  <a href="{{ article.get_absolute_url }}">
+<li class="col-sm-12 col-md-6 {{ article.type_slug|lower }}">
 
-    <h2>{{ article.title }}</h2>
+  {% if article.featured_image %}
+    {% thumbnail article.featured_image "370x223" crop="center" as im %}
+    <a href="{{ article.get_absolute_url }}" style="background-image:url({{ im.url }});">
+  {% else %}
+    <a href="{{ article.get_absolute_url }}">
+  {% endif %}
 
-    {% if article.featured_image_id %}
-      <img src="{% thumbnail article.featured_image 200x200 crop subject_location=article.featured_image.subject_location %}" alt="{{ article.featured_image.alt }}" class="img-responsive">
+    <h4>{{ article.title }}</h4>
+
+    {% if article.lead_in %}
+      <p>{{ article.lead_in|striptags|safe|truncatechars:165 }}</p>
     {% endif %}
 
-    {% include "aldryn_newsblog/includes/author.html" with author=article.author %}
-
-    {{ article.lead_in }}
-
   </a>
-</article>
+</li>
