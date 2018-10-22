@@ -10,24 +10,29 @@
 {% block newsblog_content %}
 
   {# Title #}
+  <h1 class="col-md-12">
   {% if split_path|length == 1 %}
-    <h1 class="col-md-12">Articles</h1>
-  {% elif split_path|length == 2 %}
-    <h1 class="col-md-12">{{ type_filter_active.0 }}</h1>
-  {% elif split_path|length == 3 %}
-    {% if category_filter_active.0 != 'all' %}
-      <h1 class="col-md-12">{{ type_filter_active.0 }}, filtered by <a href="{% page_url 'topics' %}{{ split_path.2 }}/">{{ category_filter_active.0 }}</a></h1>
+    Articles
+  {% endif %}
+  {% if split_path|length >= 2 %}
+    {% if type_filter_active.0 != 'all' %}
+      {{ type_filter_active.0 }}
     {% else %}
-      <h1 class="col-md-12">{{ type_filter_active.0 }}, filtered by <a href="{% page_url 'topics' %}{{ split_path.2 }}/">All categories</a></h1>
-    {% endif %}
-  {% elif split_path|length >= 4 %}
-    {% if category_filter_active.0 != 'all' %}
-      <h1 class="col-md-12">{{ type_filter_active.0 }}, filtered by <a href="{% page_url 'topics' %}{{ split_path.2 }}/">{{ category_filter_active.0 }}</a>, {{ author_filter_active.0 }}</h1>
-       {# <h1 class="col-md-12">{{ type_filter_active.0 }}, filtered by <a href="{% page_url 'topics' %}{{ split_path.2 }}/">{{ category_filter_active.0 }}</a>, <a href="{% page_url 'topics' %}{{ split_path.2 }}/{{ split_path.3 }}">{{ author_filter_active.0 }}</a></h1> #}
-    {% else %}
-      <h1 class="col-md-12">{{ type_filter_active.0 }}, filtered by <a href="{% page_url 'topics' %}{{ split_path.2 }}/">All categories</a>, {{ author_filter_active.0 }}</h1>
+      All types
     {% endif %}
   {% endif %}
+  {% if split_path|length >= 3 %}
+    {% if category_filter_active.0 != 'all' %}
+      , filtered by <a href="{% page_url 'topics' %}{{ split_path.2 }}/">{{ category_filter_active.0 }}</a>
+    {% else %}
+      , filtered by <a href="{% page_url 'topics' %}{{ split_path.2 }}/">All categories</a>
+    {% endif %}
+  {% endif %}
+  {% if split_path|length >= 4 %}
+    , {{ author_filter_active.0 }}
+     {# , <a href="{% page_url 'topics' %}{{ split_path.2 }}/{{ split_path.3 }}">{{ author_filter_active.0 }}</a> #}
+  {% endif %}
+  </h1>
 
   <ol id="breadcrumb" class="col-md-12" vocab="http://schema.org/" typeof="BreadcrumbList">
     <li property="itemListElement" typeof="ListItem">
