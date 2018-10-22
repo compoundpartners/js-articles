@@ -425,10 +425,16 @@ class RelatedArticles(ListView):
         context['split_path'] = self.request.path_info.split('/')[1:-1]  # Drop leading & trailing slash
         if type_url != 'all':
             context['type_filter_active'] = NewsBlogConfig.objects.all().filter(namespace__iexact=type_url)
+        else:
+            context['type_filter_active'] = ['all']
         if category_url != 'all':
             context['category_filter_active'] = Category.objects.all().filter(translations__slug__iexact=category_url)
+        else:
+            context['category_filter_active'] = ['all']
         if author_url != 'all':
             context['author_filter_active'] = Person.objects.all().filter(translations__slug=author_url)
+        else:
+            context['author_filter_active'] = ['all']
 
         qs = self.get_queryset()
         for article in qs:
