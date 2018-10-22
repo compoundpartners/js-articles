@@ -15,22 +15,22 @@
     Articles
   {% endif %}
   {% if split_path|length >= 2 %}
-    {% if type_filter_active.0 != 'all' %}
+    {% if type_filter_active.0 != 'all' %}{% if split_path|length >= 3 %},{% endif %}
       {{ type_filter_active.0 }}
     {% else %}
-      All types
+      All types{% if split_path|length >= 3 %},{% endif %}
     {% endif %}
   {% endif %}
   {% if split_path|length >= 3 %}
     {% if category_filter_active.0 != 'all' %}
-      , filtered by <a href="{% page_url 'topics' %}{{ split_path.2 }}/">{{ category_filter_active.0 }}</a>
+      filtered by <a href="{% page_url 'topics' %}{{ split_path.2 }}/">{{ category_filter_active.0 }}</a>{% if split_path|length >= 4 %},{% endif %}
     {% else %}
-      , filtered by <a href="{% page_url 'topics' %}{{ split_path.2 }}/">All categories</a>
+      filtered by <a href="{% page_url 'topics' %}{{ split_path.2 }}/">All categories</a>{% if split_path|length >= 4 %},{% endif %}
     {% endif %}
   {% endif %}
   {% if split_path|length >= 4 %}
-    , {{ author_filter_active.0 }}
-     {# , <a href="{% page_url 'topics' %}{{ split_path.2 }}/{{ split_path.3 }}">{{ author_filter_active.0 }}</a> #}
+    {{ author_filter_active.0 }}
+     {# <a href="{% page_url 'authors' %}/{{ split_path.3 }}">{{ author_filter_active.0 }}</a> #}
   {% endif %}
   </h1>
 
