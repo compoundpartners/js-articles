@@ -429,6 +429,13 @@ class RelatedArticles(ListView):
             context['category_filter_active'] = Category.objects.all().filter(translations__slug__iexact=category_url)
         if author_url != 'all':
             context['author_filter_active'] = Person.objects.all().filter(translations__slug=author_url)
+
+        qs = self.get_queryset()
+        for article in qs:
+            article.type = article.app_config
+            article.type_slug = context['split_path'][1]
+        context['article_list'] = qs
+
         return context
 
     def get_queryset(self):
