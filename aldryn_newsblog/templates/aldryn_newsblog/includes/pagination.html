@@ -15,6 +15,10 @@
                     <span aria-hidden="true">&laquo; Previous</span>
                 </a>
             </li>
+        {% else %}
+            <li>
+                <span class="faded" aria-hidden="true">&laquo; Previous</span>
+            </li>
         {% endif %}
 
         {% if paginator.num_pages > pagination.pages_start %}
@@ -35,7 +39,7 @@
         {% else %}
             {% for num in page_obj.paginator.page_range %}
                 {% if num == page_obj.number %}
-                    <li class="active"><span>{{ num }}</span></li>
+                    <li class="active"><span class="active">{{ num }}</span></li>
                 {% else %}
                     <li><a href="?page={{ num }}">{{ num }}</a></li>
                 {% endif %}
@@ -55,6 +59,10 @@
                     </a>
                 </li>
             {% endif %}
+        {% else %}
+            <li>
+                <span class="faded" aria-hidden="true">Next &raquo;</span>
+            </li>
         {% endif %}
     </ul>
 {% endif %}
