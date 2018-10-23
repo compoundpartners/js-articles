@@ -411,17 +411,14 @@ class RelatedArticles(ListView):
 
     type_url_kwarg = 'type'
     category_url_kwarg = 'category'
-    author_url_kwarg = 'author'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         type_url = self.kwargs.get(self.type_url_kwarg, 'all')
         category_url = self.kwargs.get(self.category_url_kwarg, 'all')
-        author_url = self.kwargs.get(self.author_url_kwarg, 'all')
 
         context['type_filter_list'] = NewsBlogConfig.objects.all()
         context['category_filter_list'] = Category.objects.all().exclude(translations__slug__iexact='hr-hub')
-        context['author_filter_list'] = Person.objects.all()
         context['split_path'] = self.request.path_info.split('/')[1:-1]  # Drop leading & trailing slash
         if type_url != 'all':
             context['type_filter_active'] = NewsBlogConfig.objects.all().filter(namespace__iexact=type_url)
@@ -431,10 +428,6 @@ class RelatedArticles(ListView):
             context['category_filter_active'] = Category.objects.all().filter(translations__slug__iexact=category_url)
         else:
             context['category_filter_active'] = ['all']
-        if author_url != 'all':
-            context['author_filter_active'] = Person.objects.all().filter(translations__slug=author_url)
-        else:
-            context['author_filter_active'] = ['all']
 
         qs = self.get_queryset()
         for article in qs:
@@ -447,7 +440,6 @@ class RelatedArticles(ListView):
     def get_queryset(self):
         type_url = self.kwargs.get(self.type_url_kwarg, 'all')
         category_url = self.kwargs.get(self.category_url_kwarg, 'all')
-        author_url = self.kwargs.get(self.author_url_kwarg, 'all')
 
         qs = Article.objects.all().filter(is_published=True).filter(
             publishing_date__lte=datetime.now()).distinct()
@@ -457,7 +449,4 @@ class RelatedArticles(ListView):
         if category_url != 'all':
             qs_category = Category.objects.all().filter(translations__slug__iexact=category_url)
             qs = qs.filter(categories__in=qs_category.all())
-        if author_url != 'all':
-            qs_author = Person.objects.all().filter(translations__slug=author_url)
-            qs = qs.filter(author__in=qs_author.all())
         return qs

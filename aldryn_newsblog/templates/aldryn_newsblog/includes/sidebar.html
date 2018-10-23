@@ -18,14 +18,6 @@
         {% endfor %}
     </ul>
 
-    <h3>Author</h3>
-    <ul>
-        <li><a href="/{{ split_path.0 }}/all/all">Any</a></li>
-        {% for item in author_filter_list %}
-            <li><a href="/{{ split_path.0 }}/all/all/{{ item.slug|lower|slugify }}">{{ item }}</a></li>
-        {% endfor %}
-    </ul>
-
 {% elif split_path|length == 2 %}
 
     <h3>Type</h3>
@@ -45,14 +37,6 @@
         <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}">Any</a></li>
         {% for item in category_filter_list %}
             <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/{{ item.slug|lower|slugify }}">{{ item }}</a></li>
-        {% endfor %}
-    </ul>
-
-    <h3>Author</h3>
-    <ul>
-        <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/all">Any</a></li>
-        {% for item in author_filter_list %}
-            <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/all/{{ item.slug|lower|slugify }}">{{ item }}</a></li>
         {% endfor %}
     </ul>
 
@@ -78,52 +62,6 @@
             <li class="active"><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/{{ item.slug|lower|slugify }}">{{ item }}</a></li>
             {% else %}
             <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/{{ item.slug|lower|slugify }}">{{ item }}</a></li>
-            {% endif %}
-        {% endfor %}
-    </ul>
-
-    <h3>Author</h3>
-    <ul>
-        <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/{{ split_path.2|slugify }}">Any</a></li>
-        {% for item in author_filter_list %}
-            <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/{{ split_path.2|slugify }}/{{ item.slug|lower|slugify }}">{{ item }}</a></li>
-        {% endfor %}
-    </ul>
-
-{% elif split_path|length >= 4 %}
-
-    <h3>Type</h3>
-    <ul>
-        <li><a href="/{{ split_path.0 }}/all/{{ split_path.2|slugify }}/{{ split_path.3|slugify }}">Any</a></li>
-        {% for item in type_filter_list %}
-            {% if item == type_filter_active.0 %}
-            <li class="active"><a href="/{{ split_path.0 }}/{{ item.namespace|lower|slugify }}/{{ split_path.2|slugify }}/{{ split_path.3|slugify }}">{{ item }}</a></li>
-            {% else %}
-            <li><a href="/{{ split_path.0 }}/{{ item.namespace|lower|slugify }}/{{ split_path.2|slugify }}/{{ split_path.3|slugify }}">{{ item }}</a></li>
-            {% endif %}
-        {% endfor %}
-    </ul>
-
-    <h3>Category</h3>
-    <ul>
-        <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/all/{{ split_path.3|slugify }}">Any</a></li>
-        {% for item in category_filter_list %}
-            {% if item == category_filter_active.0 %}
-            <li class="active"><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/{{ item.slug|lower|slugify }}/{{ split_path.3|slugify }}">{{ item }}</a></li>
-            {% else %}
-            <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/{{ item.slug|lower|slugify }}/{{ split_path.3|slugify }}">{{ item }}</a></li>
-            {% endif %}
-        {% endfor %}
-    </ul>
-
-    <h3>Author</h3>
-    <ul>
-        <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/{{ split_path.2|slugify }}">Any</a></li>
-        {% for item in author_filter_list %}
-            {% if item == author_filter_active.0 %}
-            <li class="active"><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/{{ split_path.2|slugify }}/{{ item.slug|lower|slugify }}">{{ item }}</a></li>
-            {% else %}
-            <li><a href="/{{ split_path.0 }}/{{ split_path.1|slugify }}/{{ split_path.2|slugify }}/{{ item.slug|lower|slugify }}">{{ item }}</a></li>
             {% endif %}
         {% endfor %}
     </ul>
