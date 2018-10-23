@@ -408,7 +408,7 @@ class DayArticleList(DateRangeArticleList):
 class RelatedArticles(ListView):
     model = Article
     template_name = 'aldryn_newsblog/article_list.html'
-
+    paginate_by = 8
     type_url_kwarg = 'type'
     category_url_kwarg = 'category'
 
@@ -429,11 +429,9 @@ class RelatedArticles(ListView):
         else:
             context['category_filter_active'] = ['all']
 
-        qs = self.get_queryset()
-        for article in qs:
+        for article in context['article_list']:
             article.type = article.app_config
             article.type_slug = article.app_config.namespace
-        context['article_list'] = qs
 
         return context
 

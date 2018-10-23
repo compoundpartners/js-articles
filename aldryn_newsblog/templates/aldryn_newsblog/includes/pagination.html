@@ -12,7 +12,7 @@
             {% endif %}
             <li>
                 <a href="?page={{ page_obj.previous_page_number }}" aria-label="{% trans 'Previous' %}" title="{% trans 'Previous' %}">
-                    <span aria-hidden="true">&lsaquo;</span>
+                    <span aria-hidden="true">&laquo; Previous</span>
                 </a>
             </li>
         {% endif %}
@@ -45,7 +45,7 @@
         {% if page_obj.has_next %}
             <li>
                 <a href="?page={{ page_obj.next_page_number }}" aria-label="{% trans 'Next' %}" title="{% trans 'Next' %}">
-                    <span aria-hidden="true">&rsaquo;</span>
+                    <span aria-hidden="true">Next &raquo;</span>
                 </a>
             </li>
             {% if page_obj.number < paginator.num_pages|add:pagination.pages_visible_negative %}
