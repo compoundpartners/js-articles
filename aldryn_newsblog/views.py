@@ -411,6 +411,18 @@ class RelatedArticles(ListView):
     paginate_by = 8
     type_url_kwarg = 'type'
     category_url_kwarg = 'category'
+    pagination_pages_start = 5
+    pagination_pages_visible = 2
+
+    def get_pagination_options(self):
+        options = dict()
+        options['pages_start'] = self.pagination_pages_start
+        options['pages_visible'] = self.pagination_pages_visible
+        pages_visible_negative = -self.pagination_pages_visible
+        options['pages_visible_negative'] = pages_visible_negative
+        options['pages_visible_total'] = self.pagination_pages_visible + 1
+        options['pages_visible_total_negative'] = pages_visible_negative - 1
+        return options
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -432,6 +444,8 @@ class RelatedArticles(ListView):
         for article in context['article_list']:
             article.type = article.app_config
             article.type_slug = article.app_config.namespace
+
+        context['pagination'] = self.get_pagination_options()
 
         return context
 
