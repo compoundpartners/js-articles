@@ -2,6 +2,6 @@
 
 from __future__ import unicode_literals
 
-__version__ = '3.5.3'
+__version__ = '3.6.0'
 
 default_app_config = 'aldryn_newsblog.apps.AldrynNewsBlog'

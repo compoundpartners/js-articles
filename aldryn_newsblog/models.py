@@ -521,6 +521,7 @@ class NewsBlogJSRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
     number_of_articles = models.PositiveSmallIntegerField(verbose_name=_('Number of articles'), validators=[django.core.validators.MaxValueValidator(120)])
     layout = models.CharField(max_length=30, verbose_name=_('layout'))
     featured = models.BooleanField(blank=True, default=False)
+    exclude_current_article = models.BooleanField(blank=True, default=False)
     related_types = SortedManyToManyField(NewsBlogConfig, verbose_name=_('related articles'), blank=True, symmetrical=False)
     related_categories = SortedManyToManyField(Category, verbose_name=_('related categories'), blank=True, symmetrical=False)
     related_authors = SortedManyToManyField(Person, verbose_name=_('related authors'), blank=True, symmetrical=False)

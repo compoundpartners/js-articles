@@ -195,12 +195,25 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
     form = forms.NewsBlogJSRelatedPluginForm
     # change_form_template = "aldryn_newsblog/plugins/js_related_articles_admin.html"
 
+    def get_article(self, request):
+        if request and request.resolver_match:
+            view_name = request.resolver_match.view_name
+            namespace = request.resolver_match.namespace
+            if view_name == '{0}:article-detail'.format(namespace):
+                article = models.Article.objects.active_translations(
+                    slug=request.resolver_match.kwargs['slug'])
+                if article.count() == 1:
+                    return article[0]
+        return None
+
     def render(self, context, instance, placeholder):
+        request = context.get('request')
         context['instance'] = instance
 
         context['title'] = instance.title
         layout = instance.layout
         featured = instance.featured
+        exclude_current_article = instance.exclude_current_article
         related_types = instance.related_types
         related_authors = instance.related_authors.all()
         related_categories = instance.related_categories.all()
@@ -212,6 +225,10 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
             qs = qs.filter(author__in=related_authors.all())
         if related_categories:
             qs = qs.filter(categories__in=related_categories.all())
+        if exclude_current_article:
+            current_article = self.get_article(request)
+            if current_article is not None:
+                qs = qs.exclude(id=current_article.id)
         if featured:
             qs = qs.filter(is_featured=True)
         related_articles = qs[:int(instance.number_of_articles)]

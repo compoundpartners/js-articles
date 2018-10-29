@@ -81,6 +81,8 @@ class NewsBlogJSRelatedPluginForm(forms.ModelForm):
 
     featured = forms.BooleanField(label='Show "Is Featured"', required=False)
 
+    exclude_current_article = forms.BooleanField(label='Exclude current article', required=False)
+
     from aldryn_newsblog.models import NewsBlogConfig
     related_types = forms.ModelMultipleChoiceField(queryset=NewsBlogConfig.objects.all(), required=False,
                                                      widget=FilteredSelectMultiple("Related sections", is_stacked=False))
@@ -92,4 +94,4 @@ class NewsBlogJSRelatedPluginForm(forms.ModelForm):
     related_categories = forms.ModelMultipleChoiceField(queryset=Category.objects.all(), required=False, widget=FilteredSelectMultiple("Related categories", is_stacked=False))
 
     class Meta:
-        fields = ['title', 'number_of_articles', 'layout', 'featured', 'related_types', 'related_authors', 'related_categories']
+        fields = ['title', 'number_of_articles', 'layout', 'featured', 'exclude_current_article', 'related_types', 'related_authors', 'related_categories']
