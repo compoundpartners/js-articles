@@ -6,13 +6,7 @@ from django.db import migrations
 
 
 def related_articles_relations_publisher(apps, schema_editor):
-    from cms.models.pagemodel import Page
-    pages = Page.objects.all()
-    for page in pages:
-        if not page.publisher_is_draft:
-            continue
-        for lang in page.get_languages():
-            page.publish(lang)
+    pass
 
 def backwards(apps, schema_editor):
     pass
