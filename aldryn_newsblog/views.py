@@ -441,10 +441,6 @@ class RelatedArticles(ListView):
         else:
             context['category_filter_active'] = ['all']
 
-        for article in context['article_list']:
-            article.type = article.app_config
-            article.type_slug = article.app_config.namespace
-
         context['pagination'] = self.get_pagination_options()
 
         return context

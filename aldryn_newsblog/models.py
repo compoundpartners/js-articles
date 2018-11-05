@@ -162,6 +162,16 @@ class Article(TranslatedAutoSlugifyMixin,
         ordering = ['-publishing_date']
 
     @property
+    def type(self):
+        '''Article Type / Section.'''
+        return self.app_config
+
+    @property
+    def type_slug(self):
+        '''Article Type / Section Machine Name'''
+        return self.app_config.namespace
+
+    @property
     def published(self):
         """
         Returns True only if the article (is_published == True) AND has a
