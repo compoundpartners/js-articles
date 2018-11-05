@@ -17,7 +17,7 @@
 
       {% if article.featured_image %}
         {% thumbnail article.featured_image "370x223" crop="center" as im %}
-        <li class="col-md-6 {{ article.type }}" style="background-image:url({{ im.url }});">
+        <li class="col-md-6 {{ article.type_slug|lower }}" style="background-image:url({{ im.url }});">
       {% else %}
         <li class="col-md-6">
       {% endif %}
