@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 
+from django.contrib.sitemaps import Sitemap
 from django.db.models import Q
 from django.http import (
     Http404,
@@ -458,3 +459,15 @@ class RelatedArticles(ListView):
             qs_category = Category.objects.all().filter(translations__slug__iexact=category_url)
             qs = qs.filter(categories__in=qs_category.all())
         return qs
+
+
+class ArticlesSitemap(Sitemap):
+    changefreq = "monthly"
+    priority = 0.7
+
+    def items(self):
+        return Article.objects.all().filter(is_published=True).filter(
+            publishing_date__lte=datetime.now()).distinct()
+
+    def lastmod(self, obj):
+        return obj.publishing_date  # MOD date exists?  (e.g. when plugins are updated)
