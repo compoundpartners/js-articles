@@ -157,6 +157,25 @@ class ArticleDetail(AppConfigMixin, AppHookCheckMixin, PreviewModeMixin,
             self.queryset, self.object)
         context['next_article'] = self.get_next_object(
             self.queryset, self.object)
+
+        article = context['article']
+        categories = article.categories.all()
+        ra_qs = Article.objects.all().filter(is_published=True).filter(
+            publishing_date__lte=datetime.now()).distinct()
+        ra_qs = ra_qs.filter(categories__in=categories)
+        ra_qs = ra_qs.exclude(id=article.id)
+        context['related_articles'] = ra_qs[:6]
+
+        related_types_first = article.app_config
+        if related_types_first is not None:
+            context['related_types_first'] = related_types_first.namespace
+        else:
+            context['related_types_first'] = 'all'
+        if categories is not None:
+            context['related_categories_first'] = categories[0].slug
+        else:
+            context['related_categories_first'] = 'all'
+
         return context
 
     def get_prev_object(self, queryset=None, object=None):
