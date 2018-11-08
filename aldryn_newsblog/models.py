@@ -161,6 +161,10 @@ class Article(TranslatedAutoSlugifyMixin,
     class Meta:
         ordering = ['-publishing_date']
 
+    def get_class(self):
+        '''Return class name'''
+        return self.__class__.__name__
+
     @property
     def type(self):
         '''Article Type / Section.'''
