@@ -164,7 +164,7 @@ class ArticleDetail(AppConfigMixin, AppHookCheckMixin, PreviewModeMixin,
             publishing_date__lte=datetime.now()).distinct()
         ra_qs = ra_qs.filter(categories__in=categories)
         ra_qs = ra_qs.exclude(id=article.id)
-        context['related_articles'] = ra_qs[:6]
+        context['related_articles'] = ra_qs[:3]
 
         related_types_first = article.app_config
         if related_types_first is not None:
