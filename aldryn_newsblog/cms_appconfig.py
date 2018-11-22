@@ -137,6 +137,12 @@ class NewsBlogConfig(TranslatableModel, AppHookConfig):
         related_name='aldryn_newsblog_detail_footer',
     )
 
+    enabled = models.BooleanField(
+        verbose_name=_('Available in related articles listing?'),
+        default=True,
+        help_text=_('Uncheck to remove this section from the related articles listing filters.')
+    )
+
     def get_app_title(self):
         return getattr(self, 'app_title', _('untitled'))
 

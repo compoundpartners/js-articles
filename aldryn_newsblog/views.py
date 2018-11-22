@@ -449,8 +449,9 @@ class RelatedArticles(ListView):
         type_url = self.kwargs.get(self.type_url_kwarg, 'all')
         category_url = self.kwargs.get(self.category_url_kwarg, 'all')
 
-        context['type_filter_list'] = NewsBlogConfig.objects.all().exclude(translations__app_title__icontains='DISABLED')
+        # context['type_filter_list'] = NewsBlogConfig.objects.all().exclude(translations__app_title__icontains='DISABLED')
             # Allows adding 'DISABLED' anywhere in title of a Section to exclude it from the related articles listing filters
+        context['type_filter_list'] = NewsBlogConfig.objects.all().exclude(enabled=False)
         context['category_filter_list'] = Category.objects.all().exclude(translations__slug__iexact='hr-hub')
         context['split_path'] = self.request.path_info.split('/')[1:-1]  # Drop leading & trailing slash
         if type_url != 'all':

@@ -209,6 +209,7 @@ class NewsBlogConfigAdmin(
             'template_prefix', 'paginate_by', 'pagination_pages_start',
             'pagination_pages_visible', 'exclude_featured',
             'create_authors', 'search_indexed', 'config.default_published',
+            'enabled',
         )
 
 
