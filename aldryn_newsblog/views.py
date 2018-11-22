@@ -7,6 +7,7 @@ from dateutil.relativedelta import relativedelta
 
 from django.contrib.sitemaps import Sitemap
 from django.db.models import Q
+from django.db.models.functions import Lower
 from django.http import (
     Http404,
     HttpResponseRedirect,
@@ -451,8 +452,8 @@ class RelatedArticles(ListView):
 
         # context['type_filter_list'] = NewsBlogConfig.objects.all().exclude(translations__app_title__icontains='DISABLED')
             # Allows adding 'DISABLED' anywhere in title of a Section to exclude it from the related articles listing filters
-        context['type_filter_list'] = NewsBlogConfig.objects.all().exclude(enabled=False)
-        context['category_filter_list'] = Category.objects.all().exclude(translations__slug__iexact='hr-hub')
+        context['type_filter_list'] = NewsBlogConfig.objects.all().exclude(enabled=False).order_by(Lower('namespace'))
+        context['category_filter_list'] = Category.objects.all().exclude(translations__slug__iexact='hr-hub').order_by(Lower('translations__name'))
         context['split_path'] = self.request.path_info.split('/')[1:-1]  # Drop leading & trailing slash
         if type_url != 'all':
             context['type_filter_active'] = NewsBlogConfig.objects.all().filter(namespace__iexact=type_url)
