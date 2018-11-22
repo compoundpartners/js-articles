@@ -172,8 +172,9 @@ class ArticleDetail(AppConfigMixin, AppHookCheckMixin, PreviewModeMixin,
             context['related_types_first'] = related_types_first.namespace
         else:
             context['related_types_first'] = 'all'
-        if categories is not None:
-            context['related_categories_first'] = categories[0].slug
+        related_categories_first = article.categories.all().first()
+        if related_categories_first is not None:
+            context['related_categories_first'] = related_categories_first.slug
         else:
             context['related_categories_first'] = 'all'
 
