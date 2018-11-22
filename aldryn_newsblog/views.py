@@ -466,6 +466,16 @@ class RelatedArticles(ListView):
 
         context['pagination'] = self.get_pagination_options()
 
+        # GAT01-170; reorder types manually  >  Move Quick Reads ("in60s") to top
+        type_filter_list_custom_sort = list()
+        for item in context['type_filter_list']:
+            if item.namespace == 'in60s':
+                type_filter_list_custom_sort.append(item)
+        for item in context['type_filter_list']:
+            if item.namespace != 'in60s':
+                type_filter_list_custom_sort.append(item)
+        context['type_filter_list'] = type_filter_list_custom_sort
+
         return context
 
     def get_queryset(self):
