@@ -94,4 +94,4 @@ class NewsBlogJSRelatedPluginForm(forms.ModelForm):
     related_categories = forms.ModelMultipleChoiceField(queryset=Category.objects.all(), required=False, widget=FilteredSelectMultiple("Related categories", is_stacked=False))
 
     class Meta:
-        fields = ['title', 'number_of_articles', 'layout', 'featured', 'exclude_current_article', 'related_types', 'related_authors', 'related_categories']
+        fields = ['title', 'icon', 'image', 'number_of_articles', 'layout', 'featured', 'exclude_current_article', 'related_types', 'related_authors', 'related_categories']
