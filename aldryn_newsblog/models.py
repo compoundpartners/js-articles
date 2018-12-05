@@ -23,6 +23,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import override, ugettext
+from djangocms_icon.fields import Icon
 from djangocms_text_ckeditor.fields import HTMLField
 from filer.fields.image import FilerImageField
 from parler.models import TranslatableModel, TranslatedFields
@@ -532,6 +533,8 @@ class NewsBlogJSRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
         CMSPlugin, related_name='+', parent_link=True)
 
     title = models.CharField(max_length=255, blank=True, verbose_name=_('Title'))
+    icon = Icon(blank=False, default='fa-')
+    image = FilerImageField(null=True, blank=True, related_name="title_image")
     number_of_articles = models.PositiveSmallIntegerField(verbose_name=_('Number of articles'), validators=[django.core.validators.MaxValueValidator(120)])
     layout = models.CharField(max_length=30, verbose_name=_('layout'))
     featured = models.BooleanField(blank=True, default=False)

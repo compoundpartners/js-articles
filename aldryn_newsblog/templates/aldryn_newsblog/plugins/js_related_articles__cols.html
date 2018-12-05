@@ -1,7 +1,19 @@
-{% load cms_tags i18n thumbnail %}
+{% load cms_tags i18n thumbnail djangocms_icon_tags %}
 
 <div class="related-articles cols-layout">
-  <h3>{% if title %}{{ title }}{% endif %}</h3>
+
+  {% if title %}
+    <h3 class="title">
+      {% if image %}
+        {% thumbnail image "40x40" crop="center" as im %}
+          <img src="{{ im.url }}" alt="{{ object.image_alt }}" class="img-responsive media-object">
+      {% elif icon != 'fa-' %}
+        <i class="{{ icon|iconset_from_class }} {{ icon }} " aria-hidden="true"></i>
+      {% endif %}
+      {{ title }}
+    </h3>
+   {% endif %}
+
   {% page_url 'related_articles' as apphook_id %}
   {% if apphook_id %}
     <a href="{{ apphook_id }}{{ related_types_first|lower|slugify }}/{{ related_categories_first|lower|slugify }}/{{ related_authors_first|lower|slugify }}" class="btn btn-info">See all</a>

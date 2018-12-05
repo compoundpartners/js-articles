@@ -9,7 +9,6 @@ from django.utils.translation import ugettext_lazy as _
 from cms import __version__ as cms_version
 from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
-
 from . import models, forms
 from .utils import add_prefix_to_path, default_reverse
 
@@ -211,6 +210,8 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
         context['instance'] = instance
 
         context['title'] = instance.title
+        context['icon'] = instance.icon
+        context['image'] = instance.image
         layout = instance.layout
         featured = instance.featured
         exclude_current_article = instance.exclude_current_article
