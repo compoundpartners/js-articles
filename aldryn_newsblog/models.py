@@ -116,6 +116,10 @@ class Article(TranslatedAutoSlugifyMixin,
                                related_name='newsblog_article_content')
     related_articles = PlaceholderField('newsblog_related_articles',
                                 related_name='newsblog_related_articles')
+    article_carousel = PlaceholderField('newsblog_article_carousel',
+                                related_name='newsblog_article_carousel')
+    article_sidebar = PlaceholderField('newsblog_article_sidebar',
+                                related_name='newsblog_article_sidebar')
     author = models.ForeignKey(Person, null=True, blank=True,
                                verbose_name=_('author'))
     author_2 = models.ForeignKey(Person, related_name='author_2', null=True, blank=True,
