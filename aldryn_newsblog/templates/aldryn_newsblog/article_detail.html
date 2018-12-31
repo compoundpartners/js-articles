@@ -1,6 +1,10 @@
 {% extends "aldryn_newsblog/base.html" %}
 {% load i18n cms_tags apphooks_config_tags %}
 
+{% block header_attributes %}
+      <link rel="canonical" href="{{ ROOT_URL }}{% page_url 'articles' %}{{ article.type_slug }}/{{ article.slug }}" />
+{% endblock %}
+
 {% block title %}
     {{ article.title }} - {{ block.super }}
 {% endblock %}
