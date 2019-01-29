@@ -16,6 +16,8 @@
 
   </header>
 
+    {% render_placeholder article.carousel %}
+
     {% if slug != "how-to" and slug != "guides" %}
       {% include "aldryn_newsblog/includes/author-top.html" with author=article.author %}
     {% endif %}
