@@ -19,6 +19,7 @@ from .cms_appconfig import NewsBlogConfig
 from .models import Article
 from .utils.utilities import is_valid_namespace
 
+from .constants import HIDE_USER
 
 def get_published_app_configs():
     """
@@ -90,9 +91,7 @@ class CreateNewsBlogArticleForm(BaseFormMixin, TranslatableModelForm):
             self.fields['app_config'].initial = app_configs[0].pk
 
     def save(self, commit=True):
-        article = super(CreateNewsBlogArticleForm, self).save(commit=False)
-        article.owner = self.user
-        article.save()
+        article = super(CreateNewsBlogArticleForm, self).save(commit=commit)
 
         # If 'content' field has value, create a TextPlugin with same and add it to the PlaceholderField
         content = clean_html(self.cleaned_data.get('content', ''), False)

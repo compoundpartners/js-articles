@@ -13,3 +13,15 @@ HIDE_TAGS = getattr(
     'HIDE_TAGS',
     False,
 )
+
+HIDE_USER = getattr(
+    settings,
+    'HIDE_USER',
+    False,
+)
+
+SUMMARY_RICHTEXT = getattr(
+    settings,
+    'SUMMARY_RICHTEXT',
+    False,
+)

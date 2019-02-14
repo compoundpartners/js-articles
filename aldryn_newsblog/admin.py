@@ -6,6 +6,7 @@ from aldryn_people.models import Person
 from aldryn_translation_tools.admin import AllTranslationsMixin
 from cms.admin.placeholderadmin import FrontendEditableAdminMixin
 from django.contrib import admin
+from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
 from parler.admin import TranslatableAdmin
 from parler.forms import TranslatableModelForm
@@ -14,7 +15,9 @@ from . import models
 
 from .constants import (
     HIDE_RELATED_ARTICLES,
-    HIDE_TAGS
+    HIDE_TAGS,
+    HIDE_USER,
+    SUMMARY_RICHTEXT,
 )
 
 from cms.admin.placeholderadmin import PlaceholderAdminMixin
@@ -99,7 +102,8 @@ class ArticleAdminForm(TranslatableModelForm):
         if ('related' in self.fields and
                 hasattr(self.fields['related'], 'widget')):
             self.fields['related'].widget.can_add_related = False
-
+        if not SUMMARY_RICHTEXT:
+            self.fields['lead_in'].widget = widgets.Textarea()
 
 class ArticleAdmin(
     AllTranslationsMixin,
@@ -123,6 +127,7 @@ class ArticleAdmin(
 
     advanced_settings_fields = (
         'categories',
+        'services',
     )
 
     if HIDE_TAGS == 0:
@@ -135,8 +140,12 @@ class ArticleAdmin(
             'related',
         )
 
+    if HIDE_USER == 0:
+        advanced_settings_fields += (
+            'owner',
+        )
+
     advanced_settings_fields += (
-        'owner',
         'app_config',
     )
 
@@ -179,20 +188,6 @@ class ArticleAdmin(
     }
     app_config_selection_title = ''
     app_config_selection_desc = ''
-
-    def add_view(self, request, *args, **kwargs):
-        data = request.GET.copy()
-        try:
-            person = Person.objects.get(user=request.user)
-            data['author'] = person.pk
-            request.GET = data
-        except Person.DoesNotExist:
-            pass
-
-        data['owner'] = request.user.pk
-        request.GET = data
-        return super(ArticleAdmin, self).add_view(request, *args, **kwargs)
-
 
 admin.site.register(models.Article, ArticleAdmin)
 

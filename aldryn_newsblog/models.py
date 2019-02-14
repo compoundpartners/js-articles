@@ -126,7 +126,8 @@ class Article(TranslatedAutoSlugifyMixin,
                                verbose_name=_('second author'))
     author_3 = models.ForeignKey(Person, related_name='author_3', null=True, blank=True,
                                verbose_name=_('third author'))
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('owner'))
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('owner'),
+                              null=True, blank=True)
     app_config = AppHookConfigField(
         NewsBlogConfig,
         verbose_name=_('Section'),
@@ -134,6 +135,9 @@ class Article(TranslatedAutoSlugifyMixin,
     )
     categories = CategoryManyToManyField('aldryn_categories.Category',
                                          verbose_name=_('categories'),
+                                         blank=True)
+    services = SortedManyToManyField('js_services.Service',
+                                         verbose_name=_('services'),
                                          blank=True)
     publishing_date = models.DateTimeField(_('publishing date'),
                                            default=now)
@@ -243,6 +247,9 @@ class Article(TranslatedAutoSlugifyMixin,
         for category in self.categories.all():
             text_bits.append(
                 force_unicode(category.safe_translation_getter('name')))
+        for service in self.services.all():
+            text_bits.append(
+                force_unicode(service.safe_translation_getter('name')))
         for tag in self.tags.all():
             text_bits.append(force_unicode(tag.name))
         if self.content:
@@ -259,7 +266,7 @@ class Article(TranslatedAutoSlugifyMixin,
             self.search_data = self.get_search_data()
 
         # Ensure there is an owner.
-        if self.app_config.create_authors and self.author is None:
+        if self.app_config.create_authors and self.owner and self.author is None:
             if hasattr(Person, 'first_name') and hasattr(Person, 'last_name'):
                 defaults={
                     'first_name': self.owner.first_name,
