@@ -15,14 +15,14 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='article',
-            name='article_carousel',
-            field=cms.models.fields.PlaceholderField(editable=False, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='newsblog_article_carousel', slotname='newsblog_article_carousel', to='cms.Placeholder'),
-        ),
-        migrations.AddField(
-            model_name='article',
-            name='article_sidebar',
-            field=cms.models.fields.PlaceholderField(editable=False, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='newsblog_article_sidebar', slotname='newsblog_article_sidebar', to='cms.Placeholder'),
-        ),
+        #migrations.AddField(
+            #model_name='article',
+            #name='article_carousel',
+            #field=cms.models.fields.PlaceholderField(editable=False, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='newsblog_article_carousel', slotname='newsblog_article_carousel', to='cms.Placeholder'),
+        #),
+        #migrations.AddField(
+            #model_name='article',
+            #name='article_sidebar',
+            #field=cms.models.fields.PlaceholderField(editable=False, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='newsblog_article_sidebar', slotname='newsblog_article_sidebar', to='cms.Placeholder'),
+        #),
     ]
