@@ -556,13 +556,15 @@ class NewsBlogJSRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
     layout = models.CharField(max_length=30, verbose_name=_('layout'))
     featured = models.BooleanField(blank=True, default=False)
     exclude_current_article = models.BooleanField(blank=True, default=False)
-    related_types = SortedManyToManyField(NewsBlogConfig, verbose_name=_('related articles'), blank=True, symmetrical=False)
+    related_types = SortedManyToManyField(NewsBlogConfig, verbose_name=_('related sections'), blank=True, symmetrical=False)
     related_categories = SortedManyToManyField(Category, verbose_name=_('related categories'), blank=True, symmetrical=False)
+    related_services = SortedManyToManyField('js_services.Service', verbose_name=_('related services'), blank=True, symmetrical=False)
     related_authors = SortedManyToManyField(Person, verbose_name=_('related authors'), blank=True, symmetrical=False)
 
     def copy_relations(self, oldinstance):
         self.related_types = oldinstance.related_types.all()
         self.related_categories = oldinstance.related_categories.all()
+        self.related_services = oldinstance.related_services.all()
         self.related_authors = oldinstance.related_authors.all()
 
     # def get_articles(self, article, request):

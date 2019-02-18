@@ -84,14 +84,24 @@ class NewsBlogJSRelatedPluginForm(forms.ModelForm):
     exclude_current_article = forms.BooleanField(label='Exclude current article', required=False)
 
     from aldryn_newsblog.models import NewsBlogConfig
-    related_types = forms.ModelMultipleChoiceField(queryset=NewsBlogConfig.objects.all(), required=False,
-                                                     widget=FilteredSelectMultiple("Related sections", is_stacked=False))
+    related_types = forms.ModelMultipleChoiceField(
+        label='Related sections',
+        queryset=NewsBlogConfig.objects.all(),
+        required=False,
+        widget=FilteredSelectMultiple("Related sections", is_stacked=False))
 
     from aldryn_people.models import Person
     related_authors = forms.ModelMultipleChoiceField(queryset=Person.objects.all(), required=False, widget=FilteredSelectMultiple("Related authors", is_stacked=False))
 
     from aldryn_categories.models import Category
     related_categories = forms.ModelMultipleChoiceField(queryset=Category.objects.all(), required=False, widget=FilteredSelectMultiple("Related categories", is_stacked=False))
+
+    from js_services.models import Service
+    related_services = forms.ModelMultipleChoiceField(
+        queryset=Service.objects.all(),
+        required=False,
+        widget=FilteredSelectMultiple('Related services', False)
+    )
 
     class Meta:
         fields = ['title', 'icon', 'image', 'number_of_articles', 'layout', 'featured', 'exclude_current_article', 'related_types', 'related_authors', 'related_categories']
