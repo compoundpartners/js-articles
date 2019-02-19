@@ -106,15 +106,14 @@ class ArticleAdminForm(TranslatableModelForm):
             self.fields['lead_in'].widget = widgets.Textarea()
 
 class ArticleAdmin(
-    AllTranslationsMixin,
     PlaceholderAdminMixin,
     FrontendEditableAdminMixin,
     ModelAppHookConfig,
     TranslatableAdmin
 ):
     form = ArticleAdminForm
-    list_display = ('title', 'app_config', 'slug', 'is_featured',
-                    'is_published')
+    list_display = ('title_view', 'slug', 'app_config', 'is_featured',
+                    'is_published', 'publishing_date')
     list_filter = [
         'app_config',
         'categories',
@@ -124,6 +123,10 @@ class ArticleAdmin(
         make_published, make_unpublished,
     )
 
+    def title_view(self, obj):
+         return obj.title
+    title_view.short_description  = 'title'
+    title_view.admin_order_field = 'translations__title'
 
     advanced_settings_fields = (
         'categories',
@@ -193,7 +196,6 @@ admin.site.register(models.Article, ArticleAdmin)
 
 
 class NewsBlogConfigAdmin(
-    AllTranslationsMixin,
     PlaceholderAdminMixin,
     BaseAppHookConfig,
     TranslatableAdmin
