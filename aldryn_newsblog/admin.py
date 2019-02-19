@@ -112,7 +112,7 @@ class ArticleAdmin(
     TranslatableAdmin
 ):
     form = ArticleAdminForm
-    list_display = ('title_view', 'slug', 'app_config', 'is_featured',
+    list_display = ('title_view', 'app_config', 'is_featured',
                     'is_published', 'publishing_date')
     list_filter = [
         'app_config',
