@@ -216,6 +216,16 @@ class ArticleListBase(AppConfigMixin, AppHookCheckMixin, TemplatePrefixMixin,
     model = Article
     show_header = False
 
+    def get(self, request, *args, **kwargs):
+        self.edit_mode = (request.toolbar and request.toolbar.edit_mode)
+        return super(ArticleListBase, self).get(request)
+
+    def get_queryset(self):
+        qs = super(ArticleListBase, self).get_queryset()
+        if not self.edit_mode:
+            qs = qs.published()
+        return qs
+
     def get_paginate_by(self, queryset):
         if self.paginate_by is not None:
             return self.paginate_by
@@ -279,7 +289,6 @@ class ArticleSearchResultsList(ArticleListBase):
     def get(self, request, *args, **kwargs):
         self.query = request.GET.get('q')
         self.max_articles = request.GET.get('max_articles', 0)
-        self.edit_mode = (request.toolbar and request.toolbar.edit_mode)
         return super(ArticleSearchResultsList, self).get(request)
 
     def get_paginate_by(self, queryset):
@@ -292,8 +301,6 @@ class ArticleSearchResultsList(ArticleListBase):
 
     def get_queryset(self):
         qs = super(ArticleSearchResultsList, self).get_queryset()
-        if not self.edit_mode:
-            qs = qs.published()
         if self.query:
             return qs.filter(
                 Q(translations__title__icontains=self.query) |
