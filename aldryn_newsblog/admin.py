@@ -77,6 +77,7 @@ class ArticleAdminForm(TranslatableModelForm):
         ]
 
     def __init__(self, *args, **kwargs):
+        kwargs['initial']['medium'] = models.ArticleMedium.objects.first().pk if models.ArticleMedium.objects.first() else None
         super(ArticleAdminForm, self).__init__(*args, **kwargs)
 
         qs = models.Article.objects
@@ -104,6 +105,7 @@ class ArticleAdminForm(TranslatableModelForm):
             self.fields['related'].widget.can_add_related = False
         if not SUMMARY_RICHTEXT:
             self.fields['lead_in'].widget = widgets.Textarea()
+
 
 class ArticleAdmin(
     PlaceholderAdminMixin,
@@ -164,6 +166,7 @@ class ArticleAdmin(
                 'is_featured',
                 'featured_image',
                 'lead_in',
+                'medium',
             )
         }),
         (_('Meta Options'), {
@@ -210,3 +213,5 @@ class NewsBlogConfigAdmin(
 
 
 admin.site.register(models.NewsBlogConfig, NewsBlogConfigAdmin)
+
+admin.site.register(models.ArticleMedium)
