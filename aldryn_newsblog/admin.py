@@ -77,7 +77,8 @@ class ArticleAdminForm(TranslatableModelForm):
         ]
 
     def __init__(self, *args, **kwargs):
-        kwargs['initial']['medium'] = models.ArticleMedium.objects.first().pk if models.ArticleMedium.objects.first() else None
+        if 'initial' in kwargs:
+            kwargs['initial']['medium'] = models.ArticleMedium.objects.first().pk if models.ArticleMedium.objects.first() else None
         super(ArticleAdminForm, self).__init__(*args, **kwargs)
 
         qs = models.Article.objects
