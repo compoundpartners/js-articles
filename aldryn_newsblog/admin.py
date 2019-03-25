@@ -120,6 +120,7 @@ class ArticleAdmin(
     list_filter = [
         'app_config',
         'categories',
+        'services',
     ]
     actions = (
         make_featured, make_not_featured,
@@ -189,6 +190,7 @@ class ArticleAdmin(
 
     filter_horizontal = [
         'categories',
+        'services',
     ]
     app_config_values = {
         'default_published': 'is_published'
