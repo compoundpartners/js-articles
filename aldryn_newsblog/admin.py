@@ -10,6 +10,8 @@ from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
 from parler.admin import TranslatableAdmin
 from parler.forms import TranslatableModelForm
+from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
+
 
 from . import models
 
@@ -62,6 +64,7 @@ class ArticleAdminForm(TranslatableModelForm):
         fields = [
             'app_config',
             'categories',
+            'companies',
             'featured_image',
             'is_featured',
             'is_published',
@@ -71,6 +74,7 @@ class ArticleAdminForm(TranslatableModelForm):
             'meta_title',
             'owner',
             'related',
+            'services',
             'slug',
             'tags',
             'title',
@@ -121,6 +125,7 @@ class ArticleAdmin(
         'app_config',
         'categories',
         'services',
+        'companies',
     ]
     actions = (
         make_featured, make_not_featured,
@@ -135,6 +140,7 @@ class ArticleAdmin(
     advanced_settings_fields = (
         'categories',
         'services',
+        'companies',
     )
 
     if HIDE_TAGS == 0:
@@ -190,13 +196,20 @@ class ArticleAdmin(
 
     filter_horizontal = [
         'categories',
-        'services',
     ]
     app_config_values = {
         'default_published': 'is_published'
     }
     app_config_selection_title = ''
     app_config_selection_desc = ''
+
+    def formfield_for_manytomany(self, db_field, request=None, **kwargs):
+        if db_field.name == 'services':
+            kwargs['widget'] = SortedFilteredSelectMultiple()
+        if db_field.name == 'companies':
+            kwargs['widget'] = SortedFilteredSelectMultiple()
+        return super(ArticleAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
+
 
 admin.site.register(models.Article, ArticleAdmin)
 

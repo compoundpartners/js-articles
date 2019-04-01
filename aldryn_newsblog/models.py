@@ -157,6 +157,9 @@ class Article(TranslatedAutoSlugifyMixin,
     services = SortedManyToManyField('js_services.Service',
                                          verbose_name=_('services'),
                                          blank=True)
+    companies = SortedManyToManyField('js_companies.Company',
+                                         verbose_name=_('companies'),
+                                         blank=True)
     publishing_date = models.DateTimeField(_('publishing date'),
                                            default=now)
     is_published = models.BooleanField(_('is published'), default=False,
