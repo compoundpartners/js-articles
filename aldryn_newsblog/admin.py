@@ -69,6 +69,7 @@ class ArticleAdminForm(TranslatableModelForm):
             'is_featured',
             'is_published',
             'lead_in',
+            'location',
             'meta_description',
             'meta_keywords',
             'meta_title',
@@ -126,6 +127,7 @@ class ArticleAdmin(
         'categories',
         'services',
         'companies',
+        'location',
     ]
     actions = (
         make_featured, make_not_featured,
@@ -175,6 +177,7 @@ class ArticleAdmin(
                 'featured_image',
                 'lead_in',
                 'medium',
+                'location',
             )
         }),
         (_('Meta Options'), {
