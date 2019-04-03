@@ -17,6 +17,10 @@ class Form(forms.BaseForm):
         'Hide owner', required=False, initial=False
     )
 
+    enable_locations = forms.CheckboxField(
+        'Enable Locations', required=False, initial=False
+    )
+
     summary_richtext = forms.CheckboxField(
         "Use rich text for Summary",
         required=False,
@@ -25,16 +29,19 @@ class Form(forms.BaseForm):
     def to_settings(self, data, settings):
 
         if data['hide_related_articles']:
-            settings['HIDE_RELATED_ARTICLES'] = int(data['hide_related_articles'])
+            settings['ARTICLES_HIDE_RELATED'] = int(data['hide_related_articles'])
 
         if data['hide_tags']:
-            settings['HIDE_TAGS'] = int(data['hide_tags'])
+            settings['ARTICLES_HIDE_TAGS'] = int(data['hide_tags'])
 
         if data['hide_user']:
-            settings['HIDE_USER'] = int(data['hide_user'])
+            settings['ARTICLES_HIDE_USER'] = int(data['hide_user'])
+
+        if data['enable_locations']:
+            settings['ARTICLES_ENABLE_LOCATIONS'] = int(data['enable_locations'])
 
         if data['summary_richtext']:
-            settings['SUMMARY_RICHTEXT'] = int(data['summary_richtext'])
+            settings['ARTICLES_SUMMARY_RICHTEXT'] = int(data['summary_richtext'])
 
 
         settings['INSTALLED_APPS'].extend([

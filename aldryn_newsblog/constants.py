@@ -4,24 +4,30 @@ from django.conf import settings
 
 HIDE_RELATED_ARTICLES = getattr(
     settings,
-    'HIDE_RELATED_ARTICLES',
+    'ARTICLES_HIDE_RELATED',
     False,
 )
 
 HIDE_TAGS = getattr(
     settings,
-    'HIDE_TAGS',
+    'ARTICLES_HIDE_TAGS',
     False,
 )
 
 HIDE_USER = getattr(
     settings,
-    'HIDE_USER',
+    'ARTICLES_HIDE_USER',
+    False,
+)
+
+ENABLE_LOCATIONS = getattr(
+    settings,
+    'ARTICLES_ENABLE_LOCATIONS',
     False,
 )
 
 SUMMARY_RICHTEXT = getattr(
     settings,
-    'SUMMARY_RICHTEXT',
+    'ARTICLES_SUMMARY_RICHTEXT',
     False,
 )

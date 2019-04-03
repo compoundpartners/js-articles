@@ -19,6 +19,7 @@ from .constants import (
     HIDE_RELATED_ARTICLES,
     HIDE_TAGS,
     HIDE_USER,
+    ENABLE_LOCATIONS,
     SUMMARY_RICHTEXT,
 )
 
@@ -127,8 +128,12 @@ class ArticleAdmin(
         'categories',
         'services',
         'companies',
-        'location',
     ]
+    if ENABLE_LOCATIONS:
+        list_filter += [
+            'location',
+        ]
+
     actions = (
         make_featured, make_not_featured,
         make_published, make_unpublished,
@@ -164,21 +169,27 @@ class ArticleAdmin(
         'app_config',
     )
 
+    main_fields = [
+        'title',
+        'author',
+        'author_2',
+        'author_3',
+        'publishing_date',
+        'is_published',
+        'is_featured',
+        'featured_image',
+        'lead_in',
+        'medium',
+    ]
+    if ENABLE_LOCATIONS:
+        main_fields += [
+            'location',
+        ]
+
+
     fieldsets = (
         (None, {
-            'fields': (
-                'title',
-                'author',
-                'author_2',
-                'author_3',
-                'publishing_date',
-                'is_published',
-                'is_featured',
-                'featured_image',
-                'lead_in',
-                'medium',
-                'location',
-            )
+            'fields': main_fields,
         }),
         (_('Meta Options'), {
             'classes': ('collapse',),
