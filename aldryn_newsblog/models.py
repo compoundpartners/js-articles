@@ -151,9 +151,9 @@ class Article(TranslatedAutoSlugifyMixin,
         verbose_name=_('Section'),
         help_text='',
     )
-    location = models.ForeignKey('js_locations.location',
-                                 verbose_name=_('location'), blank=True,
-                                 null=True)
+    locations = SortedManyToManyField('js_locations.location',
+                                         verbose_name=_('locations'),
+                                         blank=True)
     categories = CategoryManyToManyField('aldryn_categories.Category',
                                          verbose_name=_('categories'),
                                          blank=True)

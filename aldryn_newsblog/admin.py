@@ -70,7 +70,7 @@ class ArticleAdminForm(TranslatableModelForm):
             'is_featured',
             'is_published',
             'lead_in',
-            'location',
+            'locations',
             'meta_description',
             'meta_keywords',
             'meta_title',
@@ -131,7 +131,7 @@ class ArticleAdmin(
     ]
     if ENABLE_LOCATIONS:
         list_filter += [
-            'location',
+            'locations',
         ]
 
     actions = (
@@ -183,7 +183,7 @@ class ArticleAdmin(
     ]
     if ENABLE_LOCATIONS:
         main_fields += [
-            'location',
+            'locations',
         ]
 
 
@@ -218,9 +218,7 @@ class ArticleAdmin(
     app_config_selection_desc = ''
 
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
-        if db_field.name == 'services':
-            kwargs['widget'] = SortedFilteredSelectMultiple()
-        if db_field.name == 'companies':
+        if db_field.name in ['services', 'companies', 'locations']:
             kwargs['widget'] = SortedFilteredSelectMultiple()
         return super(ArticleAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
 
