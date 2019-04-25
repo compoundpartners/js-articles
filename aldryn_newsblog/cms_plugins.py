@@ -219,16 +219,19 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
         related_authors = instance.related_authors.all()
         related_categories = instance.related_categories.all()
         related_services = instance.related_services.all()
+        related_companies = instance.related_companies.all()
 
         qs = models.Article.objects.all().filter(is_published=True).filter(publishing_date__lte=datetime.datetime.now()).distinct()
         if related_types.exists():
             qs = qs.filter(app_config__in=related_types.all())
-        if related_authors:
-            qs = qs.filter(author__in=related_authors.all())
-        if related_categories:
-            qs = qs.filter(categories__in=related_categories.all())
-        if related_services:
-            qs = qs.filter(services__in=related_services.all())
+        if related_authors.exists():
+            qs = qs.filter(author__in=related_authors)
+        if related_categories.exists():
+            qs = qs.filter(categories__in=related_categories)
+        if related_services.exists():
+            qs = qs.filter(services__in=related_services)
+        if related_companies.exists():
+            qs = qs.filter(companies__in=related_companies)
         if exclude_current_article:
             current_article = self.get_article(request)
             if current_article is not None:
