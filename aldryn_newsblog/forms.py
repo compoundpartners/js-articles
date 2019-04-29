@@ -102,6 +102,12 @@ class NewsBlogJSRelatedPluginForm(forms.ModelForm):
         required=False,
         widget=FilteredSelectMultiple('Related services', False)
     )
+    from js_companies.models import Company
+    related_companies = forms.ModelMultipleChoiceField(
+        queryset=Company.objects.all(),
+        required=False,
+        widget=FilteredSelectMultiple('Related companies', False)
+    )
 
     class Meta:
-        fields = ['title', 'icon', 'image', 'number_of_articles', 'layout', 'featured', 'exclude_current_article', 'related_types', 'related_authors', 'related_categories']
+        fields = ['title', 'icon', 'image', 'number_of_articles', 'layout', 'featured', 'exclude_current_article', 'related_types', 'related_authors', 'related_categories', 'related_companies']
