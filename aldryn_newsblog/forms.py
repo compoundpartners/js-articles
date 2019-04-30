@@ -3,7 +3,11 @@ from __future__ import unicode_literals
 from django import forms
 
 from . import models
-
+from .constants import (
+    IS_THERE_COMPANIES,
+)
+if IS_THERE_COMPANIES:
+    from js_companies.models import Company
 
 class AutoAppConfigFormMixin(object):
     """
@@ -102,12 +106,18 @@ class NewsBlogJSRelatedPluginForm(forms.ModelForm):
         required=False,
         widget=FilteredSelectMultiple('Related services', False)
     )
-    from js_companies.models import Company
-    related_companies = forms.ModelMultipleChoiceField(
-        queryset=Company.objects.all(),
-        required=False,
-        widget=FilteredSelectMultiple('Related companies', False)
-    )
+    related_companies = forms.CharField()
 
     class Meta:
-        fields = ['title', 'icon', 'image', 'number_of_articles', 'layout', 'featured', 'exclude_current_article', 'related_types', 'related_authors', 'related_categories', 'related_companies']
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(NewsBlogJSRelatedPluginForm, self).__init__(*args, **kwargs)
+        if IS_THERE_COMPANIES:
+            self.fields['related_companies'] = forms.ModelMultipleChoiceField(queryset=Company.objects.all(), required=False)
+            self.fields['related_companies'].widget = SortedFilteredSelectMultiple()
+            self.fields['related_companies'].queryset = Company.objects.all()
+            self.fields['related_companies'].initial = self.instance.related_companies.all()
+        else:
+            del self.fields['related_companies']
+

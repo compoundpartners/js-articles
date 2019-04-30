@@ -5,6 +5,8 @@ from aldryn_apphooks_config.admin import BaseAppHookConfig, ModelAppHookConfig
 from aldryn_people.models import Person
 from aldryn_translation_tools.admin import AllTranslationsMixin
 from cms.admin.placeholderadmin import FrontendEditableAdminMixin
+from django.db.models.query import EmptyQuerySet
+from django import forms
 from django.contrib import admin
 from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
@@ -21,7 +23,11 @@ from .constants import (
     HIDE_USER,
     ENABLE_LOCATIONS,
     SUMMARY_RICHTEXT,
+    IS_THERE_COMPANIES,
 )
+if IS_THERE_COMPANIES:
+    from js_companies.models import Company
+
 
 from cms.admin.placeholderadmin import PlaceholderAdminMixin
 
@@ -59,28 +65,11 @@ make_not_featured.short_description = _(
 
 
 class ArticleAdminForm(TranslatableModelForm):
+    companies = forms.CharField()
 
     class Meta:
         model = models.Article
-        fields = [
-            'app_config',
-            'categories',
-            'companies',
-            'featured_image',
-            'is_featured',
-            'is_published',
-            'lead_in',
-            'locations',
-            'meta_description',
-            'meta_keywords',
-            'meta_title',
-            'owner',
-            'related',
-            'services',
-            'slug',
-            'tags',
-            'title',
-        ]
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         #if 'initial' in kwargs:
@@ -112,6 +101,13 @@ class ArticleAdminForm(TranslatableModelForm):
             self.fields['related'].widget.can_add_related = False
         if not SUMMARY_RICHTEXT:
             self.fields['lead_in'].widget = widgets.Textarea()
+        if IS_THERE_COMPANIES:
+            self.fields['companies'] = forms.ModelMultipleChoiceField(queryset=Company.objects.all(), required=False)# self.instance.companies
+            self.fields['companies'].widget = SortedFilteredSelectMultiple()
+            self.fields['companies'].queryset = Company.objects.all()
+            self.fields['companies'].initial = self.instance.companies.all()
+        else:
+            del self.fields['companies']
 
 
 class ArticleAdmin(
@@ -127,7 +123,6 @@ class ArticleAdmin(
         'app_config',
         'categories',
         'services',
-        'companies',
     ]
     if ENABLE_LOCATIONS:
         list_filter += [
@@ -147,8 +142,11 @@ class ArticleAdmin(
     advanced_settings_fields = (
         'categories',
         'services',
-        'companies',
     )
+    if IS_THERE_COMPANIES:
+        advanced_settings_fields += (
+            'companies',
+        )
 
     if HIDE_TAGS == 0:
         advanced_settings_fields += (
@@ -222,6 +220,10 @@ class ArticleAdmin(
             kwargs['widget'] = SortedFilteredSelectMultiple()
         return super(ArticleAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
 
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        if IS_THERE_COMPANIES:
+            obj.companies = Company.objects.filter(pk__in=form.cleaned_data.get('companies'))
 
 admin.site.register(models.Article, ArticleAdmin)
 

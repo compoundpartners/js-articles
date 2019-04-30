@@ -31,3 +31,9 @@ SUMMARY_RICHTEXT = getattr(
     'ARTICLES_SUMMARY_RICHTEXT',
     False,
 )
+
+try:
+    IS_THERE_COMPANIES = True
+    from js_companies.models import Company
+except ImportError:
+    IS_THERE_COMPANIES = False

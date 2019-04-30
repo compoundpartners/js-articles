@@ -10,6 +10,11 @@ from cms import __version__ as cms_version
 from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
 from . import models, forms
+from .constants import (
+    IS_THERE_COMPANIES,
+)
+if IS_THERE_COMPANIES:
+    from js_companies.models import Company
 from .utils import add_prefix_to_path, default_reverse
 
 CMS_GTE_330 = LooseVersion(cms_version) >= LooseVersion('3.3.0')
@@ -219,7 +224,8 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
         related_authors = instance.related_authors.all()
         related_categories = instance.related_categories.all()
         related_services = instance.related_services.all()
-        related_companies = instance.related_companies.all()
+        if IS_THERE_COMPANIES:
+            related_companies = instance.related_companies.all()
 
         qs = models.Article.objects.all().filter(is_published=True).filter(publishing_date__lte=datetime.datetime.now()).distinct()
         if related_types.exists():
@@ -230,7 +236,7 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
             qs = qs.filter(categories__in=related_categories)
         if related_services.exists():
             qs = qs.filter(services__in=related_services)
-        if related_companies.exists():
+        if IS_THERE_COMPANIES and related_companies.exists():
             qs = qs.filter(companies__in=related_companies)
         if exclude_current_article:
             current_article = self.get_article(request)
@@ -266,6 +272,11 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
             self.render_template = 'aldryn_newsblog/plugins/js_related_articles__articles.html'
 
         return context
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        if IS_THERE_COMPANIES:
+            obj.related_companies = Company.objects.filter(pk__in=form.cleaned_data.get('related_companies'))
 
 
 @plugin_pool.register_plugin
