@@ -105,7 +105,8 @@ class ArticleAdminForm(TranslatableModelForm):
             self.fields['companies'] = forms.ModelMultipleChoiceField(queryset=Company.objects.all(), required=False)# self.instance.companies
             self.fields['companies'].widget = SortedFilteredSelectMultiple()
             self.fields['companies'].queryset = Company.objects.all()
-            self.fields['companies'].initial = self.instance.companies.all()
+            if self.instance.pk and self.instance.companies.count():
+                self.fields['companies'].initial = self.instance.companies.all()
         else:
             del self.fields['companies']
 
