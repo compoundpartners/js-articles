@@ -9,14 +9,14 @@ import sortedm2m.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('js_companies', '0002_auto_20190417_0522'),
+        #('js_companies', '0002_auto_20190417_0522'),
         ('aldryn_newsblog', '0040_article_locations'),
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='newsblogjsrelatedplugin',
-            name='related_companies',
-            field=sortedm2m.fields.SortedManyToManyField(blank=True, help_text=None, to='js_companies.Company', verbose_name='related companies'),
-        ),
+        #migrations.AddField(
+            #model_name='newsblogjsrelatedplugin',
+            #name='related_companies',
+            #field=sortedm2m.fields.SortedManyToManyField(blank=True, help_text=None, to='js_companies.Company', verbose_name='related companies'),
+        #),
     ]

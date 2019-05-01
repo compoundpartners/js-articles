@@ -164,9 +164,6 @@ class Article(TranslatedAutoSlugifyMixin,
     services = SortedManyToManyField('js_services.Service',
                                          verbose_name=_('services'),
                                          blank=True)
-    #companies = SortedManyToManyField('js_companies.Company',
-                                         #verbose_name=_('companies'),
-                                         #blank=True)
     publishing_date = models.DateTimeField(_('publishing date'),
                                            default=now)
     is_published = models.BooleanField(_('is published'), default=False,
@@ -592,7 +589,6 @@ class NewsBlogJSRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
     related_categories = SortedManyToManyField(Category, verbose_name=_('related categories'), blank=True, symmetrical=False)
     related_services = SortedManyToManyField('js_services.Service', verbose_name=_('related services'), blank=True, symmetrical=False)
     related_authors = SortedManyToManyField(Person, verbose_name=_('related authors'), blank=True, symmetrical=False)
-#    related_companies = SortedManyToManyField('js_companies.Company', verbose_name=_('related companies'), blank=True, symmetrical=False)
 
     def copy_relations(self, oldinstance):
         self.related_types = oldinstance.related_types.all()

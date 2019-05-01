@@ -9,7 +9,7 @@ import sortedm2m.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('js_companies', '0001_initial'),
+        #('js_companies', '0001_initial'),
         ('aldryn_newsblog', '0037_auto_20190220_0636'),
     ]
 
@@ -18,9 +18,9 @@ class Migration(migrations.Migration):
             name='articlemedium',
             options={'ordering': ['position'], 'verbose_name': 'Medium', 'verbose_name_plural': 'Medium'},
         ),
-        migrations.AddField(
-            model_name='article',
-            name='companies',
-            field=sortedm2m.fields.SortedManyToManyField(blank=True, help_text=None, to='js_companies.Company', verbose_name='companies'),
-        ),
+        #migrations.AddField(
+            #model_name='article',
+            #name='companies',
+            #field=sortedm2m.fields.SortedManyToManyField(blank=True, help_text=None, to='js_companies.Company', verbose_name='companies'),
+        #),
     ]
