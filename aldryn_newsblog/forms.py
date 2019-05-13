@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django import forms
+from django.contrib.admin.widgets import FilteredSelectMultiple
 
 from . import models
 from .constants import (
@@ -8,6 +9,14 @@ from .constants import (
 )
 if IS_THERE_COMPANIES:
     from js_companies.models import Company
+
+LAYOUT_CHOICES = [
+    ('columns', 'Columns'),
+    ('rows', 'Rows'),
+    ('hero', 'Hero'),
+    ('articles', 'Articles'),
+]
+
 
 class AutoAppConfigFormMixin(object):
     """
@@ -68,20 +77,16 @@ class NewsBlogTagsPluginForm(AutoAppConfigFormMixin, forms.ModelForm):
 
 
 class NewsBlogRelatedPluginForm(forms.ModelForm):
+    layout = forms.ChoiceField(LAYOUT_CHOICES)
+    related_articles = forms.ModelMultipleChoiceField(queryset=models.Article.objects.all(), required=False, widget=FilteredSelectMultiple("Related articles", is_stacked=False))
+
     class Meta:
-        fields = ['cache_duration']
+        fields = ['title', 'layout', 'related_articles']
 
 
 class NewsBlogJSRelatedPluginForm(forms.ModelForm):
-    from django.contrib.admin.widgets import FilteredSelectMultiple
 
-    CHOICES = [
-        ('columns', 'Columns'),
-        ('rows', 'Rows'),
-        ('hero', 'Hero'),
-        ('articles', 'Articles'),
-    ]
-    layout = forms.ChoiceField(CHOICES)
+    layout = forms.ChoiceField(LAYOUT_CHOICES)
 
     featured = forms.BooleanField(label='Show "Is Featured"', required=False)
 
@@ -93,6 +98,8 @@ class NewsBlogJSRelatedPluginForm(forms.ModelForm):
         queryset=NewsBlogConfig.objects.all(),
         required=False,
         widget=FilteredSelectMultiple("Related sections", is_stacked=False))
+
+    related_mediums = forms.ModelMultipleChoiceField(queryset=models.ArticleMedium.objects.all(), required=False, widget=FilteredSelectMultiple("Medium", is_stacked=False))
 
     from aldryn_people.models import Person
     related_authors = forms.ModelMultipleChoiceField(queryset=Person.objects.all(), required=False, widget=FilteredSelectMultiple("Related authors", is_stacked=False))
@@ -115,7 +122,7 @@ class NewsBlogJSRelatedPluginForm(forms.ModelForm):
         super(NewsBlogJSRelatedPluginForm, self).__init__(*args, **kwargs)
         if IS_THERE_COMPANIES:
             self.fields['related_companies'] = forms.ModelMultipleChoiceField(queryset=Company.objects.all(), required=False)
-            self.fields['related_companies'].widget = SortedFilteredSelectMultiple()
+            self.fields['related_companies'].widget = FilteredSelectMultiple("Related companies", is_stacked=False)
             self.fields['related_companies'].queryset = Company.objects.all()
             if self.instance.pk and self.instance.related_companies.count():
                 self.fields['related_companies'].initial = self.instance.related_companies.all()

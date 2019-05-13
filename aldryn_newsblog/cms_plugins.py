@@ -5,6 +5,8 @@ import datetime
 
 from distutils.version import LooseVersion
 from django.utils.translation import ugettext_lazy as _
+from django.template import TemplateDoesNotExist
+from django.template.loader import select_template
 
 from cms import __version__ as cms_version
 from cms.plugin_base import CMSPluginBase
@@ -165,7 +167,8 @@ class NewsBlogLatestArticlesPlugin(AdjustableCacheMixin, NewsBlogPlugin):
 
 @plugin_pool.register_plugin
 class NewsBlogRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
-    render_template = 'aldryn_newsblog/plugins/related_articles.html'
+    render_template = 'aldryn_newsblog/plugins/js_related_articles__cols.html'
+    TEMPLATE_NAME = 'aldryn_newsblog/plugins/js_related_articles__%s.html'
     name = _('Specific Articles')
     model = models.NewsBlogRelatedPlugin
     form = forms.NewsBlogRelatedPluginForm
@@ -182,18 +185,32 @@ class NewsBlogRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
         return None
 
     def render(self, context, instance, placeholder):
-        request = context.get('request')
         context['instance'] = instance
-        article = self.get_article(request)
-        if article:
-            context['article'] = article
-            context['article_list'] = instance.get_articles(article, request)
+        context['title'] = instance.title
+        if instance.related_articles.count():
+            context['related_articles'] = instance.related_articles.all()
+        else:
+            request = context.get('request')
+            article = self.get_article(request)
+            if article:
+                context['related_articles'] = instance.get_articles(article, request)
         return context
+
+    def get_render_template(self, context, instance, placeholder):
+        if instance.layout:
+            template = self.TEMPLATE_NAME % instance.layout
+            try:
+                select_template([template])
+                return template
+            except TemplateDoesNotExist:
+                pass
+        return self.render_template
 
 
 @plugin_pool.register_plugin
 class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
-    # render_template = 'aldryn_newsblog/plugins/js_related_articles.html'
+    render_template = 'aldryn_newsblog/plugins/js_related_articles__cols.html'
+    TEMPLATE_NAME = 'aldryn_newsblog/plugins/js_related_articles__%s.html'
     name = _('Related Articles')
     model = models.NewsBlogJSRelatedPlugin
     form = forms.NewsBlogJSRelatedPluginForm
@@ -221,23 +238,26 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
         featured = instance.featured
         exclude_current_article = instance.exclude_current_article
         related_types = instance.related_types
-        related_authors = instance.related_authors.all()
-        related_categories = instance.related_categories.all()
-        related_services = instance.related_services.all()
+        related_mediums = instance.related_mediums
+        related_authors = instance.related_authors
+        related_categories = instance.related_categories
+        related_services = instance.related_services
         if IS_THERE_COMPANIES:
             related_companies = instance.related_companies.all()
 
         qs = models.Article.objects.all().filter(is_published=True).filter(publishing_date__lte=datetime.datetime.now()).distinct()
         if related_types.exists():
             qs = qs.filter(app_config__in=related_types.all())
+        if related_mediums.exists():
+            qs = qs.filter(medium__in=related_mediums.all())
         if related_authors.exists():
-            qs = qs.filter(author__in=related_authors)
+            qs = qs.filter(author__in=related_authors.all())
         if related_categories.exists():
-            qs = qs.filter(categories__in=related_categories)
+            qs = qs.filter(categories__in=related_categories.all())
         if related_services.exists():
-            qs = qs.filter(services__in=related_services)
+            qs = qs.filter(services__in=related_services.all())
         if IS_THERE_COMPANIES and related_companies.exists():
-            qs = qs.filter(companies__in=related_companies)
+            qs = qs.filter(companies__in=related_companies.all())
         if exclude_current_article:
             current_article = self.get_article(request)
             if current_article is not None:
@@ -262,21 +282,22 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
         if related_authors_first is not None:
             context['related_authors_first'] = related_authors_first.slug
 
-        if layout == 'columns':
-            self.render_template = 'aldryn_newsblog/plugins/js_related_articles__cols.html'
-        elif layout == 'rows':
-            self.render_template = 'aldryn_newsblog/plugins/js_related_articles__rows.html'
-        elif layout == 'hero':
-            self.render_template = 'aldryn_newsblog/plugins/js_related_articles__hero.html'
-        elif layout == 'articles':
-            self.render_template = 'aldryn_newsblog/plugins/js_related_articles__articles.html'
-
         return context
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
         if IS_THERE_COMPANIES:
             obj.related_companies = Company.objects.filter(pk__in=form.cleaned_data.get('related_companies'))
+
+    def get_render_template(self, context, instance, placeholder):
+        if instance.layout:
+            template = self.TEMPLATE_NAME % instance.layout
+            try:
+                select_template([template])
+                return template
+            except TemplateDoesNotExist:
+                pass
+        return self.render_template
 
 
 @plugin_pool.register_plugin

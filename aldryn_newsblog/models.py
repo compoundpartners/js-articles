@@ -551,6 +551,12 @@ class NewsBlogRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
     # plugin can really only be placed on the article detail view in an apphook.
     cmsplugin_ptr = models.OneToOneField(
         CMSPlugin, related_name='+', parent_link=True)
+    title = models.CharField(max_length=255, blank=True, verbose_name=_('Title'))
+    layout = models.CharField(max_length=30, verbose_name=_('layout'), blank=True, null=True)
+    related_articles = SortedManyToManyField(Article, verbose_name=_('related articles'), blank=True, symmetrical=False)
+
+    def copy_relations(self, oldinstance):
+        self.related_articles = oldinstance.related_articles.all()
 
     def get_articles(self, article, request):
         """
@@ -586,12 +592,14 @@ class NewsBlogJSRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
     featured = models.BooleanField(blank=True, default=False)
     exclude_current_article = models.BooleanField(blank=True, default=False)
     related_types = SortedManyToManyField(NewsBlogConfig, verbose_name=_('related sections'), blank=True, symmetrical=False)
+    related_mediums = SortedManyToManyField(ArticleMedium, verbose_name=_('medium'), blank=True, symmetrical=False)
     related_categories = SortedManyToManyField(Category, verbose_name=_('related categories'), blank=True, symmetrical=False)
     related_services = SortedManyToManyField('js_services.Service', verbose_name=_('related services'), blank=True, symmetrical=False)
     related_authors = SortedManyToManyField(Person, verbose_name=_('related authors'), blank=True, symmetrical=False)
 
     def copy_relations(self, oldinstance):
         self.related_types = oldinstance.related_types.all()
+        self.related_mediums = oldinstance.related_mediums.all()
         self.related_categories = oldinstance.related_categories.all()
         self.related_services = oldinstance.related_services.all()
         self.related_authors = oldinstance.related_authors.all()
