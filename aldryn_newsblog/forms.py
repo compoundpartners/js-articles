@@ -2,20 +2,16 @@
 from __future__ import unicode_literals
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
+from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple, SortedMultipleChoiceField
 
 from . import models
 from .constants import (
     IS_THERE_COMPANIES,
+    SPECIFIC_ARTICLES_LAYOUTS,
+    RELATED_ARTICLES_LAYOUTS,
 )
 if IS_THERE_COMPANIES:
     from js_companies.models import Company
-
-LAYOUT_CHOICES = [
-    ('columns', 'Columns'),
-    ('rows', 'Rows'),
-    ('hero', 'Hero'),
-    ('articles', 'Articles'),
-]
 
 
 class AutoAppConfigFormMixin(object):
@@ -77,8 +73,14 @@ class NewsBlogTagsPluginForm(AutoAppConfigFormMixin, forms.ModelForm):
 
 
 class NewsBlogRelatedPluginForm(forms.ModelForm):
-    layout = forms.ChoiceField(LAYOUT_CHOICES)
-    related_articles = forms.ModelMultipleChoiceField(queryset=models.Article.objects.all(), required=False, widget=FilteredSelectMultiple("Related articles", is_stacked=False))
+    layout = forms.ChoiceField(SPECIFIC_ARTICLES_LAYOUTS)
+    related_articles = SortedMultipleChoiceField(
+        label='ralated articles',
+        queryset=models.Article.objects.all(),
+        required=False,
+        widget=SortedFilteredSelectMultiple(attrs={'verbose_name':'article', 'verbose_name_plural':'articles'})
+    )
+
 
     class Meta:
         fields = ['title', 'layout', 'related_articles']
@@ -86,7 +88,7 @@ class NewsBlogRelatedPluginForm(forms.ModelForm):
 
 class NewsBlogJSRelatedPluginForm(forms.ModelForm):
 
-    layout = forms.ChoiceField(LAYOUT_CHOICES)
+    layout = forms.ChoiceField(RELATED_ARTICLES_LAYOUTS)
 
     featured = forms.BooleanField(label='Show "Is Featured"', required=False)
 

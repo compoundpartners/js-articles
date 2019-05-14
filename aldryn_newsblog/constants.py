@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.conf import settings
+from django.utils.text import slugify
 
 HIDE_RELATED_ARTICLES = getattr(
     settings,
@@ -31,6 +32,20 @@ SUMMARY_RICHTEXT = getattr(
     'ARTICLES_SUMMARY_RICHTEXT',
     False,
 )
+
+SPECIFIC_ARTICLES_LAYOUTS = getattr(
+    settings,
+    'ARTICLES_SPECIFIC_LAYOUTS',
+    (),
+)
+SPECIFIC_ARTICLES_LAYOUTS = zip(list(map(lambda s: slugify(s).replace('-', '_'), ('default',) + SPECIFIC_ARTICLES_LAYOUTS)), ('default',) + SPECIFIC_ARTICLES_LAYOUTS)
+
+RELATED_ARTICLES_LAYOUTS = getattr(
+    settings,
+    'ARTICLES_RELATED_LAYOUTS',
+    (),
+)
+RELATED_ARTICLES_LAYOUTS = zip(list(map(lambda s: slugify(s).replace('-', '_'), ('default',) + RELATED_ARTICLES_LAYOUTS)), ('default',) + RELATED_ARTICLES_LAYOUTS)
 
 try:
     IS_THERE_COMPANIES = True

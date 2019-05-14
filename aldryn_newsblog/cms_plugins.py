@@ -167,8 +167,8 @@ class NewsBlogLatestArticlesPlugin(AdjustableCacheMixin, NewsBlogPlugin):
 
 @plugin_pool.register_plugin
 class NewsBlogRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
-    render_template = 'aldryn_newsblog/plugins/js_related_articles__cols.html'
-    TEMPLATE_NAME = 'aldryn_newsblog/plugins/js_related_articles__%s.html'
+    render_template = 'aldryn_newsblog/plugins/specific_articles.html'
+    TEMPLATE_NAME = 'aldryn_newsblog/plugins/specific_articles__%s.html'
     name = _('Specific Articles')
     model = models.NewsBlogRelatedPlugin
     form = forms.NewsBlogRelatedPluginForm
@@ -188,12 +188,12 @@ class NewsBlogRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
         context['instance'] = instance
         context['title'] = instance.title
         if instance.related_articles.count():
-            context['related_articles'] = instance.related_articles.all()
+            context['article_list'] = instance.related_articles.all()
         else:
             request = context.get('request')
             article = self.get_article(request)
             if article:
-                context['related_articles'] = instance.get_articles(article, request)
+                context['article_list'] = instance.get_articles(article, request)
         return context
 
     def get_render_template(self, context, instance, placeholder):
