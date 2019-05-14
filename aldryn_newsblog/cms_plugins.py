@@ -168,7 +168,7 @@ class NewsBlogLatestArticlesPlugin(AdjustableCacheMixin, NewsBlogPlugin):
 @plugin_pool.register_plugin
 class NewsBlogRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
     render_template = 'aldryn_newsblog/plugins/specific_articles.html'
-    TEMPLATE_NAME = 'aldryn_newsblog/plugins/specific_articles__%s.html'
+    TEMPLATE_NAME = 'aldryn_newsblog/plugins/specific_articles_%s.html'
     name = _('Specific Articles')
     model = models.NewsBlogRelatedPlugin
     form = forms.NewsBlogRelatedPluginForm
@@ -209,12 +209,12 @@ class NewsBlogRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
 
 @plugin_pool.register_plugin
 class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
-    render_template = 'aldryn_newsblog/plugins/js_related_articles__cols.html'
-    TEMPLATE_NAME = 'aldryn_newsblog/plugins/js_related_articles__%s.html'
+    render_template = 'aldryn_newsblog/plugins/related_articles.html'
+    TEMPLATE_NAME = 'aldryn_newsblog/plugins/related_articles_%s.html'
     name = _('Related Articles')
     model = models.NewsBlogJSRelatedPlugin
     form = forms.NewsBlogJSRelatedPluginForm
-    # change_form_template = "aldryn_newsblog/plugins/js_related_articles_admin.html"
+    # change_form_template = "aldryn_newsblog/plugins/related_articles_admin.html"
 
     def get_article(self, request):
         if request and request.resolver_match:
