@@ -168,7 +168,7 @@ class NewsBlogLatestArticlesPlugin(AdjustableCacheMixin, NewsBlogPlugin):
 @plugin_pool.register_plugin
 class NewsBlogRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
     render_template = 'aldryn_newsblog/plugins/specific_articles.html'
-    TEMPLATE_NAME = 'aldryn_newsblog/plugins/specific_articles_%s.html'
+    TEMPLATE_NAME = 'aldryn_newsblog/plugins/specific_articles__%s.html'
     name = _('Specific Articles')
     model = models.NewsBlogRelatedPlugin
     form = forms.NewsBlogRelatedPluginForm
@@ -210,7 +210,7 @@ class NewsBlogRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
 @plugin_pool.register_plugin
 class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
     render_template = 'aldryn_newsblog/plugins/related_articles.html'
-    TEMPLATE_NAME = 'aldryn_newsblog/plugins/related_articles_%s.html'
+    TEMPLATE_NAME = 'aldryn_newsblog/plugins/related_articles__%s.html'
     name = _('Related Articles')
     model = models.NewsBlogJSRelatedPlugin
     form = forms.NewsBlogJSRelatedPluginForm
