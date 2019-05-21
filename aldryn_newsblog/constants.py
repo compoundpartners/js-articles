@@ -50,5 +50,5 @@ RELATED_ARTICLES_LAYOUTS = zip(list(map(lambda s: slugify(s).replace('-', '_'), 
 try:
     IS_THERE_COMPANIES = True
     from js_companies.models import Company
-except ImportError:
+except:
     IS_THERE_COMPANIES = False
