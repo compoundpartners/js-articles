@@ -50,7 +50,7 @@ CLASSIFIERS = [
 ]
 
 setup(
-    name='aldryn-newsblog',
+    name='js-articles',
     version=__version__,
     description='Adds blogging and newsing capabilities to django CMS',
     author='Divio AG',
