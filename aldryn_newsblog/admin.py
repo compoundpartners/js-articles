@@ -173,6 +173,7 @@ class ArticleAdmin(
         'author',
         'author_2',
         'author_3',
+        'hide_authors',
         'publishing_date',
         'is_published',
         'is_featured',
