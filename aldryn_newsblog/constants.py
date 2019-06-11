@@ -47,6 +47,11 @@ RELATED_ARTICLES_LAYOUTS = getattr(
 )
 RELATED_ARTICLES_LAYOUTS = zip(list(map(lambda s: slugify(s).replace('-', '_'), ('default',) + RELATED_ARTICLES_LAYOUTS)), ('default',) + RELATED_ARTICLES_LAYOUTS)
 
+ADD_FILTERED_CATEGORIES = getattr(
+    settings,
+    'ARTICLES_ADD_FILTERED_CATEGORIES',
+    [],
+)
 try:
     IS_THERE_COMPANIES = True
     from js_companies.models import Company

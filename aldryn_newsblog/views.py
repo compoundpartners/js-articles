@@ -30,6 +30,7 @@ from aldryn_newsblog.utils.utilities import get_valid_languages_from_request
 from .cms_appconfig import NewsBlogConfig
 from .models import Article
 from .utils import add_prefix_to_path
+from .filters import ArticleFilters
 
 
 class TemplatePrefixMixin(object):
@@ -218,7 +219,14 @@ class ArticleListBase(AppConfigMixin, AppHookCheckMixin, TemplatePrefixMixin,
 
     def get(self, request, *args, **kwargs):
         self.edit_mode = (request.toolbar and request.toolbar.edit_mode)
-        return super(ArticleListBase, self).get(request)
+        self.filterset = ArticleFilters(self.request.GET, queryset=self.get_queryset())
+        if not self.filterset.is_bound or self.filterset.is_valid() or not self.get_strict():
+            self.object_list = self.filterset.qs
+        else:
+            self.object_list = self.filterset.queryset.none()
+        context = self.get_context_data(filter=self.filterset,
+                                        object_list=self.object_list)
+        return self.render_to_response(context)
 
     def get_queryset(self):
         qs = super(ArticleListBase, self).get_queryset()
