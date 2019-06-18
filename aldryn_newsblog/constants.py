@@ -52,6 +52,11 @@ ADD_FILTERED_CATEGORIES = getattr(
     'ARTICLES_ADD_FILTERED_CATEGORIES',
     [],
 )
+ADDITIONAL_EXCLUDE = getattr(
+    settings,
+    'ARTICLES_ADDITIONAL_EXCLUDE',
+    {},
+)
 try:
     IS_THERE_COMPANIES = True
     from js_companies.models import Company
