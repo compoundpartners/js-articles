@@ -234,9 +234,6 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
         context['title'] = instance.title
         context['icon'] = instance.icon
         context['image'] = instance.image
-        context['more_button_is_shown'] = instance.more_button_is_shown
-        context['more_button_text'] = instance.more_button_text
-        context['more_button_link'] = instance.more_button_link
         layout = instance.layout
         featured = instance.featured
         exclude_current_article = instance.exclude_current_article

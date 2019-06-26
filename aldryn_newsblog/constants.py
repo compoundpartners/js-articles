@@ -3,6 +3,12 @@
 from django.conf import settings
 from django.utils.text import slugify
 
+UPDATE_SEARCH_DATA_ON_SAVE = getattr(
+    settings,
+    'ALDRYN_NEWSBLOG_UPDATE_SEARCH_DATA_ON_SAVE',
+    False,
+)
+
 HIDE_RELATED_ARTICLES = getattr(
     settings,
     'ARTICLES_HIDE_RELATED',
