@@ -7,6 +7,7 @@ from js_services.models import Service
 from js_locations.models import Location
 import django_filters
 from . import models
+from .cms_appconfig import NewsBlogConfig
 
 from .constants import (
     UPDATE_SEARCH_DATA_ON_SAVE,
@@ -18,16 +19,28 @@ if IS_THERE_COMPANIES:
     from js_companies.models import Company
 
 
+class SearchFilter(django_filters.Filter):
+    def filter(self, qs, values):
+        values = values or ''
+        if len(values) > 0:
+            for value in values.strip().split():
+                value = value.strip()
+                if value:
+                    qs = qs.filter(translations__search_data__icontains=value)
+        return qs
+
+
 class ArticleFilters(django_filters.FilterSet):
     q = django_filters.CharFilter('translations__title', 'icontains', label='Search the directory')
     medium = django_filters.ModelChoiceFilter('medium', label='medium', queryset=models.ArticleMedium.objects.exclude(**ADDITIONAL_EXCLUDE.get('medium', {})).order_by('position'))
     location = django_filters.ModelChoiceFilter('locations', label='location', queryset=Location.objects.exclude(**ADDITIONAL_EXCLUDE.get('location', {})).order_by('translations__name'))
     category = django_filters.ModelChoiceFilter('categories', label='category', queryset=Category.objects.exclude(**ADDITIONAL_EXCLUDE.get('category', {})).order_by('translations__name'))
     service = django_filters.ModelChoiceFilter('services', label='service', queryset=Service.objects.published().exclude(**ADDITIONAL_EXCLUDE.get('service', {})).order_by('translations__title'))
+    section = django_filters.ModelChoiceFilter('app_config', label='section', queryset=NewsBlogConfig.objects.exclude(**ADDITIONAL_EXCLUDE.get('section', {})).order_by('translations__app_title'))
 
     class Meta:
         model = models.Article
-        fields = ['q', 'medium', 'location', 'category', 'service']
+        fields = ['q', 'medium', 'location', 'category', 'service', 'section']
 
     def __init__(self, values, *args, **kwargs):
         super(ArticleFilters, self).__init__(values, *args, **kwargs)
@@ -37,7 +50,7 @@ class ArticleFilters(django_filters.FilterSet):
         self.filters['service'].extra.update({'empty_label': 'by service'})
 
         if UPDATE_SEARCH_DATA_ON_SAVE:
-            self.filters['q'] = django_filters.CharFilter('translations__search_data', 'icontains', label='Search the directory')
+            self.filters['q'] = SearchFilter(label='Search the directory')
 
         if IS_THERE_COMPANIES:
             self.filters['company'] = django_filters.ModelChoiceFilter('companies', label='company', queryset=Company.objects.exclude(**ADDITIONAL_EXCLUDE.get('company', {})).order_by('name'))
