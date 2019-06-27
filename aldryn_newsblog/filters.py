@@ -48,6 +48,7 @@ class ArticleFilters(django_filters.FilterSet):
         self.filters['location'].extra.update({'empty_label': 'by location'})
         self.filters['category'].extra.update({'empty_label': 'by category'})
         self.filters['service'].extra.update({'empty_label': 'by service'})
+        self.filters['section'].extra.update({'empty_label': 'by section'})
 
         if UPDATE_SEARCH_DATA_ON_SAVE:
             self.filters['q'] = SearchFilter(label='Search the directory')
