@@ -172,6 +172,14 @@ class NewsBlogRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
     name = _('Specific Articles')
     model = models.NewsBlogRelatedPlugin
     form = forms.NewsBlogRelatedPluginForm
+    fields = [
+        'title',
+        'layout',
+        'more_button_is_shown',
+        'more_button_text',
+        'more_button_link',
+        'related_articles',
+    ]
 
     def get_article(self, request):
         if request and request.resolver_match:
@@ -187,6 +195,9 @@ class NewsBlogRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
     def render(self, context, instance, placeholder):
         context['instance'] = instance
         context['title'] = instance.title
+        context['more_button_is_shown'] = instance.more_button_is_shown
+        context['more_button_text'] = instance.more_button_text
+        context['more_button_link'] = instance.more_button_link
         if instance.related_articles.count():
             context['article_list'] = instance.related_articles.all()
         else:

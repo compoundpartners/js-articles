@@ -83,7 +83,7 @@ class NewsBlogRelatedPluginForm(forms.ModelForm):
 
 
     class Meta:
-        fields = ['title', 'layout', 'related_articles']
+        fields = '__all__'
 
 
 class NewsBlogJSRelatedPluginForm(forms.ModelForm):
