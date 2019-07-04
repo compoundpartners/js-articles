@@ -31,6 +31,7 @@ from .cms_appconfig import NewsBlogConfig
 from .models import Article
 from .utils import add_prefix_to_path
 from .filters import ArticleFilters
+from .constants import IS_THERE_COMPANIES
 
 
 class TemplatePrefixMixin(object):
@@ -161,12 +162,11 @@ class ArticleDetail(AppConfigMixin, AppHookCheckMixin, PreviewModeMixin,
             self.queryset, self.object)
 
         article = context['article']
+        articles = Article.objects.published().exclude(id=article.id).distinct()
         categories = article.categories.all()
-        ra_qs = Article.objects.all().filter(is_published=True).filter(
-            publishing_date__lte=datetime.now()).distinct()
-        ra_qs = ra_qs.filter(categories__in=categories)
-        ra_qs = ra_qs.exclude(id=article.id)
-        context['related_articles'] = ra_qs[:3]
+        context['related_articles'] = articles.filter(categories__in=categories)[:3]
+        if IS_THERE_COMPANIES and article.companies.count():
+            context['related_articles_by_company'] = articles.filter(companies__in=article.companies.all())[:3]
 
         related_types_first = article.app_config
         if related_types_first is not None:
