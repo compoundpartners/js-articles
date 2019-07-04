@@ -557,6 +557,9 @@ class NewsBlogRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
     title = models.CharField(max_length=255, blank=True, verbose_name=_('Title'))
     layout = models.CharField(max_length=30, verbose_name=_('layout'), blank=True, null=True)
     related_articles = SortedManyToManyField(Article, verbose_name=_('related articles'), blank=True, symmetrical=False)
+    more_button_is_shown = models.BooleanField(blank=True, default=False, verbose_name=_('Show “See More Button”'))
+    more_button_text = models.CharField(max_length=255, blank=True, verbose_name=_('See More Button Text'))
+    more_button_link = models.CharField(max_length=255, blank=True, verbose_name=_('See More Button Link'))
 
     def copy_relations(self, oldinstance):
         self.related_articles = oldinstance.related_articles.all()
