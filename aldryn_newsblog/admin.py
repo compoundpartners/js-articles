@@ -198,6 +198,7 @@ class ArticleAdmin(
                 'meta_title',
                 'meta_description',
                 'meta_keywords',
+                'share_image',
             )
         }),
         (_('Advanced Settings'), {

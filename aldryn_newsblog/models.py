@@ -178,6 +178,14 @@ class Article(TranslatedAutoSlugifyMixin,
         blank=True,
         on_delete=models.SET_NULL,
     )
+    share_image = FilerImageField(
+        verbose_name=_('social share image'),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        help_text='This image will only be shown on social channels. Minimum size: 1200x630px',
+        related_name='+'
+    )
     tags = TaggableManager(blank=True)
     medium = models.ForeignKey(ArticleMedium, verbose_name=_('medium'),
                               null=True, blank=True)
