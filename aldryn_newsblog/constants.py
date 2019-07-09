@@ -63,6 +63,18 @@ ADDITIONAL_EXCLUDE = getattr(
     'ARTICLES_ADDITIONAL_EXCLUDE',
     {},
 )
+SITEMAP_CHANGEFREQ = getattr(
+    settings,
+    'ARTICLES_SITEMAP_CHANGEFREQ',
+    'never',
+)
+SITEMAP_PRIORITY = getattr(
+    settings,
+    'ARTICLES_SITEMAP_PRIORITY',
+    0.5,
+)
+
+
 try:
     IS_THERE_COMPANIES = True
     from js_companies.models import Company

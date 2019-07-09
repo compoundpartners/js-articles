@@ -165,6 +165,8 @@ class ArticleDetail(AppConfigMixin, AppHookCheckMixin, PreviewModeMixin,
         articles = Article.objects.published().exclude(id=article.id).distinct()
         categories = article.categories.all()
         context['related_articles'] = articles.filter(categories__in=categories)[:3]
+        services = article.services.all()
+        context['related_articles_by_services'] = articles.filter(services__in=services)[:3]
         if IS_THERE_COMPANIES and article.companies.count():
             context['related_articles_by_company'] = articles.filter(companies__in=article.companies.all())[:3]
 
