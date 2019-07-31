@@ -1,5 +1,5 @@
-{% load crispy_forms_tags %}
+{% load crispy_forms_field %}
     <form action="">
-        {{ filter.form|crispy }}
+        {% crispy_field filter.form.service 'class' 'form-control' %}
         <button type="submit">GO</button>
     </form>

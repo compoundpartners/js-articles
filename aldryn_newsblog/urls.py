@@ -3,7 +3,7 @@ from django.conf.urls import url
 from aldryn_newsblog.views import (
     ArticleDetail, ArticleList, AuthorArticleList, CategoryArticleList,
     YearArticleList, MonthArticleList, DayArticleList, TagArticleList,
-    ArticleSearchResultsList)
+    ArticleSearchResultsList, ServiceArticleList)
 from aldryn_newsblog.feeds import LatestArticlesFeed, TagFeed, CategoryFeed
 
 urlpatterns = [
@@ -46,6 +46,8 @@ urlpatterns = [
         CategoryArticleList.as_view(), name='article-list-by-category'),
     url(r'^category/(?P<category>\w[-\w]*)/feed/$',
         CategoryFeed(), name='article-list-by-category-feed'),
+    url(r'^service/(?P<service>\w[-\w]*)/$',
+        ServiceArticleList.as_view(), name='article-list-by-service'),
 
     url(r'^tag/(?P<tag>\w[-\w]*)/$',
         TagArticleList.as_view(), name='article-list-by-tag'),

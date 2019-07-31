@@ -2,10 +2,12 @@
 from __future__ import unicode_literals
 from django.utils.timezone import now
 from django import forms
+from django.core.cache import cache
 from aldryn_categories.models import Category
 from js_services.models import Service
 from js_locations.models import Location
 import django_filters
+import datetime
 from . import models
 from .cms_appconfig import NewsBlogConfig
 
@@ -38,6 +40,7 @@ class ArticleFilters(django_filters.FilterSet):
     service = django_filters.ModelChoiceFilter('services', label='service', queryset=Service.objects.published().exclude(**ADDITIONAL_EXCLUDE.get('service', {})).order_by('translations__title'))
     section = django_filters.ModelChoiceFilter('app_config', label='section', queryset=NewsBlogConfig.objects.exclude(**ADDITIONAL_EXCLUDE.get('section', {})).order_by('translations__app_title'))
 
+
     class Meta:
         model = models.Article
         fields = ['q', 'medium', 'location', 'category', 'service', 'section']
@@ -63,3 +66,85 @@ class ArticleFilters(django_filters.FilterSet):
                 self.filters[name] = django_filters.ModelChoiceFilter('categories', label=category[1], queryset=qs)
                 self.filters[name].extra.update({'empty_label': 'by %s' % category[1]})
 
+
+def hash_dict(obj):
+    ret = ''
+    for key, value in obj.items():
+        ret +='-%s-%s' % (key, value)
+    return ret
+
+def get_services(namespace, **filters):
+    key = 'services-for-artlces-by-namespace-%s' % namespace
+    if filters:
+        key += hash_dict(filters)
+    output = cache.get(key)
+    if not output:
+        output = []
+        for service in Service.objects.published().filter(**filters):
+            count = models.Article.objects.published().namespace(namespace).filter(services=service).count()
+            if count:
+                output.append({
+                    'item': service,
+                    'count': count,
+                    'url_name': '%s:article-list-by-service' % namespace,
+                })
+
+        output.sort(key=lambda k: k['count'])
+        output.reverse()
+        cache.set(key, output, 3600)
+    return output
+
+def get_authors(namespace, **filters):
+    key = 'authors-for-artlces-by-namespace-%s' % namespace
+    if filters:
+        key += hash_dict(filters)
+    output = cache.get(key)
+    if not output:
+        qs = models.Article.objects.published().namespace(namespace).filter(**filters)
+        done = []
+        output = []
+        for item in qs.select_related('author'):
+            if item.author and not item.author.id in done:
+                done.append(item.author.id)
+
+                out = {
+                    'item': item.author,
+                    'count': qs.filter(author=item.author).count(),
+                    'url_name': '%s:article-list-by-author' % namespace,
+                }
+
+                output.append(out)
+        output.sort(key=lambda k: k['count'])
+        output.reverse()
+        cache.set(key, output, 3600)
+    return output
+
+
+def get_archive(namespace, **filters):
+    key = 'archive-for-artlces-by-namespace-%s' % namespace
+    if filters:
+        key += hash_dict(filters)
+    output = cache.get(key)
+    if not output:
+        qs = models.Article.objects.published().namespace(namespace).filter(**filters)
+        done = []
+        output = []
+
+        for item in qs.all().order_by('-publishing_date'):
+            date = item.publishing_date
+            uiq_date = '%d%d' % (date.month, date.year)
+
+            if not uiq_date in done:
+                done.append(uiq_date)
+
+                out = {
+                    'item': datetime.datetime.strftime(date, '%B %Y'),
+                    'count': qs.filter(publishing_date__month=date.month, publishing_date__year=date.year).count(),
+                    'url_name': '%s:article-list-by-month' % namespace,
+                    'year': date.year,
+                    'month': datetime.datetime.strftime(date, '%m'),
+                }
+
+                output.append(out)
+        cache.set(key, output, 3600)
+    return output

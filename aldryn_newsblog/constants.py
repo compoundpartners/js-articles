@@ -73,6 +73,11 @@ SITEMAP_PRIORITY = getattr(
     'ARTICLES_SITEMAP_PRIORITY',
     0.5,
 )
+SHOW_CONTER_FILTERS = getattr(
+    settings,
+    'ARTICLES_SHOW_CONTER_FILTERS',
+    False,
+)
 
 
 try:

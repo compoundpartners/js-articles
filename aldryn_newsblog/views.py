@@ -25,14 +25,26 @@ from taggit.models import Tag
 from aldryn_apphooks_config.mixins import AppConfigMixin
 from aldryn_categories.models import Category
 from aldryn_people.models import Person
+from js_services.models import Service
 
 from aldryn_newsblog.utils.utilities import get_valid_languages_from_request
 from .cms_appconfig import NewsBlogConfig
 from .models import Article
 from .utils import add_prefix_to_path
 from .filters import ArticleFilters
-from .constants import IS_THERE_COMPANIES
+from .constants import IS_THERE_COMPANIES, SHOW_CONTER_FILTERS
 
+class NoneMixin(object):
+    pass
+
+try:
+    from custom.aldryn_newsblog.views import CustomListMixin
+except:
+    CustomListMixin = NoneMixin
+try:
+    from custom.aldryn_newsblog.views import CustomDetailMixin
+except:
+    CustomDetailMixin = NoneMixin
 
 class TemplatePrefixMixin(object):
 
@@ -100,7 +112,7 @@ class AppHookCheckMixin(object):
         return qs.translated(*self.valid_languages)
 
 
-class ArticleDetail(AppConfigMixin, AppHookCheckMixin, PreviewModeMixin,
+class ArticleDetail(CustomDetailMixin, AppConfigMixin, AppHookCheckMixin, PreviewModeMixin,
                     TranslatableSlugMixin, TemplatePrefixMixin, DetailView):
     model = Article
     slug_field = 'slug'
@@ -214,7 +226,7 @@ class ArticleDetail(AppConfigMixin, AppHookCheckMixin, PreviewModeMixin,
             return None
 
 
-class ArticleListBase(AppConfigMixin, AppHookCheckMixin, TemplatePrefixMixin,
+class ArticleListBase(CustomListMixin, AppConfigMixin, AppHookCheckMixin, TemplatePrefixMixin,
                       PreviewModeMixin, ViewUrlMixin, ListView):
     model = Article
     show_header = False
@@ -269,6 +281,11 @@ class ArticleListBase(AppConfigMixin, AppHookCheckMixin, TemplatePrefixMixin,
     def get_context_data(self, **kwargs):
         context = super(ArticleListBase, self).get_context_data(**kwargs)
         context['pagination'] = self.get_pagination_options()
+        if SHOW_CONTER_FILTERS:
+            from .filters import get_services, get_authors, get_archive
+            context['filter_services'] = get_services(self.namespace)
+            context['filter_authors'] = get_authors(self.namespace)
+            context['filter_archive'] = get_archive(self.namespace)
         return context
 
 
@@ -372,6 +389,25 @@ class CategoryArticleList(ArticleListBase):
         kwargs['newsblog_category'] = self.category
         ctx = super(CategoryArticleList, self).get_context_data(**kwargs)
         ctx['newsblog_category'] = self.category
+        return ctx
+
+
+class ServiceArticleList(ArticleListBase):
+    """A list of articles filtered by services."""
+    def get_queryset(self):
+        return super(ServiceArticleList, self).get_queryset().filter(
+            services=self.service
+        )
+
+    def get(self, request, service):
+        self.service = get_object_or_404(
+            Service, translations__slug=service)
+        return super(ServiceArticleList, self).get(request)
+
+    def get_context_data(self, **kwargs):
+        kwargs['newsblog_service'] = self.service
+        ctx = super(ServiceArticleList, self).get_context_data(**kwargs)
+        ctx['newsblog_service'] = self.service
         return ctx
 
 
