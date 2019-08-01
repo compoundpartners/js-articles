@@ -67,6 +67,15 @@ SQL_IS_TRUE = {
 }[connection.vendor]
 
 
+class NoneMixin(object):
+    pass
+
+try:
+    from custom.aldryn_newsblog.models import CustomArticleMixin
+except:
+    CustomArticleMixin = NoneMixin
+
+
 @python_2_unicode_compatible
 class ArticleMedium(models.Model):
     title = models.CharField(_('title'), max_length=255)
@@ -86,7 +95,8 @@ class ArticleMedium(models.Model):
 
 
 @python_2_unicode_compatible
-class Article(TranslatedAutoSlugifyMixin,
+class Article(CustomArticleMixin,
+              TranslatedAutoSlugifyMixin,
               TranslationHelperMixin,
               TranslatableModel):
 
