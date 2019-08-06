@@ -153,6 +153,10 @@ class NewsBlogConfig(TranslatableModel, AppHookConfig):
     def __str__(self):
         return self.safe_translation_getter('app_title')
 
+    default_namespace = 'all-articles'
+    default_app_title = 'All articles'
+
+
 
 class NewsBlogConfigForm(AppDataForm):
     default_published = forms.BooleanField(

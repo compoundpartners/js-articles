@@ -90,7 +90,9 @@ class PreviewModeMixin(EditModeMixin):
         if not (self.edit_mode or user_can_edit):
             qs = qs.published()
         language = translation.get_language()
-        qs = qs.active_translations(language).namespace(self.namespace)
+        qs = qs.active_translations(language)
+        if self.namespace != NewsBlogConfig.default_namespace:
+            qs = qs.namespace(self.namespace)
         return qs
 
 

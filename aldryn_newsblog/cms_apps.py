@@ -19,7 +19,11 @@ class NewsBlogApp(CMSConfigApp):
 
     # NOTE: Please do not add a «menu» here, menu’s should only be added by at
     # the discretion of the operator.
-
+    def get_configs(self):
+        if not self.app_config.objects.filter(namespace=self.app_config.default_namespace).exists():
+            conf = self.app_config(namespace=self.app_config.default_namespace, app_title=self.app_config.default_app_title)
+            conf.save()
+        return self.app_config.objects.all()
 
 apphook_pool.register(NewsBlogApp)
 

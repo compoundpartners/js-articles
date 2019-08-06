@@ -97,7 +97,7 @@ class NewsBlogJSRelatedPluginForm(forms.ModelForm):
     from aldryn_newsblog.models import NewsBlogConfig
     related_types = forms.ModelMultipleChoiceField(
         label='Related sections',
-        queryset=NewsBlogConfig.objects.all(),
+        queryset=NewsBlogConfig.objects.exclude(namespace=NewsBlogConfig.default_namespace),
         required=False,
         widget=FilteredSelectMultiple("Related sections", is_stacked=False))
 

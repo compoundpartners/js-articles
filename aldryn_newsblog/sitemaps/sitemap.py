@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 from aldryn_translation_tools.sitemaps import I18NSitemap
 
-from ..models import Article
+from ..models import Article, NewsBlogConfig
 from ..constants import SITEMAP_CHANGEFREQ, SITEMAP_PRIORITY
 
 
@@ -15,6 +15,8 @@ class NewsBlogSitemap(I18NSitemap):
 
     def __init__(self, *args, **kwargs):
         self.namespace = kwargs.pop('namespace', None)
+        if self.namespace == NewsBlogConfig.default_namespace:
+            self.namespace = None
         self.sitemap_type = kwargs.pop('type', 'xml')
         super(NewsBlogSitemap, self).__init__(*args, **kwargs)
 
