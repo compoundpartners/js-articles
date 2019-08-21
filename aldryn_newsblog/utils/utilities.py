@@ -26,6 +26,7 @@ from cms.utils.i18n import force_language, get_language_object
 
 from lxml.html.clean import Cleaner as LxmlCleaner
 
+from ..constants import SEARCH_SKIP_PLUGINS
 
 def default_reverse(*args, **kwargs):
     """
@@ -119,6 +120,9 @@ def get_plugin_index_data(base_plugin, request):
     text_bits = []
 
     plugin_instance, plugin_type = base_plugin.get_plugin_instance()
+
+    if plugin_type.__class__.__name__ in SEARCH_SKIP_PLUGINS:
+        return text_bits
 
     if plugin_instance is None:
         # this is an empty plugin

@@ -8,6 +8,11 @@ UPDATE_SEARCH_DATA_ON_SAVE = getattr(
     'ALDRYN_NEWSBLOG_UPDATE_SEARCH_DATA_ON_SAVE',
     False,
 )
+SEARCH_SKIP_PLUGINS = getattr(
+    settings,
+    'SEARCH_SKIP_PLUGINS',
+    [],
+)
 
 HIDE_RELATED_ARTICLES = getattr(
     settings,
