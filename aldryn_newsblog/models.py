@@ -710,7 +710,7 @@ def update_search_data(sender, instance, **kwargs):
         placeholder = (getattr(instance, '_placeholder_cache', None) or
                        instance.placeholder)
         if hasattr(placeholder, '_attached_model_cache'):
-            if placeholder._attached_model_cache == Article:
+            if placeholder._attached_model_cache == Article and placeholder.slot == 'content':
                 article = placeholder._attached_model_cache.objects.language(
                     instance.language).get(content=placeholder.pk)
                 article.search_data = article.get_search_data(instance.language)
