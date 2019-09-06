@@ -238,6 +238,7 @@ class ArticleListBase(CustomListMixin, AppConfigMixin, AppHookCheckMixin, Templa
                       PreviewModeMixin, ViewUrlMixin, ListView):
     model = Article
     show_header = False
+    strict = False
 
     def get(self, request, *args, **kwargs):
         self.edit_mode = (request.toolbar and request.toolbar.edit_mode)
@@ -295,6 +296,9 @@ class ArticleListBase(CustomListMixin, AppConfigMixin, AppHookCheckMixin, Templa
             context['filter_authors'] = get_authors(self.namespace)
             context['filter_archive'] = get_archive(self.namespace)
         return context
+
+    def get_strict(self):
+        return self.strict
 
 
 class ArticleList(ArticleListBase):

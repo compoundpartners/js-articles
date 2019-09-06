@@ -11,6 +11,14 @@ import datetime
 from . import models
 from .cms_appconfig import NewsBlogConfig
 
+class NoneMixin(object):
+    pass
+
+try:
+    from custom.aldryn_newsblog.filters import CustomFilterMixin
+except:
+    CustomFilterMixin = NoneMixin
+
 from .constants import (
     UPDATE_SEARCH_DATA_ON_SAVE,
     IS_THERE_COMPANIES,
@@ -32,7 +40,7 @@ class SearchFilter(django_filters.Filter):
         return qs
 
 
-class ArticleFilters(django_filters.FilterSet):
+class ArticleFilters(CustomFilterMixin, django_filters.FilterSet):
     q = django_filters.CharFilter('translations__title', 'icontains', label='Search the directory')
     medium = django_filters.ModelChoiceFilter('medium', label='medium', queryset=models.ArticleMedium.objects.exclude(**ADDITIONAL_EXCLUDE.get('medium', {})).order_by('position'))
     location = django_filters.ModelChoiceFilter('locations', label='location', queryset=Location.objects.exclude(**ADDITIONAL_EXCLUDE.get('location', {})).order_by('translations__name'))
