@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
             name='locations',
             field=sortedm2m.fields.SortedManyToManyField(blank=True, help_text=None, to='js_locations.Location', verbose_name='locations'),
         ),
-        migrations.RunPython(forwards, backward),
+        #migrations.RunPython(forwards, backward),
         migrations.RemoveField(
             model_name='article',
             name='location',

@@ -45,5 +45,5 @@ class Migration(migrations.Migration):
             name='article_sidebar',
             field=cms.models.fields.PlaceholderField(editable=False, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='newsblog_article_sidebar', slotname='newsblog_article_sidebar', to='cms.Placeholder'),
         ),
-        migrations.RunPython(related_articles_placeholder_gen, backwards)
+        #migrations.RunPython(related_articles_placeholder_gen, backwards)
     ]
