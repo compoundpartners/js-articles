@@ -32,7 +32,7 @@ from taggit.managers import TaggableManager
 from taggit.models import Tag
 
 from .cms_appconfig import NewsBlogConfig
-from .managers import RelatedManager
+from .managers import RelatedManager, AllManager, SearchManager
 from .utils import get_plugin_index_data, get_request, strip_tags
 
 try:
@@ -218,6 +218,8 @@ class Article(CustomArticleMixin,
                                     blank=True, symmetrical=False)
 
     objects = RelatedManager()
+    all_objects = AllManager()
+    search_objects = SearchManager()
 
     class Meta:
         ordering = ['-publishing_date']

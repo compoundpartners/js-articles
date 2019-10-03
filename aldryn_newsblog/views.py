@@ -81,7 +81,10 @@ class PreviewModeMixin(EditModeMixin):
     published articles should be returned.
     """
     def get_queryset(self):
-        qs = super(PreviewModeMixin, self).get_queryset()
+        if self.namespace == NewsBlogConfig.default_namespace:
+            qs = self.model.objects
+        else:
+            qs = self.model.all_objects.namespace(self.namespace)
         # check if user can see unpublished items. this will allow to switch
         # to edit mode instead of 404 on article detail page. CMS handles the
         # permissions.
@@ -91,8 +94,6 @@ class PreviewModeMixin(EditModeMixin):
             qs = qs.published()
         language = translation.get_language()
         qs = qs.active_translations(language)
-        if self.namespace != NewsBlogConfig.default_namespace:
-            qs = qs.namespace(self.namespace)
         return qs
 
 
@@ -250,12 +251,6 @@ class ArticleListBase(CustomListMixin, AppConfigMixin, AppHookCheckMixin, Templa
         context = self.get_context_data(filter=self.filterset,
                                         object_list=self.object_list)
         return self.render_to_response(context)
-
-    def get_queryset(self):
-        qs = super(ArticleListBase, self).get_queryset()
-        if not self.edit_mode:
-            qs = qs.published()
-        return qs
 
     def get_paginate_by(self, queryset):
         if self.paginate_by is not None:

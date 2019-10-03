@@ -28,7 +28,7 @@ class ArticleQuerySet(QuerySetMixin, TranslatableQuerySet):
         return self.filter(is_published=True, publishing_date__lte=now())
 
 
-class RelatedManager(ManagerMixin, TranslatableManager):
+class AllManager(ManagerMixin, TranslatableManager):
     def get_queryset(self):
         qs = ArticleQuerySet(self.model, using=self.db)
         return qs.select_related('featured_image')
@@ -118,3 +118,17 @@ class RelatedManager(ManagerMixin, TranslatableManager):
         for tag in tags:
             tag.num_articles = counted_tags[tag.pk]
         return sorted(tags, key=attrgetter('num_articles'), reverse=True)
+
+
+class RelatedManager(AllManager):
+    def get_queryset(self):
+        qs = ArticleQuerySet(self.model, using=self.db)
+        qs = qs.filter(app_config__show_in_listing=True)
+        return qs.select_related('featured_image')
+
+
+class SearchManager(AllManager):
+    def get_queryset(self):
+        qs = ArticleQuerySet(self.model, using=self.db)
+        qs = qs.filter(app_config__search_indexed=True)
+        return qs.select_related('featured_image')

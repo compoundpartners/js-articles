@@ -106,6 +106,12 @@ class NewsBlogConfig(TranslatableModel, AppHookConfig):
         help_text=_('Include articles in search indexes?'),
     )
 
+    show_in_listing = models.BooleanField(
+        _('Include in Listings?'),
+        default=True,
+        help_text=_('Include articles in listing pages and admin selects?'),
+    )
+
     placeholder_base_top = PlaceholderField(
         'newsblog_base_top',
         related_name='aldryn_newsblog_base_top',

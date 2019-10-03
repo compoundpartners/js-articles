@@ -117,6 +117,9 @@ class ArticleAdmin(
     ModelAppHookConfig,
     TranslatableAdmin
 ):
+    def get_queryset(self, request):
+        return self.model.all_objects
+
     form = ArticleAdminForm
     list_display = ('title_view', 'app_config', 'is_featured',
                     'is_published', 'publishing_date')
@@ -247,10 +250,11 @@ class NewsBlogConfigAdmin(
 ):
     def get_config_fields(self):
         return (
-            'app_title', 'permalink_type', 'allow_post', 'non_permalink_handling',
+            'app_title', 'allow_post', 'permalink_type', 'non_permalink_handling',
             'template_prefix', 'paginate_by', 'pagination_pages_start',
             'pagination_pages_visible', 'exclude_featured',
-            'create_authors', 'search_indexed', 'config.default_published',
+            'create_authors', 'search_indexed', 'show_in_listing',
+            'config.default_published',
         )
 
 
