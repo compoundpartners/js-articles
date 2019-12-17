@@ -11,13 +11,11 @@ import datetime
 from . import models
 from .cms_appconfig import NewsBlogConfig
 
-class NoneMixin(object):
-    pass
-
 try:
     from custom.aldryn_newsblog.filters import CustomFilterMixin
 except:
-    CustomFilterMixin = NoneMixin
+    class CustomFilterMixin(object):
+        pass
 
 from .constants import (
     UPDATE_SEARCH_DATA_ON_SAVE,

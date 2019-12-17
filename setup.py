@@ -12,15 +12,16 @@ REQUIREMENTS = [
     'backport_collections==0.1',
     'django-appdata>=0.1.4',
     'django-cms>=3.4',
-    'djangocms-text-ckeditor',
+    'djangocms-text-ckeditor==3.8.0',
     'django-filer>=0.9.9',
     'django-parler>=1.8.1',
     'django-sortedm2m>=1.2.2,!=1.3.0,!=1.3.1',
-    'django-taggit',
-    'lxml',
+    'django-taggit==1.1.0',
+    'lxml==4.4.2',
     'pytz',
-    'six',
-    'python-dateutil',
+    'six==1.13.0',
+    'python-dateutil==2.8.1',
+    'django-filter==2.2.0',
 ]
 
 # https://pypi.python.org/pypi?%3Aaction=list_classifiers

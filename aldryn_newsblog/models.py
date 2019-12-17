@@ -66,14 +66,11 @@ SQL_IS_TRUE = {
     'sqlite': '== 1', 'oracle': 'IS TRUE'
 }[connection.vendor]
 
-
-class NoneMixin(object):
-    pass
-
 try:
     from custom.aldryn_newsblog.models import CustomArticleMixin
 except:
-    CustomArticleMixin = NoneMixin
+    class CustomArticleMixin(object):
+        pass
 
 
 @python_2_unicode_compatible
