@@ -121,7 +121,6 @@ def get_plugin_index_data(base_plugin, request):
 
     plugin_instance, plugin_type = base_plugin.get_plugin_instance()
 
-    print(plugin_type.__class__.__name__, base_plugin.plugin_type)
     if plugin_type.__class__.__name__ in SEARCH_SKIP_PLUGINS:
         return text_bits
 

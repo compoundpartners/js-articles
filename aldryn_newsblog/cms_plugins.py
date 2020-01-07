@@ -259,9 +259,11 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
         if IS_THERE_COMPANIES:
             related_companies = instance.related_companies.all()
 
-        qs = models.Article.objects.all().filter(is_published=True).filter(publishing_date__lte=datetime.datetime.now()).distinct()
         if related_types.exists():
+            qs = models.Article.all_objects.published().distinct()
             qs = qs.filter(app_config__in=related_types.all())
+        else:
+            qs = models.Article.objects.published().distinct()
         if related_mediums.exists():
             qs = qs.filter(medium__in=related_mediums.all())
         if related_authors.exists():
