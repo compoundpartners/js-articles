@@ -43,7 +43,7 @@ class SearchFilter(django_filters.Filter):
 class ArticleFilters(CustomFilterMixin, django_filters.FilterSet):
     q = django_filters.CharFilter('translations__title', 'icontains', label='Search the directory')
     medium = django_filters.ModelChoiceFilter('medium', label='medium', queryset=models.ArticleMedium.objects.exclude(**ADDITIONAL_EXCLUDE.get('medium', {})).order_by('position'))
-    location = django_filters.ModelChoiceFilter('locations', label='location', queryset=Location.objects.exclude(**ADDITIONAL_EXCLUDE.get('location', {})).order_by('translations__name'))
+    location = django_filters.ModelChoiceFilter('locations', label='location', queryset=Location.objects.published().exclude(**ADDITIONAL_EXCLUDE.get('location', {})).order_by('translations__name'))
     category = django_filters.ModelChoiceFilter('categories', label='category', queryset=Category.objects.exclude(**ADDITIONAL_EXCLUDE.get('category', {})).order_by('translations__name'))
     service = django_filters.ModelChoiceFilter('services', label='service', queryset=Service.objects.published().exclude(**ADDITIONAL_EXCLUDE.get('service', {})).order_by('translations__title'))
     section = django_filters.ModelChoiceFilter('app_config', label='section', queryset=NewsBlogConfig.objects.filter(show_in_listing=True).exclude(namespace=NewsBlogConfig.default_namespace, **ADDITIONAL_EXCLUDE.get('section', {})).order_by('translations__app_title'))
