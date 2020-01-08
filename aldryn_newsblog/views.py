@@ -245,7 +245,7 @@ class ArticleListBase(CustomListMixin, AppConfigMixin, AppHookCheckMixin, Templa
         self.edit_mode = (request.toolbar and request.toolbar.edit_mode)
         self.filterset = ArticleFilters(self.request.GET, queryset=self.get_queryset())
         if not self.filterset.is_bound or self.filterset.is_valid() or not self.get_strict():
-            self.object_list = self.filterset.qs
+            self.object_list = self.filterset.qs.distinct()
         else:
             self.object_list = self.filterset.queryset.none()
         context = self.get_context_data(filter=self.filterset,
