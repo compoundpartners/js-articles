@@ -2,7 +2,11 @@
 
 from __future__ import unicode_literals
 
-from django.core.urlresolvers import NoReverseMatch, reverse
+try:
+    from django.core.urlresolvers import reverse, NoReverseMatch
+except ImportError:
+    # Django 2.0
+    from django.urls import reverse, NoReverseMatch
 
 from unittest import TestCase
 

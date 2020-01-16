@@ -15,7 +15,11 @@ from cms.utils.i18n import get_current_language, get_redirect_on_fallback
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
-from django.core.urlresolvers import reverse
+try:
+    from django.core.urlresolvers import reverse
+except ImportError:
+    # Django 2.0
+    from django.urls import reverse
 from django.db import connection, models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -38,7 +42,11 @@ from .utils import get_plugin_index_data, get_request, strip_tags
 try:
     from django.utils.encoding import force_unicode
 except ImportError:
-    from django.utils.encoding import force_text as force_unicode
+    try:
+        from django.utils.encoding import force_text as force_unicode
+    except ImportError:
+        def force_unicode(value):
+            return value.decode()
 
 from .constants import (
     IS_THERE_COMPANIES,
@@ -154,16 +162,17 @@ class Article(CustomArticleMixin,
                                 related_name='newsblog_article_sidebar')
     hide_authors = models.BooleanField(_('Hide Authors'),
                                 default=False,)
-    author = models.ForeignKey(Person, null=True, blank=True,
+    author = models.ForeignKey(Person, on_delete=models.SET_NULL, null=True, blank=True,
                                verbose_name=_('author'))
-    author_2 = models.ForeignKey(Person, related_name='author_2', null=True, blank=True,
+    author_2 = models.ForeignKey(Person, on_delete=models.SET_NULL, related_name='author_2', null=True, blank=True,
                                verbose_name=_('second author'))
-    author_3 = models.ForeignKey(Person, related_name='author_3', null=True, blank=True,
+    author_3 = models.ForeignKey(Person, on_delete=models.SET_NULL, related_name='author_3', null=True, blank=True,
                                verbose_name=_('third author'))
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('owner'),
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, verbose_name=_('owner'),
                               null=True, blank=True)
     app_config = AppHookConfigField(
         NewsBlogConfig,
+        on_delete=models.CASCADE,
         verbose_name=_('Section'),
         help_text='',
     )
@@ -197,7 +206,7 @@ class Article(CustomArticleMixin,
         related_name='+'
     )
     tags = TaggableManager(blank=True)
-    medium = models.ForeignKey(ArticleMedium, verbose_name=_('medium'),
+    medium = models.ForeignKey(ArticleMedium, on_delete=models.SET_NULL, verbose_name=_('medium'),
                               null=True, blank=True)
 
     show_on_sitemap = models.BooleanField(_('Show on sitemap'), null=False, default=True)
@@ -376,9 +385,9 @@ class NewsBlogCMSPlugin(CMSPlugin):
     # avoid reverse relation name clashes by not adding a related_name
     # to the parent plugin
     cmsplugin_ptr = models.OneToOneField(
-        CMSPlugin, related_name='+', parent_link=True)
+        CMSPlugin, on_delete=models.CASCADE, related_name='+', parent_link=True)
 
-    app_config = models.ForeignKey(NewsBlogConfig, verbose_name=_('Apphook configuration'))
+    app_config = models.ForeignKey(NewsBlogConfig, on_delete=models.CASCADE, verbose_name=_('Apphook configuration'))
 
     class Meta:
         abstract = True
@@ -578,7 +587,7 @@ class NewsBlogRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
     # NOTE: This one does NOT subclass NewsBlogCMSPlugin. This is because this
     # plugin can really only be placed on the article detail view in an apphook.
     cmsplugin_ptr = models.OneToOneField(
-        CMSPlugin, related_name='+', parent_link=True)
+        CMSPlugin, on_delete=models.CASCADE, related_name='+', parent_link=True)
     title = models.CharField(max_length=255, blank=True, verbose_name=_('Title'))
     layout = models.CharField(max_length=30, verbose_name=_('layout'), blank=True, null=True)
     related_articles = SortedManyToManyField(Article, verbose_name=_('related articles'), blank=True, symmetrical=False)
@@ -613,11 +622,11 @@ class NewsBlogJSRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
     # NOTE: This one does NOT subclass NewsBlogCMSPlugin. This is because this
     # plugin can really only be placed on the article detail view in an apphook.
     cmsplugin_ptr = models.OneToOneField(
-        CMSPlugin, related_name='+', parent_link=True)
+        CMSPlugin, on_delete=models.CASCADE, related_name='+', parent_link=True)
 
     title = models.CharField(max_length=255, blank=True, verbose_name=_('Title'))
     icon = Icon(blank=False, default='')
-    image = FilerImageField(null=True, blank=True, related_name="title_image")
+    image = FilerImageField(on_delete=models.SET_NULL, null=True, blank=True, related_name="title_image")
     number_of_articles = models.PositiveSmallIntegerField(verbose_name=_('Number of articles'), validators=[django.core.validators.MaxValueValidator(120)])
     layout = models.CharField(max_length=30, verbose_name=_('layout'))
     featured = models.BooleanField(blank=True, default=False)

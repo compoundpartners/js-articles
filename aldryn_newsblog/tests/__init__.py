@@ -8,7 +8,11 @@ import sys
 
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser, User
-from django.core.urlresolvers import clear_url_caches
+try:
+    from django.core.urlresolvers import clear_url_caches
+except ImportError:
+    # Django 2.0
+    from django.urls import clear_url_caches
 from django.core.cache import cache
 from django.test import RequestFactory
 from django.utils.timezone import now

@@ -28,36 +28,36 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='newsblogarchiveplugin',
             name='app_config',
-            field=models.ForeignKey(verbose_name='Apphook configuration', to='aldryn_newsblog.NewsBlogConfig'),
+            field=models.ForeignKey(on_delete=models.CASCADE, verbose_name='Apphook configuration', to='aldryn_newsblog.NewsBlogConfig'),
         ),
         migrations.AlterField(
             model_name='newsblogarticlesearchplugin',
             name='app_config',
-            field=models.ForeignKey(verbose_name='Apphook configuration', to='aldryn_newsblog.NewsBlogConfig'),
+            field=models.ForeignKey(on_delete=models.CASCADE, verbose_name='Apphook configuration', to='aldryn_newsblog.NewsBlogConfig'),
         ),
         migrations.AlterField(
             model_name='newsblogauthorsplugin',
             name='app_config',
-            field=models.ForeignKey(verbose_name='Apphook configuration', to='aldryn_newsblog.NewsBlogConfig'),
+            field=models.ForeignKey(on_delete=models.CASCADE, verbose_name='Apphook configuration', to='aldryn_newsblog.NewsBlogConfig'),
         ),
         migrations.AlterField(
             model_name='newsblogcategoriesplugin',
             name='app_config',
-            field=models.ForeignKey(verbose_name='Apphook configuration', to='aldryn_newsblog.NewsBlogConfig'),
+            field=models.ForeignKey(on_delete=models.CASCADE, verbose_name='Apphook configuration', to='aldryn_newsblog.NewsBlogConfig'),
         ),
         migrations.AlterField(
             model_name='newsblogfeaturedarticlesplugin',
             name='app_config',
-            field=models.ForeignKey(verbose_name='Apphook configuration', to='aldryn_newsblog.NewsBlogConfig'),
+            field=models.ForeignKey(on_delete=models.CASCADE, verbose_name='Apphook configuration', to='aldryn_newsblog.NewsBlogConfig'),
         ),
         migrations.AlterField(
             model_name='newsbloglatestarticlesplugin',
             name='app_config',
-            field=models.ForeignKey(verbose_name='Apphook configuration', to='aldryn_newsblog.NewsBlogConfig'),
+            field=models.ForeignKey(on_delete=models.CASCADE, verbose_name='Apphook configuration', to='aldryn_newsblog.NewsBlogConfig'),
         ),
         migrations.AlterField(
             model_name='newsblogtagsplugin',
             name='app_config',
-            field=models.ForeignKey(verbose_name='Apphook configuration', to='aldryn_newsblog.NewsBlogConfig'),
+            field=models.ForeignKey(on_delete=models.CASCADE, verbose_name='Apphook configuration', to='aldryn_newsblog.NewsBlogConfig'),
         ),
     ]

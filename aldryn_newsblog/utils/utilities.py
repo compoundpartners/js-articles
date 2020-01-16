@@ -10,14 +10,22 @@ try:
 except ImportError:
     # Django 1.6
     from django.contrib.sites.models import get_current_site
-from django.core.urlresolvers import reverse, NoReverseMatch
+try:
+    from django.core.urlresolvers import reverse, NoReverseMatch
+except ImportError:
+    # Django 2.0
+    from django.urls import reverse, NoReverseMatch
 from django.db import models
 from django.test import RequestFactory
 from django.utils import translation
 try:
     from django.utils.encoding import force_unicode
 except ImportError:
-    from django.utils.encoding import force_text as force_unicode
+    try:
+        from django.utils.encoding import force_text as force_unicode
+    except ImportError:
+        def force_unicode(value):
+            return value.decode()
 from django.utils.html import strip_tags as _strip_tags
 from django.utils.text import smart_split
 

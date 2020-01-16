@@ -10,7 +10,11 @@ from random import randint
 
 from django.conf import settings
 from django.core.files import File as DjangoFile
-from django.core.urlresolvers import reverse, NoReverseMatch
+try:
+    from django.core.urlresolvers import reverse, NoReverseMatch
+except ImportError:
+    # Django 2.0
+    from django.urls import reverse, NoReverseMatch
 from django.utils.timezone import now
 from django.utils.translation import override
 

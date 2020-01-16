@@ -73,7 +73,7 @@ class NewsBlogTagsPluginForm(AutoAppConfigFormMixin, forms.ModelForm):
 
 
 class NewsBlogRelatedPluginForm(forms.ModelForm):
-    layout = forms.ChoiceField(SPECIFIC_ARTICLES_LAYOUTS)
+    layout = forms.ChoiceField(choices=SPECIFIC_ARTICLES_LAYOUTS)
     related_articles = SortedMultipleChoiceField(
         label='ralated articles',
         queryset=models.Article.objects.all(),
@@ -88,7 +88,7 @@ class NewsBlogRelatedPluginForm(forms.ModelForm):
 
 class NewsBlogJSRelatedPluginForm(forms.ModelForm):
 
-    layout = forms.ChoiceField(RELATED_ARTICLES_LAYOUTS)
+    layout = forms.ChoiceField(choices=RELATED_ARTICLES_LAYOUTS)
 
     featured = forms.BooleanField(label='Show "Is Featured"', required=False)
 
