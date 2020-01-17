@@ -362,7 +362,7 @@ class PluginEditModeMixin(object):
         """
         return (
             hasattr(request, 'toolbar') and request.toolbar and
-            request.toolbar.edit_mode)
+            request.toolbar.edit_mode_active)
 
 
 class AdjustableCacheModelMixin(models.Model):

@@ -19,7 +19,7 @@
     {% render_placeholder article.carousel %}
 
     {% if slug != "how-to" and slug != "guides" %}
-      {% include "aldryn_newsblog/includes/author-top.html" with author=article.author %}
+      {% include "aldryn_newsblog/includes/author.html" with author=article.author %}
     {% endif %}
 
     {% render_placeholder article.content language placeholder_language %}
@@ -36,13 +36,13 @@
         </div>
       </div>
       {% if article.author %}
-        {% include "aldryn_newsblog/includes/author-bottom.html" with author=article.author %}
+        {% include "aldryn_newsblog/includes/author.html" with author=article.author %}
       {% endif %}
       {% if article.author_2 %}
-        {% include "aldryn_newsblog/includes/author-bottom.html" with author=article.author_2 %}
+        {% include "aldryn_newsblog/includes/author.html" with author=article.author_2 %}
       {% endif %}
       {% if article.author_3 %}
-        {% include "aldryn_newsblog/includes/author-bottom.html" with author=article.author_3 %}
+        {% include "aldryn_newsblog/includes/author.html" with author=article.author_3 %}
       {% endif %}
     </div>
     {% endif %}

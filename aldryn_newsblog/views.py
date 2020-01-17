@@ -71,7 +71,7 @@ class EditModeMixin(object):
 
     def dispatch(self, request, *args, **kwargs):
         self.edit_mode = (
-            self.request.toolbar and self.request.toolbar.edit_mode)
+            self.request.toolbar and self.request.toolbar.edit_mode_active)
         return super(EditModeMixin, self).dispatch(request, *args, **kwargs)
 
 
@@ -242,7 +242,7 @@ class ArticleListBase(CustomListMixin, AppConfigMixin, AppHookCheckMixin, Templa
     strict = False
 
     def get(self, request, *args, **kwargs):
-        self.edit_mode = (request.toolbar and request.toolbar.edit_mode)
+        self.edit_mode = (request.toolbar and request.toolbar.edit_mode_active)
         self.filterset = ArticleFilters(self.request.GET, queryset=self.get_queryset())
         if not self.filterset.is_bound or self.filterset.is_valid() or not self.get_strict():
             self.object_list = self.filterset.qs.distinct()
