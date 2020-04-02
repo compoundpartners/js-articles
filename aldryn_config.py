@@ -26,6 +26,18 @@ class Form(forms.BaseForm):
         required=False,
         initial=False)
 
+    show_logo = forms.CheckboxField(
+        "Show Logo",
+        required=False,
+        initial=False,
+    )
+    translate_is_published = forms.CheckboxField(
+        'Translate Is published and Is featured fields', required=False, initial=False
+    )
+    translate_authors = forms.CheckboxField(
+        'Translate Authors', required=False, initial=False
+    )
+
     def to_settings(self, data, settings):
 
         if data['hide_related_articles']:
@@ -42,6 +54,11 @@ class Form(forms.BaseForm):
 
         if data['summary_richtext']:
             settings['ARTICLES_SUMMARY_RICHTEXT'] = int(data['summary_richtext'])
+
+        if data['show_logo']:
+            settings['ARTICLES_SHOW_LOGO'] = int(data['show_logo'])
+        settings['ARTICLES_TRANSLATE_IS_PUBLISHED'] = int(data['translate_is_published'])
+        settings['ARTICLES_TRANSLATE_AUTHORS'] = int(data['translate_authors'])
 
 
         settings['INSTALLED_APPS'].extend([
