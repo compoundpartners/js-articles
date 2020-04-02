@@ -18,6 +18,9 @@ from aldryn_people.models import Person
 from parler.managers import TranslatableManager, TranslatableQuerySet
 from taggit.models import Tag, TaggedItem
 
+from .constants import (
+    TRANSLATE_IS_PUBLISHED,
+)
 
 class ArticleQuerySet(QuerySetMixin, TranslatableQuerySet):
     def published(self):
@@ -25,7 +28,10 @@ class ArticleQuerySet(QuerySetMixin, TranslatableQuerySet):
         Returns articles that are published AND have a publishing_date that
         has actually passed.
         """
-        return self.filter(is_published=True, publishing_date__lte=now())
+        qs = self.filter(publishing_date__lte=now())
+        if TRANSLATE_IS_PUBLISHED:
+            return qs.translated(is_published_trans=True)
+        return qs.filter(is_published=True)
 
 
 class AllManager(ManagerMixin, TranslatableManager):

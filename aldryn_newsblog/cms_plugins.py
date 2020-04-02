@@ -281,7 +281,13 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
         if featured:
             qs = qs.filter(is_featured=True)
         related_articles = qs[:int(instance.number_of_articles)]
+        articles_with_images = qs.exclude(featured_image__isnull=True)
 
+        context['show_images'] = True
+        for article in related_articles:
+            if not article.featured_image:
+                context['show_images'] = False
+                break
         context['related_articles'] = related_articles
 
         related_types_first = instance.related_types.first()

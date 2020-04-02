@@ -44,6 +44,12 @@ SUMMARY_RICHTEXT = getattr(
     False,
 )
 
+SHOW_LOGO = getattr(
+    settings,
+    'ARTICLES_SHOW_LOGO',
+    False,
+)
+
 SPECIFIC_ARTICLES_LAYOUTS = getattr(
     settings,
     'ARTICLES_SPECIFIC_LAYOUTS',
@@ -94,6 +100,16 @@ if len(ARTICLE_LAYOUTS) == 0 or len(ARTICLE_LAYOUTS[0]) != 2:
 else:
     ARTICLE_LAYOUT_CHOICES.insert(0, ('', 'default'))
 
+TRANSLATE_IS_PUBLISHED = getattr(
+    settings,
+    'ARTICLES_TRANSLATE_IS_PUBLISHED',
+    False,
+)
+TRANSLATE_AUTHORS = getattr(
+    settings,
+    'ARTICLES_TRANSLATE_AUTHORS',
+    False,
+)
 
 try:
     IS_THERE_COMPANIES = True

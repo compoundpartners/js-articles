@@ -75,13 +75,11 @@ SQL_IS_TRUE = {
 }[connection.vendor]
 
 
-class NoneMixin(object):
-    pass
-
 try:
     from custom.aldryn_newsblog.models import CustomArticleMixin
 except:
-    CustomArticleMixin = NoneMixin
+    class CustomArticleMixin(object):
+        pass
 
 
 @python_2_unicode_compatible
@@ -149,7 +147,21 @@ class Article(CustomArticleMixin,
             verbose_name=_('meta keywords'), blank=True, default=''),
         meta={'unique_together': (('language_code', 'slug', ), )},
 
-        search_data=models.TextField(blank=True, editable=False)
+        search_data=models.TextField(blank=True, editable=False),
+
+        author_trans = models.ForeignKey(Person, on_delete=models.SET_NULL,
+            related_name='+', null=True, blank=True,
+            verbose_name=_('author')),
+        author_2_trans = models.ForeignKey(Person, on_delete=models.SET_NULL,
+            related_name='+', null=True, blank=True,
+            verbose_name=_('second author')),
+        author_3_trans = models.ForeignKey(Person, on_delete=models.SET_NULL,
+            related_name='+', null=True, blank=True,
+            verbose_name=_('third author')),
+        is_published_trans = models.BooleanField(_('is published'),
+            default=False, db_index=True),
+        is_featured_trans = models.BooleanField(_('is featured'),
+            default=False, db_index=True),
     )
 
     content = PlaceholderField('newsblog_article_content',
@@ -203,6 +215,13 @@ class Article(CustomArticleMixin,
         blank=True,
         on_delete=models.SET_NULL,
         help_text='This image will only be shown on social channels. Minimum size: 1200x630px',
+        related_name='+'
+    )
+    logo_image = FilerImageField(
+        verbose_name=_('logo image'),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
         related_name='+'
     )
     tags = TaggableManager(blank=True)

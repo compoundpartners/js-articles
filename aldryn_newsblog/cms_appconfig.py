@@ -112,6 +112,11 @@ class NewsBlogConfig(TranslatableModel, AppHookConfig):
         help_text=_('Include articles in listing pages and admin selects?'),
     )
 
+    show_logo = models.BooleanField(
+        _('Show Logo'),
+        default=False,
+    )
+
     placeholder_base_top = PlaceholderField(
         'newsblog_base_top',
         related_name='aldryn_newsblog_base_top',

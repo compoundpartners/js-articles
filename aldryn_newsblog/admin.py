@@ -5,6 +5,7 @@ from aldryn_apphooks_config.admin import BaseAppHookConfig, ModelAppHookConfig
 from aldryn_people.models import Person
 from aldryn_translation_tools.admin import AllTranslationsMixin
 from cms.admin.placeholderadmin import FrontendEditableAdminMixin
+from cms.utils.i18n import get_current_language
 from django.db.models.query import EmptyQuerySet
 from django import forms
 from django.contrib import admin
@@ -25,6 +26,9 @@ from .constants import (
     SUMMARY_RICHTEXT,
     IS_THERE_COMPANIES,
     ARTICLE_LAYOUT_CHOICES,
+    SHOW_LOGO,
+    TRANSLATE_IS_PUBLISHED,
+    TRANSLATE_AUTHORS,
 )
 if IS_THERE_COMPANIES:
     from js_companies.models import Company
@@ -34,7 +38,14 @@ from cms.admin.placeholderadmin import PlaceholderAdminMixin
 
 
 def make_published(modeladmin, request, queryset):
-    queryset.update(is_published=True)
+    if TRANSLATE_IS_PUBLISHED:
+        for i in queryset.all():
+            i.is_published_trans = True
+            i.save()
+        #language = get_current_language()
+        #models.ArticleTranslation.objects.filter(language_code=language, master__in=queryset).update(is_published_trans=True)
+    else:
+        queryset.update(is_published=True)
 
 
 make_published.short_description = _(
@@ -42,7 +53,14 @@ make_published.short_description = _(
 
 
 def make_unpublished(modeladmin, request, queryset):
-    queryset.update(is_published=False)
+    if TRANSLATE_IS_PUBLISHED:
+        for i in queryset.all():
+            i.is_published_trans = False
+            i.save()
+        #language = get_current_language()
+        #models.ArticleTranslation.objects.filter(language_code=language, master__in=queryset).update(is_published_trans=False)
+    else:
+        queryset.update(is_published=False)
 
 
 make_unpublished.short_description = _(
@@ -50,7 +68,14 @@ make_unpublished.short_description = _(
 
 
 def make_featured(modeladmin, request, queryset):
-    queryset.update(is_featured=True)
+    if TRANSLATE_IS_PUBLISHED:
+        for i in queryset.all():
+            i.is_featured_trans = True
+            i.save()
+        #language = get_current_language()
+        #models.ArticleTranslation.objects.filter(language_code=language, master__in=queryset).update(is_featured_trans=True)
+    else:
+        queryset.update(is_featured=True)
 
 
 make_featured.short_description = _(
@@ -58,7 +83,14 @@ make_featured.short_description = _(
 
 
 def make_not_featured(modeladmin, request, queryset):
-    queryset.update(is_featured=False)
+    if TRANSLATE_IS_PUBLISHED:
+        for i in queryset.all():
+            i.is_featured_trans = False
+            i.save()
+        #language = get_current_language()
+        #models.ArticleTranslation.objects.filter(language_code=language, master__in=queryset).update(is_featured_trans=False)
+    else:
+        queryset.update(is_featured=False)
 
 
 make_not_featured.short_description = _(
@@ -229,6 +261,32 @@ class ArticleAdmin(
     app_config_selection_title = ''
     app_config_selection_desc = ''
 
+    def get_list_display(self, request):
+        fields = []
+        list_display = super(ArticleAdmin, self).get_list_display(request)
+        for field in list_display:
+            if field  in ['is_published', 'is_featured'] and TRANSLATE_IS_PUBLISHED:
+                field += '_trans'
+            fields.append(field)
+        return fields
+
+    def get_fieldsets(self, request, obj=None):
+        fieldsets = super(ArticleAdmin, self).get_fieldsets(request, obj)
+        if SHOW_LOGO and obj and obj.app_config.show_logo and 'logo_image' not in fieldsets[0][1]['fields']:
+            fieldsets[0][1]['fields'] += [
+                'logo_image',
+            ]
+        for fieldset in fieldsets:
+            if len(fieldset) == 2 and 'fields' in fieldset[1]:
+                fields = []
+                for field in fieldset[1]['fields']:
+                    if ((field  in ['is_published', 'is_featured'] and TRANSLATE_IS_PUBLISHED) or
+                            (field  in ['author', 'author_2', 'author_3'] and TRANSLATE_AUTHORS)):
+                        field += '_trans'
+                    fields.append(field)
+                fieldset[1]['fields'] = fields
+        return fieldsets
+
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
         if db_field.name in ['services', 'companies', 'locations']:
             kwargs['widget'] = SortedFilteredSelectMultiple()
@@ -258,6 +316,7 @@ class NewsBlogConfigAdmin(
             'template_prefix', 'paginate_by', 'pagination_pages_start',
             'pagination_pages_visible', 'exclude_featured',
             'create_authors', 'search_indexed', 'show_in_listing',
+            'show_logo',
             'config.default_published',
         )
 
