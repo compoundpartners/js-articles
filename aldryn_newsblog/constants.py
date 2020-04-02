@@ -83,6 +83,16 @@ SHOW_CONTER_FILTERS = getattr(
     'ARTICLES_SHOW_CONTER_FILTERS',
     False,
 )
+ARTICLE_LAYOUTS = getattr(
+    settings,
+    'ARTICLES_ARTICLE_LAYOUTS',
+    (),
+)
+ARTICLE_LAYOUT_CHOICES = list(ARTICLE_LAYOUTS)
+if len(ARTICLE_LAYOUTS) == 0 or len(ARTICLE_LAYOUTS[0]) != 2:
+    ARTICLE_LAYOUT_CHOICES = zip(list(map(lambda s: slugify(s).replace('-', '_'), ('',) + ARTICLE_LAYOUTS)), ('default',) + ARTICLE_LAYOUTS)
+else:
+    ARTICLE_LAYOUT_CHOICES.insert(0, ('', 'default'))
 
 
 try:

@@ -213,7 +213,19 @@ class Article(CustomArticleMixin,
     show_on_xml_sitemap = models.BooleanField(_('Show on xml sitemap'), null=False, default=True)
     noindex = models.BooleanField(_('noindex'), null=False, default=False)
     nofollow = models.BooleanField(_('nofollow'), null=False, default=False)
+    canonical_url = models.CharField(
+        blank=True,
+        null=True,
+        max_length=255,
+        verbose_name=_('Canonical URL')
+    )
 
+    layout = models.CharField(
+        blank=True,
+        default='',
+        max_length=60,
+        verbose_name=_('layout')
+    )
     # Setting "symmetrical" to False since it's a bit unexpected that if you
     # set "B relates to A" you immediately have also "A relates to B". It have
     # to be forced to False because by default it's True if rel.to is "self":
@@ -596,7 +608,7 @@ class NewsBlogRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
     more_button_link = models.CharField(max_length=255, blank=True, verbose_name=_('See More Button Link'))
 
     def copy_relations(self, oldinstance):
-        self.related_articles = oldinstance.related_articles.all()
+        self.related_articles.set(oldinstance.related_articles.all())
 
     def get_articles(self, article, request):
         """
@@ -641,13 +653,13 @@ class NewsBlogJSRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
     more_button_link = models.CharField(max_length=255, blank=True, verbose_name=_('See More Button Link'))
 
     def copy_relations(self, oldinstance):
-        self.related_types = oldinstance.related_types.all()
-        self.related_mediums = oldinstance.related_mediums.all()
-        self.related_categories = oldinstance.related_categories.all()
-        self.related_services = oldinstance.related_services.all()
-        self.related_authors = oldinstance.related_authors.all()
+        self.related_types.set(oldinstance.related_types.all())
+        self.related_mediums.set(oldinstance.related_mediums.all())
+        self.related_categories.set(oldinstance.related_categories.all())
+        self.related_services.set(oldinstance.related_services.all())
+        self.related_authors.set(oldinstance.related_authors.all())
         if IS_THERE_COMPANIES:
-            self.related_companies = oldinstance.related_companies.all()
+            self.related_companies.set(oldinstance.related_companies.all())
 
     # def get_articles(self, article, request):
     #     """

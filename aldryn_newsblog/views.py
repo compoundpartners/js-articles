@@ -23,6 +23,7 @@ from parler.views import TranslatableSlugMixin, ViewUrlMixin
 from taggit.models import Tag
 
 from aldryn_apphooks_config.mixins import AppConfigMixin
+from aldryn_apphooks_config.utils import get_app_instance
 from aldryn_categories.models import Category
 from aldryn_people.models import Person
 from js_services.models import Service
@@ -124,6 +125,10 @@ class ArticleDetail(CustomDetailMixin, AppConfigMixin, AppHookCheckMixin, Previe
     day_url_kwarg = 'day'
     slug_url_kwarg = 'slug'
     pk_url_kwarg = 'pk'
+
+    @property
+    def template_name_suffix(self):
+        return '_%s' %  (self.object.layout or 'detail')
 
     def get(self, request, *args, **kwargs):
         """

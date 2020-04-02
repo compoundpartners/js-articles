@@ -24,6 +24,7 @@ from .constants import (
     ENABLE_LOCATIONS,
     SUMMARY_RICHTEXT,
     IS_THERE_COMPANIES,
+    ARTICLE_LAYOUT_CHOICES,
 )
 if IS_THERE_COMPANIES:
     from js_companies.models import Company
@@ -66,6 +67,7 @@ make_not_featured.short_description = _(
 
 class ArticleAdminForm(TranslatableModelForm):
     companies = forms.CharField()
+    layout = forms.ChoiceField(choices=ARTICLE_LAYOUT_CHOICES, required=False)
 
     class Meta:
         model = models.Article
@@ -183,6 +185,7 @@ class ArticleAdmin(
         'featured_image',
         'lead_in',
         'medium',
+        'layout',
     ]
     if ENABLE_LOCATIONS:
         main_fields += [
@@ -206,6 +209,7 @@ class ArticleAdmin(
                 'show_on_xml_sitemap',
                 'noindex',
                 'nofollow',
+                'canonical_url',
             )
         }),
         (_('Advanced Settings'), {
