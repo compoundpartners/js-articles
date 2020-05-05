@@ -15,8 +15,7 @@ from parler.admin import TranslatableAdmin
 from parler.forms import TranslatableModelForm
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
 
-
-from . import models
+from . import models, default_medium
 
 from .constants import (
     HIDE_RELATED_ARTICLES,
@@ -117,6 +116,11 @@ class ArticleAdminForm(TranslatableModelForm):
         elif 'initial' in kwargs and 'app_config' in kwargs['initial']:
             qs = models.Article.objects.filter(
                 app_config=kwargs['initial']['app_config'])
+
+        author_fileds = ['author', 'author_trans', 'author_2', 'author_2_trans', 'author_3', 'author_3_trans', ]
+        for field in author_fileds:
+            if field in self.fields:
+                self.fields[field].queryset = Person.objects.all().order_by('last_name')
 
         if self.instance.pk:
             qs = qs.exclude(pk=self.instance.pk)
@@ -295,6 +299,9 @@ class ArticleAdmin(
     def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
         if db_field.name == 'app_config':
             kwargs["queryset"] = models.NewsBlogConfig.objects.exclude(namespace=models.NewsBlogConfig.default_namespace)
+        if db_field.name == 'medium':
+            default_medium_obj, created = models.ArticleMedium.objects.get_or_create(title=default_medium)
+            kwargs["queryset"] = models.ArticleMedium.objects.exclude(pk=default_medium_obj.pk)
         return super(ArticleAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
     def save_model(self, request, obj, form, change):

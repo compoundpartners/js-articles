@@ -11,7 +11,7 @@ from django.template.loader import select_template
 from cms import __version__ as cms_version
 from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
-from . import models, forms
+from . import models, forms, default_medium
 from .constants import (
     IS_THERE_COMPANIES,
 )
@@ -265,7 +265,10 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
         else:
             qs = models.Article.objects.published().distinct()
         if related_mediums.exists():
-            qs = qs.filter(medium__in=related_mediums.all())
+            if related_mediums.count() == 1 and related_mediums.first().title == default_medium:
+                qs = qs.filter(medium__isnull=True)
+            else:
+                qs = qs.filter(medium__in=related_mediums.all())
         if related_authors.exists():
             qs = qs.filter(author__in=related_authors.all())
         if related_categories.exists():

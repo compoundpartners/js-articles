@@ -33,6 +33,11 @@ class ArticleQuerySet(QuerySetMixin, TranslatableQuerySet):
             return qs.translated(is_published_trans=True)
         return qs.filter(is_published=True)
 
+    def published_one_of_trans(self):
+        if TRANSLATE_IS_PUBLISHED:
+            return self.filter(publishing_date__lte=now(), translations__is_published_trans=True)
+        return self.published()
+
 
 class AllManager(ManagerMixin, TranslatableManager):
     def get_queryset(self):
@@ -41,6 +46,9 @@ class AllManager(ManagerMixin, TranslatableManager):
 
     def published(self):
         return self.get_queryset().published()
+
+    def published_one_of_trans(self):
+        return self.get_queryset().published_one_of_trans()
 
     def get_months(self, request, namespace):
         """

@@ -110,7 +110,11 @@ TRANSLATE_AUTHORS = getattr(
     'ARTICLES_TRANSLATE_AUTHORS',
     False,
 )
-
+GET_NEXT_ARTICLE = getattr(
+    settings,
+    'ARTICLES_GET_NEXT_ARTICLE',
+    False,
+)
 try:
     IS_THERE_COMPANIES = True
     from js_companies.models import Company

@@ -50,6 +50,8 @@ except ImportError:
 
 from .constants import (
     IS_THERE_COMPANIES,
+    TRANSLATE_IS_PUBLISHED,
+    TRANSLATE_AUTHORS,
 )
 
 
@@ -150,13 +152,13 @@ class Article(CustomArticleMixin,
         search_data=models.TextField(blank=True, editable=False),
 
         author_trans = models.ForeignKey(Person, on_delete=models.SET_NULL,
-            related_name='+', null=True, blank=True,
+            related_name='articles_trans', null=True, blank=True,
             verbose_name=_('author')),
         author_2_trans = models.ForeignKey(Person, on_delete=models.SET_NULL,
-            related_name='+', null=True, blank=True,
+            related_name='articles_trans_2', null=True, blank=True,
             verbose_name=_('second author')),
         author_3_trans = models.ForeignKey(Person, on_delete=models.SET_NULL,
-            related_name='+', null=True, blank=True,
+            related_name='articles_trans_3', null=True, blank=True,
             verbose_name=_('third author')),
         is_published_trans = models.BooleanField(_('is published'),
             default=False, db_index=True),
@@ -284,7 +286,31 @@ class Article(CustomArticleMixin,
         Returns True only if the article (is_published == True) AND has a
         published_date that has passed.
         """
+        language = get_current_language()
+        if TRANSLATE_IS_PUBLISHED:
+            return (
+                (self.safe_translation_getter('is_published_trans', language_code=language, any_language=False) or False
+            ) and self.publishing_date <= now())
         return (self.is_published and self.publishing_date <= now())
+
+    @property
+    def authors(self):
+        authors = []
+        if TRANSLATE_AUTHORS:
+            if self.author_trans and self.author_trans.published:
+                authors.append(self.author_trans)
+            if self.author_2_trans and self.author_2_trans.published:
+                authors.append(self.author_2_trans)
+            if self.author_3_trans and self.author_3_trans.published:
+                authors.append(self.author_3_trans)
+        else:
+            if self.author and self.author.published:
+                authors.append(self.author)
+            if self.author_2 and self.author_2.published:
+                authors.append(self.author_2)
+            if self.author_3 and self.author_3.published:
+                authors.append(self.author_3)
+        return authors
 
     @property
     def future(self):
@@ -324,6 +350,17 @@ class Article(CustomArticleMixin,
 
         with override(language):
             return reverse('{0}article-detail'.format(namespace), kwargs=kwargs)
+
+    def get_public_url(self, language=None):
+        if not language:
+            language = get_current_language()
+        if not TRANSLATE_IS_PUBLISHED and self.published:
+            return self.get_absolute_url(language)
+        if (TRANSLATE_IS_PUBLISHED and \
+                (self.safe_translation_getter('is_published_trans', language_code=language, any_language=False) or False) and \
+                self.publishing_date <= now()):
+            return self.get_absolute_url(language)
+        return ''
 
     def get_search_data(self, language=None, request=None):
         """

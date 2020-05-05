@@ -8,7 +8,7 @@ from js_services.models import Service
 from js_locations.models import Location
 import django_filters
 import datetime
-from . import models
+from . import models, default_medium
 from .cms_appconfig import NewsBlogConfig
 
 class NoneMixin(object):
@@ -42,11 +42,11 @@ class SearchFilter(django_filters.Filter):
 
 class ArticleFilters(CustomFilterMixin, django_filters.FilterSet):
     q = django_filters.CharFilter('translations__title', 'icontains', label='Search the directory')
-    medium = django_filters.ModelChoiceFilter('medium', label='medium', queryset=models.ArticleMedium.objects.exclude(**ADDITIONAL_EXCLUDE.get('medium', {})).order_by('position'))
-    location = django_filters.ModelChoiceFilter('locations', label='location', queryset=Location.objects.published().exclude(**ADDITIONAL_EXCLUDE.get('location', {})).order_by('translations__name'))
-    category = django_filters.ModelChoiceFilter('categories', label='category', queryset=Category.objects.exclude(**ADDITIONAL_EXCLUDE.get('category', {})).order_by('translations__name'))
-    service = django_filters.ModelChoiceFilter('services', label='service', queryset=Service.objects.published().exclude(**ADDITIONAL_EXCLUDE.get('service', {})).order_by('translations__title'))
-    section = django_filters.ModelChoiceFilter('app_config', label='section', queryset=NewsBlogConfig.objects.filter(show_in_listing=True).exclude(namespace=NewsBlogConfig.default_namespace, **ADDITIONAL_EXCLUDE.get('section', {})).order_by('translations__app_title'))
+    medium = django_filters.ModelChoiceFilter('medium', label='medium', queryset=models.ArticleMedium.objects.exclude(title=default_medium, **ADDITIONAL_EXCLUDE.get('medium', {})))
+    location = django_filters.ModelChoiceFilter('locations', label='location', queryset=Location.objects.published().exclude(**ADDITIONAL_EXCLUDE.get('location', {})))
+    category = django_filters.ModelChoiceFilter('categories', label='category', queryset=Category.objects.exclude(**ADDITIONAL_EXCLUDE.get('category', {})))
+    service = django_filters.ModelChoiceFilter('services', label='service', queryset=Service.objects.published().exclude(**ADDITIONAL_EXCLUDE.get('service', {})))
+    section = django_filters.ModelChoiceFilter('app_config', label='section', queryset=NewsBlogConfig.objects.filter(show_in_listing=True).exclude(namespace=NewsBlogConfig.default_namespace, **ADDITIONAL_EXCLUDE.get('section', {})))
 
 
     class Meta:
@@ -64,6 +64,12 @@ class ArticleFilters(CustomFilterMixin, django_filters.FilterSet):
         if UPDATE_SEARCH_DATA_ON_SAVE:
             self.filters['q'] = SearchFilter(label='Search the directory')
 
+        self.sort_choices(self.filters['section'])
+        self.sort_choices(self.filters['service'])
+        self.sort_choices(self.filters['category'])
+        self.sort_choices(self.filters['location'])
+        self.sort_choices(self.filters['medium'])
+
         if IS_THERE_COMPANIES:
             self.filters['company'] = django_filters.ModelChoiceFilter('companies', label='company', queryset=Company.objects.exclude(**ADDITIONAL_EXCLUDE.get('company', {})).order_by('name'))
             self.filters['company'].extra.update({'empty_label': 'by company'})
@@ -73,6 +79,13 @@ class ArticleFilters(CustomFilterMixin, django_filters.FilterSet):
                 name = category[0].replace('-', '_')
                 self.filters[name] = django_filters.ModelChoiceFilter('categories', label=category[1], queryset=qs)
                 self.filters[name].extra.update({'empty_label': 'by %s' % category[1]})
+
+    def sort_choices(self, field):
+        field = field.field
+        if isinstance(field.choices, django_filters.fields.ModelChoiceIterator):
+            choices = [(obj.pk, str(obj)) for obj in field.choices.queryset]
+            field.iterator = django_filters.fields.ChoiceIterator
+            field._set_choices(sorted(choices, key=lambda item: item[1]))
 
 
 def hash_dict(obj):

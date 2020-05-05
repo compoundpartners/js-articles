@@ -33,7 +33,7 @@ from .cms_appconfig import NewsBlogConfig
 from .models import Article
 from .utils import add_prefix_to_path
 from .filters import ArticleFilters
-from .constants import IS_THERE_COMPANIES, SHOW_CONTER_FILTERS
+from .constants import IS_THERE_COMPANIES, SHOW_CONTER_FILTERS, GET_NEXT_ARTICLE
 
 class NoneMixin(object):
     pass
@@ -137,7 +137,7 @@ class ArticleDetail(CustomDetailMixin, AppConfigMixin, AppHookCheckMixin, Previe
         """
         if not hasattr(self, 'object'):
             self.object = self.get_object()
-        set_language_changer(request, self.object.get_absolute_url)
+        set_language_changer(request, self.object.get_public_url)
         url = self.object.get_absolute_url()
         if (self.config.non_permalink_handling == 200 or request.path == url):
             # Continue as normal
@@ -182,10 +182,11 @@ class ArticleDetail(CustomDetailMixin, AppConfigMixin, AppHookCheckMixin, Previe
 
     def get_context_data(self, **kwargs):
         context = super(ArticleDetail, self).get_context_data(**kwargs)
-        context['prev_article'] = self.get_prev_object(
-            self.queryset, self.object)
-        context['next_article'] = self.get_next_object(
-            self.queryset, self.object)
+        if GET_NEXT_ARTICLE:
+            context['prev_article'] = self.get_prev_object(
+                self.queryset, self.object)
+            context['next_article'] = self.get_next_object(
+                self.queryset, self.object)
 
         article = context['article']
         articles = Article.objects.published().exclude(id=article.id).distinct()

@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 from aldryn_translation_tools.sitemaps import I18NSitemap
 
 from ..models import Article, NewsBlogConfig
-from ..constants import SITEMAP_CHANGEFREQ, SITEMAP_PRIORITY
+from ..constants import SITEMAP_CHANGEFREQ, SITEMAP_PRIORITY, TRANSLATE_IS_PUBLISHED
 
 
 class NewsBlogSitemap(I18NSitemap):
@@ -23,7 +23,7 @@ class NewsBlogSitemap(I18NSitemap):
     def items(self):
         qs = Article.objects.published()
         if self.language is not None:
-            qs = qs.translated(self.language)
+            qs = qs.language(self.language)
         if self.namespace is not None:
             qs = qs.filter(app_config__namespace=self.namespace)
         if self.sitemap_type == 'html':
@@ -34,3 +34,18 @@ class NewsBlogSitemap(I18NSitemap):
 
     def lastmod(self, obj):
         return obj.publishing_date
+
+try:
+    from js_sitemap.alt_sitemap import SitemapAlt
+    class NewsBlogSitemapAlt(SitemapAlt, NewsBlogSitemap):
+        def get_queryset(self):
+            if TRANSLATE_IS_PUBLISHED:
+                return Person.objects.published_one_of_trans().prefetch_related('translations')
+            return super(NewsBlogSitemapAlt, self).get_queryset()
+
+        def languages(self, obj):
+            if TRANSLATE_IS_PUBLISHED:
+                return obj.translations.filter(is_published_trans=True).values_list('language_code', flat=True)
+            return super(NewsBlogSitemapAlt, self).languages(obj)
+except:
+    pass
