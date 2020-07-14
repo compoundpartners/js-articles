@@ -93,8 +93,8 @@ class PreviewModeMixin(EditModeMixin):
         user_can_edit = user.is_staff or user.is_superuser
         if not (self.edit_mode or user_can_edit):
             qs = qs.published()
-        language = translation.get_language()
-        qs = qs.active_translations(language)
+        #language = translation.get_language()
+        #qs = qs.active_translations(language)
         return qs
 
 
@@ -113,12 +113,12 @@ class AppHookCheckMixin(object):
         # if your mixin contains filtering after super call - please place it
         # after this mixin.
         qs = super(AppHookCheckMixin, self).get_queryset()
-        return qs.translated(*self.valid_languages)
+        return qs#.translated(*self.valid_languages)
 
 
-class ArticleDetail(CustomDetailMixin, AppConfigMixin, AppHookCheckMixin, PreviewModeMixin,
+class ArticleDetail(CustomDetailMixin, AppConfigMixin, AppHookCheckMixin, EditModeMixin,
                     TranslatableSlugMixin, TemplatePrefixMixin, DetailView):
-    model = Article
+    queryset = Article.all_objects
     slug_field = 'slug'
     year_url_kwarg = 'year'
     month_url_kwarg = 'month'
@@ -137,11 +137,18 @@ class ArticleDetail(CustomDetailMixin, AppConfigMixin, AppHookCheckMixin, Previe
         """
         if not hasattr(self, 'object'):
             self.object = self.get_object()
+        user = self.request.user
+        user_can_edit = user.is_staff or user.is_superuser
+        if not (self.edit_mode or user_can_edit):
+            if not self.object.published_for_language(self.get_language()):
+                raise Http404('Object not found.')
         set_language_changer(request, self.object.get_public_url)
         url = self.object.get_absolute_url()
         if (self.config.non_permalink_handling == 200 or request.path == url):
             # Continue as normal
-            return super(ArticleDetail, self).get(request, *args, **kwargs)
+            #return super(ArticleDetail, self).get(request, *args, **kwargs)
+            context = self.get_context_data(object=self.object)
+            return self.render_to_response(context)
 
         # Check to see if the URL path matches the correct absolute_url of
         # the found object
@@ -188,25 +195,26 @@ class ArticleDetail(CustomDetailMixin, AppConfigMixin, AppHookCheckMixin, Previe
             context['next_article'] = self.get_next_object(
                 self.queryset, self.object)
 
-        article = context['article']
-        articles = Article.objects.published().exclude(id=article.id).distinct()
-        categories = article.categories.all()
-        context['related_articles'] = articles.filter(categories__in=categories)[:3]
-        services = article.services.all()
-        context['related_articles_by_services'] = articles.filter(services__in=services)[:3]
-        if IS_THERE_COMPANIES and article.companies.count():
-            context['related_articles_by_company'] = articles.filter(companies__in=article.companies.all())[:3]
+        if False:
+            article = context['article']
+            articles = Article.objects.published().exclude(id=article.id).distinct()
+            categories = article.categories.all()
+            context['related_articles'] = articles.filter(categories__in=categories)[:3]
+            services = article.services.all()
+            context['related_articles_by_services'] = articles.filter(services__in=services)[:3]
+            if IS_THERE_COMPANIES and article.companies.count():
+                context['related_articles_by_company'] = articles.filter(companies__in=article.companies.all())[:3]
 
-        related_types_first = article.app_config
-        if related_types_first is not None:
-            context['related_types_first'] = related_types_first.namespace
-        else:
-            context['related_types_first'] = 'all'
-        related_categories_first = article.categories.all().first()
-        if related_categories_first is not None:
-            context['related_categories_first'] = related_categories_first.slug
-        else:
-            context['related_categories_first'] = 'all'
+            related_types_first = article.app_config
+            if related_types_first is not None:
+                context['related_types_first'] = related_types_first.namespace
+            else:
+                context['related_types_first'] = 'all'
+            related_categories_first = article.categories.all().first()
+            if related_categories_first is not None:
+                context['related_categories_first'] = related_categories_first.slug
+            else:
+                context['related_categories_first'] = 'all'
 
         return context
 
@@ -368,9 +376,12 @@ class AuthorArticleList(ArticleListBase):
     def get_queryset(self):
         # Note: each Article.author is Person instance with guaranteed
         # presence of unique slug field, which allows to use it in URLs
-        return super(AuthorArticleList, self).get_queryset().filter(
-            author=self.author
-        )
+        qs =  super(AuthorArticleList, self).get_queryset()
+        return qs.filter(
+            Q(author=self.author) |
+            Q(author_2=self.author) |
+            Q(author_3=self.author)
+        ).distinct()
 
     def get(self, request, author):
         language = translation.get_language_from_request(

@@ -77,3 +77,22 @@ class CategoryFeed(LatestArticlesFeed):
 
     def items(self, obj):
         return self.get_queryset().filter(categories=obj)[:10]
+
+
+class CustomFeed(LatestArticlesFeed):
+
+    def link(self):
+        return reverse('{0}:articles-feed'.format(self.namespace))
+
+    def title(self):
+        return str(self.config)
+
+    def get_queryset(self):
+        qs = self.config.article_set.published().translated(
+            *self.valid_languages)
+        return qs
+
+    def items(self, obj):
+        qs = self.get_queryset()
+        return qs.order_by('-publishing_date')[:self.config.number]
+

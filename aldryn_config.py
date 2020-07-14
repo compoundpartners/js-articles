@@ -21,6 +21,14 @@ class Form(forms.BaseForm):
         'Enable Locations', required=False, initial=False
     )
 
+    enable_readtime = forms.CheckboxField(
+        'Enable Read time', required=False, initial=False
+    )
+
+    enable_feeds = forms.CheckboxField(
+        'Enable Feeds', required=False, initial=False
+    )
+
     summary_richtext = forms.CheckboxField(
         "Use rich text for Summary",
         required=False,
@@ -51,6 +59,12 @@ class Form(forms.BaseForm):
 
         if data['enable_locations']:
             settings['ARTICLES_ENABLE_LOCATIONS'] = int(data['enable_locations'])
+
+        if data['enable_readtime']:
+            settings['ARTICLES_ENABLE_READTIME'] = int(data['enable_readtime'])
+
+        if data['enable_feeds']:
+            settings['ARTICLES_ENABLE_FEEDS'] = int(data['enable_feeds'])
 
         if data['summary_richtext']:
             settings['ARTICLES_SUMMARY_RICHTEXT'] = int(data['summary_richtext'])

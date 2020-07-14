@@ -20,10 +20,12 @@ try:
 except ImportError:
     # Django 2.0
     from django.urls import reverse
+from django.contrib.postgres.fields import JSONField
 from django.db import connection, models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils.functional import cached_property
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import override, ugettext
@@ -35,7 +37,7 @@ from sortedm2m.fields import SortedManyToManyField
 from taggit.managers import TaggableManager
 from taggit.models import Tag
 
-from .cms_appconfig import NewsBlogConfig
+from .cms_appconfig import NewsBlogConfig, NewsBlogFeed
 from .managers import RelatedManager, AllManager, SearchManager
 from .utils import get_plugin_index_data, get_request, strip_tags
 
@@ -140,6 +142,9 @@ class Article(CustomArticleMixin,
             ),
             blank=True,
         ),
+        read_time=models.CharField(
+            max_length=255, verbose_name=_('Read time'),
+            blank=True, default=''),
         meta_title=models.CharField(
             max_length=255, verbose_name=_('meta title'),
             blank=True, default=''),
@@ -191,14 +196,17 @@ class Article(CustomArticleMixin,
         help_text='',
     )
     locations = SortedManyToManyField('js_locations.location',
-                                         verbose_name=_('locations'),
-                                         blank=True)
+                                       verbose_name=_('locations'),
+                                       blank=True)
     categories = CategoryManyToManyField('aldryn_categories.Category',
                                          verbose_name=_('categories'),
                                          blank=True)
     services = SortedManyToManyField('js_services.Service',
-                                         verbose_name=_('services'),
-                                         blank=True)
+                                     verbose_name=_('services'),
+                                     blank=True)
+    feeds = models.ManyToManyField(NewsBlogFeed,
+                                   verbose_name=_('feeds'),
+                                   blank=True)
     publishing_date = models.DateTimeField(_('publishing date'),
                                            default=now)
     is_published = models.BooleanField(_('is published'), default=False,
@@ -247,6 +255,7 @@ class Article(CustomArticleMixin,
         max_length=60,
         verbose_name=_('layout')
     )
+    custom_fields = JSONField(blank=True, null=True)
     # Setting "symmetrical" to False since it's a bit unexpected that if you
     # set "B relates to A" you immediately have also "A relates to B". It have
     # to be forced to False because by default it's True if rel.to is "self":
@@ -275,6 +284,11 @@ class Article(CustomArticleMixin,
         '''Article Type / Section.'''
         return self.app_config
 
+    @cached_property
+    def cached_type(self):
+        '''Article Type / Section.'''
+        return self.app_config
+
     @property
     def type_slug(self):
         '''Article Type / Section Machine Name'''
@@ -287,6 +301,9 @@ class Article(CustomArticleMixin,
         published_date that has passed.
         """
         language = get_current_language()
+        return self.published_for_language(language)
+
+    def published_for_language(self, language):
         if TRANSLATE_IS_PUBLISHED:
             return (
                 (self.safe_translation_getter('is_published_trans', language_code=language, any_language=False) or False
@@ -325,7 +342,7 @@ class Article(CustomArticleMixin,
         if not language:
             language = get_current_language()
         kwargs = {}
-        permalink_type = self.app_config.permalink_type
+        permalink_type = self.cached_type.permalink_type
         if 'y' in permalink_type:
             kwargs.update(year=self.publishing_date.year)
         if 'm' in permalink_type:
@@ -343,13 +360,17 @@ class Article(CustomArticleMixin,
                     language = lang
                 kwargs.update(slug=slug)
 
-        if self.app_config and self.app_config.namespace:
-            namespace = '{0}:'.format(self.app_config.namespace)
+        if self.cached_type.namespace:
+            namespace = self.cached_type.namespace
+            try:
+                reverse('{0}:article-list'.format(namespace))
+            except:
+                namespace = NewsBlogConfig.default_namespace
         else:
             namespace = NewsBlogConfig.default_namespace
 
         with override(language):
-            return reverse('{0}article-detail'.format(namespace), kwargs=kwargs)
+            return reverse('{0}:article-detail'.format(namespace), kwargs=kwargs)
 
     def get_public_url(self, language=None):
         if not language:
@@ -586,8 +607,13 @@ class NewsBlogFeaturedArticlesPlugin(PluginEditModeMixin, NewsBlogCMSPlugin):
         if self.language not in languages:
             return queryset.none()
         queryset = queryset.translated(*languages).filter(
-            app_config=self.app_config,
-            is_featured=True)
+            app_config=self.app_config
+        )
+        if TRANSLATE_IS_PUBLISHED:
+            if TRANSLATE_IS_PUBLISHED:
+                queryset = queryset.translated(is_featured_trans=True)
+            else:
+                queryset = queryset.filter(is_featured=True)
         return queryset[:self.article_count]
 
     def __str__(self):

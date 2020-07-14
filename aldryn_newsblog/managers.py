@@ -42,7 +42,7 @@ class ArticleQuerySet(QuerySetMixin, TranslatableQuerySet):
 class AllManager(ManagerMixin, TranslatableManager):
     def get_queryset(self):
         qs = ArticleQuerySet(self.model, using=self.db)
-        return qs.select_related('featured_image')
+        return qs#.select_related('featured_image')
 
     def published(self):
         return self.get_queryset().published()
@@ -138,11 +138,11 @@ class RelatedManager(AllManager):
     def get_queryset(self):
         qs = ArticleQuerySet(self.model, using=self.db)
         qs = qs.filter(app_config__show_in_listing=True)
-        return qs.select_related('featured_image')
+        return qs#.select_related('featured_image')
 
 
 class SearchManager(AllManager):
     def get_queryset(self):
         qs = ArticleQuerySet(self.model, using=self.db)
         qs = qs.filter(app_config__search_indexed=True)
-        return qs.select_related('featured_image')
+        return qs#.select_related('featured_image')

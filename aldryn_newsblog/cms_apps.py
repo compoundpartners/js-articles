@@ -6,8 +6,8 @@ from aldryn_apphooks_config.app_base import CMSConfigApp
 from cms.apphook_pool import apphook_pool
 from django.utils.translation import ugettext_lazy as _
 
-from .models import NewsBlogConfig
-
+from .models import NewsBlogConfig, NewsBlogFeed
+from .constants import ENABLE_FEEDS
 
 class NewsBlogApp(CMSConfigApp):
     name = _('NewsBlog')
@@ -26,6 +26,18 @@ class NewsBlogApp(CMSConfigApp):
         return self.app_config.objects.all()
 
 apphook_pool.register(NewsBlogApp)
+
+
+class NewsBlogFeedApp(CMSConfigApp):
+    name = _('NewsBlog Feed')
+    app_name = 'aldryn_newsblog'
+    app_config = NewsBlogFeed
+
+    def get_urls(self, *args, **kwargs):
+        return ['aldryn_newsblog.urls_feed']
+
+if ENABLE_FEEDS:
+    apphook_pool.register(NewsBlogFeedApp)
 
 
 @apphook_pool.register

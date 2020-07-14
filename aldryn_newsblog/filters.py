@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.utils.timezone import now
 from django import forms
 from django.core.cache import cache
+from django.utils.translation import ugettext_lazy as _
+from django.utils.timezone import now
 from aldryn_categories.models import Category
 from js_services.models import Service
 from js_locations.models import Location
@@ -42,11 +43,11 @@ class SearchFilter(django_filters.Filter):
 
 class ArticleFilters(CustomFilterMixin, django_filters.FilterSet):
     q = django_filters.CharFilter('translations__title', 'icontains', label='Search the directory')
-    medium = django_filters.ModelChoiceFilter('medium', label='medium', queryset=models.ArticleMedium.objects.exclude(title=default_medium, **ADDITIONAL_EXCLUDE.get('medium', {})))
-    location = django_filters.ModelChoiceFilter('locations', label='location', queryset=Location.objects.published().exclude(**ADDITIONAL_EXCLUDE.get('location', {})))
-    category = django_filters.ModelChoiceFilter('categories', label='category', queryset=Category.objects.exclude(**ADDITIONAL_EXCLUDE.get('category', {})))
-    service = django_filters.ModelChoiceFilter('services', label='service', queryset=Service.objects.published().exclude(**ADDITIONAL_EXCLUDE.get('service', {})))
-    section = django_filters.ModelChoiceFilter('app_config', label='section', queryset=NewsBlogConfig.objects.filter(show_in_listing=True).exclude(namespace=NewsBlogConfig.default_namespace, **ADDITIONAL_EXCLUDE.get('section', {})))
+    medium = django_filters.ModelChoiceFilter('medium', label='medium', empty_label='by medium', queryset=models.ArticleMedium.objects.exclude(title=default_medium, **ADDITIONAL_EXCLUDE.get('medium', {})))
+    location = django_filters.ModelChoiceFilter('locations', label='location', empty_label='by location', queryset=Location.objects.published().exclude(**ADDITIONAL_EXCLUDE.get('location', {})))
+    category = django_filters.ModelChoiceFilter('categories', label='category', empty_label='by category', queryset=Category.objects.exclude(**ADDITIONAL_EXCLUDE.get('category', {})))
+    service = django_filters.ModelChoiceFilter('services', label='service', empty_label='by service', queryset=Service.objects.published().exclude(**ADDITIONAL_EXCLUDE.get('service', {})))
+    section = django_filters.ModelChoiceFilter('app_config', label='section', empty_label='by section', queryset=NewsBlogConfig.objects.filter(show_in_listing=True).exclude(namespace=NewsBlogConfig.default_namespace, **ADDITIONAL_EXCLUDE.get('section', {})))
 
 
     class Meta:
@@ -55,12 +56,6 @@ class ArticleFilters(CustomFilterMixin, django_filters.FilterSet):
 
     def __init__(self, values, *args, **kwargs):
         super(ArticleFilters, self).__init__(values, *args, **kwargs)
-        self.filters['medium'].extra.update({'empty_label': 'by medium'})
-        self.filters['location'].extra.update({'empty_label': 'by location'})
-        self.filters['category'].extra.update({'empty_label': 'by category'})
-        self.filters['service'].extra.update({'empty_label': 'by service'})
-        self.filters['section'].extra.update({'empty_label': 'by section'})
-
         if UPDATE_SEARCH_DATA_ON_SAVE:
             self.filters['q'] = SearchFilter(label='Search the directory')
 
@@ -71,8 +66,7 @@ class ArticleFilters(CustomFilterMixin, django_filters.FilterSet):
         self.sort_choices(self.filters['medium'])
 
         if IS_THERE_COMPANIES:
-            self.filters['company'] = django_filters.ModelChoiceFilter('companies', label='company', queryset=Company.objects.exclude(**ADDITIONAL_EXCLUDE.get('company', {})).order_by('name'))
-            self.filters['company'].extra.update({'empty_label': 'by company'})
+            self.filters['company'] = django_filters.ModelChoiceFilter('companies', label='company', empty_label='by company', queryset=Company.objects.exclude(**ADDITIONAL_EXCLUDE.get('company', {})).order_by('name'))
         if ADD_FILTERED_CATEGORIES:
             for category in ADD_FILTERED_CATEGORIES:
                 qs = Category.objects.filter(translations__slug=category[0])[0].get_children().exclude(**ADDITIONAL_EXCLUDE.get(category[0], {})).order_by('translations__name') if Category.objects.filter(translations__slug=category[0]).exists() else Category.objects.none()

@@ -8,10 +8,12 @@ from app_data import AppDataForm
 from cms.models.fields import PlaceholderField
 from django import forms
 from django.conf import settings
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from parler.models import TranslatableModel, TranslatedFields
+
 
 PERMALINK_CHOICES = (
     ('s', _('the-eagle-has-landed/', )),
@@ -157,6 +159,7 @@ class NewsBlogConfig(TranslatableModel, AppHookConfig):
         default=True,
         help_text=_('Uncheck to remove this section from the related articles listing filters.')
     )
+    custom_fields_settings = JSONField(blank=True, null=True)
 
     def get_app_title(self):
         return getattr(self, 'app_title', _('untitled'))
@@ -180,3 +183,33 @@ class NewsBlogConfigForm(AppDataForm):
 
 
 setup_config(NewsBlogConfigForm, NewsBlogConfig)
+
+
+@python_2_unicode_compatible
+class NewsBlogFeed(TranslatableModel, AppHookConfig):
+    """Adds some translatable, per-app-instance fields."""
+    translations = TranslatedFields(
+        app_title=models.CharField(_('Title'), max_length=234),
+    )
+
+    number = models.PositiveIntegerField(
+        _('Number of articles'),
+        blank=False,
+        default=25,
+    )
+
+    def get_app_title(self):
+        return getattr(self, 'app_title', _('untitled'))
+
+    class Meta:
+        verbose_name = _('Feed')
+        verbose_name_plural = _('Feeds')
+
+    def __str__(self):
+        return self.safe_translation_getter('app_title')
+
+
+class NewsBlogFeedForm(AppDataForm):
+    pass
+
+setup_config(NewsBlogFeedForm, NewsBlogFeed)

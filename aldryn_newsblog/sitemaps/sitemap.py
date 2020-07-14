@@ -40,7 +40,7 @@ try:
     class NewsBlogSitemapAlt(SitemapAlt, NewsBlogSitemap):
         def get_queryset(self):
             if TRANSLATE_IS_PUBLISHED:
-                return Person.objects.published_one_of_trans().prefetch_related('translations')
+                return Article.objects.published_one_of_trans().prefetch_related('translations').distinct()
             return super(NewsBlogSitemapAlt, self).get_queryset()
 
         def languages(self, obj):

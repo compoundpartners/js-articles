@@ -15,6 +15,19 @@ from parler.admin import TranslatableAdmin
 from parler.forms import TranslatableModelForm
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
 
+try:
+    from js_custom_fields.forms import CustomFieldsFormMixin, CustomFieldsSettingsFormMixin
+except:
+    class CustomFieldsFormMixin(object):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.fields['custom_fields'].widget = forms.HiddenInput()
+
+    class CustomFieldsSettingsFormMixin(object):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.fields['custom_fields_settings'].widget = forms.HiddenInput()
+
 from . import models, default_medium
 
 from .constants import (
@@ -22,12 +35,14 @@ from .constants import (
     HIDE_TAGS,
     HIDE_USER,
     ENABLE_LOCATIONS,
+    ENABLE_READTIME,
     SUMMARY_RICHTEXT,
     IS_THERE_COMPANIES,
     ARTICLE_LAYOUT_CHOICES,
     SHOW_LOGO,
     TRANSLATE_IS_PUBLISHED,
     TRANSLATE_AUTHORS,
+    ENABLE_FEEDS,
 )
 if IS_THERE_COMPANIES:
     from js_companies.models import Company
@@ -96,9 +111,11 @@ make_not_featured.short_description = _(
     "Mark selected articles as not featured")
 
 
-class ArticleAdminForm(TranslatableModelForm):
+class ArticleAdminForm(CustomFieldsFormMixin, TranslatableModelForm):
     companies = forms.CharField()
     layout = forms.ChoiceField(choices=ARTICLE_LAYOUT_CHOICES, required=False)
+
+    custom_fields = 'get_custom_fields'
 
     class Meta:
         model = models.Article
@@ -147,6 +164,10 @@ class ArticleAdminForm(TranslatableModelForm):
                 self.fields['companies'].initial = self.instance.companies.all()
         else:
             del self.fields['companies']
+
+    def get_custom_fields(self):
+        if self.instance and hasattr(self.instance, 'app_config'):
+            return self.instance.app_config.custom_fields_settings
 
 
 class ArticleAdmin(
@@ -205,6 +226,11 @@ class ArticleAdmin(
             'owner',
         )
 
+    if ENABLE_FEEDS:
+        advanced_settings_fields += (
+            'feeds',
+        )
+
     advanced_settings_fields += (
         'app_config',
     )
@@ -220,8 +246,15 @@ class ArticleAdmin(
         'is_featured',
         'featured_image',
         'lead_in',
+    ]
+    if ENABLE_READTIME:
+        main_fields += [
+            'read_time',
+        ]
+    main_fields += [
         'medium',
         'layout',
+        'custom_fields',
     ]
     if ENABLE_LOCATIONS:
         main_fields += [
@@ -292,7 +325,7 @@ class ArticleAdmin(
         return fieldsets
 
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
-        if db_field.name in ['services', 'companies', 'locations']:
+        if db_field.name in ['services', 'companies', 'locations', 'feeds']:
             kwargs['widget'] = SortedFilteredSelectMultiple()
         return super(ArticleAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
 
@@ -307,9 +340,13 @@ class ArticleAdmin(
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
         if IS_THERE_COMPANIES:
-            obj.companies = Company.objects.filter(pk__in=form.cleaned_data.get('companies'))
+            obj.companies.set(Company.objects.filter(pk__in=form.cleaned_data.get('companies')))
 
 admin.site.register(models.Article, ArticleAdmin)
+
+
+class NewsBlogConfigAdminForm(CustomFieldsSettingsFormMixin, TranslatableModelForm):
+    pass
 
 
 class NewsBlogConfigAdmin(
@@ -317,6 +354,8 @@ class NewsBlogConfigAdmin(
     BaseAppHookConfig,
     TranslatableAdmin
 ):
+    form = NewsBlogConfigAdminForm
+
     def get_config_fields(self):
         return (
             'app_title', 'allow_post', 'permalink_type', 'non_permalink_handling',
@@ -324,10 +363,49 @@ class NewsBlogConfigAdmin(
             'pagination_pages_visible', 'exclude_featured',
             'create_authors', 'search_indexed', 'show_in_listing',
             'show_logo',
-            'config.default_published',
+            'config.default_published', 'custom_fields_settings',
         )
 
 
 admin.site.register(models.NewsBlogConfig, NewsBlogConfigAdmin)
+
+
+class NewsBlogFeedAdminForm(TranslatableModelForm):
+    articles = forms.ModelMultipleChoiceField(queryset=models.Article.objects.all(), required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['articles'].widget = SortedFilteredSelectMultiple()
+        self.fields['articles'].queryset = models.Article.objects.all()
+        if self.instance.pk and self.instance.article_set.count():
+            self.fields['articles'].initial = self.instance.article_set.all()
+
+
+class NewsBlogFeedAdmin(
+    BaseAppHookConfig,
+    TranslatableAdmin
+):
+    form = NewsBlogFeedAdminForm
+
+    def get_fieldsets(self, request, obj=None):
+        fieldsets = super().get_fieldsets(request, obj)
+        if 'articles' not in fieldsets[0][1]['fields']:
+            fieldsets[0][1]['fields'] += (
+                'articles',
+            )
+        return fieldsets
+
+    def get_config_fields(self):
+        return (
+            'app_title', 'number',
+        )
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        obj.article_set.set(form.cleaned_data.get('articles'))
+
+if ENABLE_FEEDS:
+    admin.site.register(models.NewsBlogFeed, NewsBlogFeedAdmin)
 
 admin.site.register(models.ArticleMedium)

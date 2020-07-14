@@ -38,6 +38,12 @@ ENABLE_LOCATIONS = getattr(
     False,
 )
 
+ENABLE_READTIME = getattr(
+    settings,
+    'ARTICLES_ENABLE_READTIME',
+    False,
+)
+
 SUMMARY_RICHTEXT = getattr(
     settings,
     'ARTICLES_SUMMARY_RICHTEXT',
@@ -115,6 +121,17 @@ GET_NEXT_ARTICLE = getattr(
     'ARTICLES_GET_NEXT_ARTICLE',
     False,
 )
+ADDITIONAL_CHILD_CLASSES = getattr(
+    settings,
+    'ARTICLES_ADDITIONAL_CHILD_CLASSES',
+    {},
+)
+ENABLE_FEEDS = getattr(
+    settings,
+    'ARTICLES_ENABLE_FEEDS',
+    False,
+)
+
 try:
     IS_THERE_COMPANIES = True
     from js_companies.models import Company

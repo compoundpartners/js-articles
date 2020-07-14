@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import datetime
 
 from distutils.version import LooseVersion
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from django.template import TemplateDoesNotExist
 from django.template.loader import select_template
@@ -14,6 +15,8 @@ from cms.plugin_pool import plugin_pool
 from . import models, forms, default_medium
 from .constants import (
     IS_THERE_COMPANIES,
+    ADDITIONAL_CHILD_CLASSES,
+    TRANSLATE_IS_PUBLISHED,
 )
 if IS_THERE_COMPANIES:
     from js_companies.models import Company
@@ -172,6 +175,8 @@ class NewsBlogRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
     name = _('Specific Articles')
     model = models.NewsBlogRelatedPlugin
     form = forms.NewsBlogRelatedPluginForm
+    allow_children = 'NewsBlogRelatedPlugin' in ADDITIONAL_CHILD_CLASSES
+    child_classes = ADDITIONAL_CHILD_CLASSES.get('NewsBlogRelatedPlugin', [])
     fields = [
         'title',
         'layout',
@@ -226,6 +231,9 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
     model = models.NewsBlogJSRelatedPlugin
     form = forms.NewsBlogJSRelatedPluginForm
     # change_form_template = "aldryn_newsblog/plugins/related_articles_admin.html"
+    allow_children = 'NewsBlogJSRelatedPlugin' in ADDITIONAL_CHILD_CLASSES
+    child_classes = ADDITIONAL_CHILD_CLASSES.get('NewsBlogJSRelatedPlugin', [])
+    author = None
 
     def get_article(self, request):
         if request and request.resolver_match:
@@ -270,7 +278,15 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
             else:
                 qs = qs.filter(medium__in=related_mediums.all())
         if related_authors.exists():
-            qs = qs.filter(author__in=related_authors.all())
+            if related_authors.count() == 1:
+                self.author = related_authors.first()
+                qs = qs.filter(
+                    Q(author=self.author) |
+                    Q(author_2=self.author) |
+                    Q(author_3=self.author)
+                )
+            else:
+                qs = qs.filter(author__in=related_authors.all())
         if related_categories.exists():
             qs = qs.filter(categories__in=related_categories.all())
         if related_services.exists():
@@ -282,7 +298,10 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
             if current_article is not None:
                 qs = qs.exclude(id=current_article.id)
         if featured:
-            qs = qs.filter(is_featured=True)
+            if TRANSLATE_IS_PUBLISHED:
+                qs = qs.translated(is_featured_trans=True)
+            else:
+                qs = qs.filter(is_featured=True)
         related_articles = qs[:int(instance.number_of_articles)]
         articles_with_images = qs.exclude(featured_image__isnull=True)
 
@@ -307,16 +326,21 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
         if related_authors_first is not None:
             context['related_authors_first'] = related_authors_first.slug
 
+        context['author'] = self.author
         return context
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
         if IS_THERE_COMPANIES:
-            obj.related_companies = Company.objects.filter(pk__in=form.cleaned_data.get('related_companies'))
+            obj.related_companies.set(Company.objects.filter(pk__in=form.cleaned_data.get('related_companies')))
 
     def get_render_template(self, context, instance, placeholder):
-        if instance.layout:
-            template = self.TEMPLATE_NAME % instance.layout
+        layout = instance.layout
+        if layout == 'default' and self.author:
+            layout = 'by_author'
+        print(layout)
+        if layout:
+            template = self.TEMPLATE_NAME % layout
             try:
                 select_template([template])
                 return template

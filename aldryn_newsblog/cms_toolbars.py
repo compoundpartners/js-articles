@@ -34,9 +34,17 @@ class NewsBlogToolbar(CMSToolbar):
     supported_apps = ('aldryn_newsblog',)
 
     def get_on_delete_redirect_url(self, article, language):
+        if article.cached_type.namespace:
+            namespace = article.cached_type.namespace
+            try:
+                reverse('{0}:article-list'.format(namespace))
+            except:
+                namespace = NewsBlogConfig.default_namespace
+        else:
+            namespace = NewsBlogConfig.default_namespace
         with override(language):
             url = reverse(
-                '{0}:article-list'.format(article.app_config.namespace))
+                '{0}:article-list'.format(namespace))
         return url
 
     def __get_newsblog_config(self):
