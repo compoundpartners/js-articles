@@ -338,7 +338,6 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
         layout = instance.layout
         if layout == 'default' and self.author:
             layout = 'by_author'
-        print(layout)
         if layout:
             template = self.TEMPLATE_NAME % layout
             try:

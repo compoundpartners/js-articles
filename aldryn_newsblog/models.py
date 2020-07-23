@@ -439,6 +439,14 @@ class Article(CustomArticleMixin,
             #self.medium = ArticleMedium.objects.first()
         super(Article, self).save(*args, **kwargs)
 
+    def get_placeholders(self):
+        return [
+            self.content,
+            self.related_articles,
+            self.article_carousel,
+            self.article_sidebar
+        ]
+
     def __str__(self):
         return self.safe_translation_getter('title', any_language=True)
 

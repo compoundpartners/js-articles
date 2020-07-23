@@ -5,13 +5,14 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 try:
-    from django.core.urlresolvers import reverse
+    from django.core.urlresolvers import reverse, NoReverseMatch
 except ImportError:
     # Django 2.0
-    from django.urls import reverse
+    from django.urls import reverse, NoReverseMatch
 from django.utils.translation import (
     ugettext as _, get_language_from_request, override)
 
+from cms.api import get_page_draft
 from cms.toolbar_base import CMSToolbar
 from cms.toolbar_pool import toolbar_pool
 from cms.utils.i18n import get_language_tuple, get_language_dict
@@ -28,9 +29,10 @@ from .cms_appconfig import NewsBlogConfig
 
 from cms.cms_toolbars import (
     ADMIN_MENU_IDENTIFIER,
-    ADMINISTRATION_BREAK,
     LANGUAGE_MENU_IDENTIFIER,
 )
+
+ADD_ARTICLE_LANGUAGE_BREAK = "Add article language Break"
 
 
 @toolbar_pool.register
@@ -67,6 +69,7 @@ class NewsBlogToolbar(CMSToolbar):
         return config
 
     def populate(self):
+        self.page = get_page_draft(self.request.current_page)
         config = self.__get_newsblog_config()
         if not config:
             # Do nothing if there is no NewsBlog app_config to work with
@@ -155,12 +158,52 @@ class NewsBlogToolbar(CMSToolbar):
                                     on_close=redirect_url)
 
         if settings.USE_I18N:# and not self._language_menu:
-            self._language_menu = self.toolbar.get_or_create_menu(LANGUAGE_MENU_IDENTIFIER, _('Language'), position=-1)
-            self._language_menu.items = []
-            for code, name in get_language_tuple(self.current_site.pk):
-                try:
-                    url = DefaultLanguageChanger(self.request)(code)
-                except NoReverseMatch:
-                    url = None
-                if url:
-                    self._language_menu.add_link_item(name, url=url, active=self.current_lang == code)
+            if article:
+                self._language_menu = self.toolbar.get_or_create_menu(LANGUAGE_MENU_IDENTIFIER, _('Language'), position=-1)
+                self._language_menu.items = []
+                languages = get_language_dict(self.current_site.pk)
+                page_languages = self.page.get_languages()
+                remove = []
+
+                for code, name in get_language_tuple():
+                    if code in article.get_available_languages():
+                        remove.append((code, name))
+                        try:
+                            url = article.get_absolute_url(code)
+                        except NoReverseMatch:
+                            url = None
+                        if url and code in page_languages:
+                            self._language_menu.add_link_item(name, url=url, active=self.current_lang == code)
+
+                if self.toolbar.edit_mode_active:
+                    add = [l for l in languages.items() if l not in remove]
+                    copy = [(code, name) for code, name in languages.items() if code != self.current_lang and (code, name) in remove]
+
+                    if (add or len(remove) > 1 or copy) and change_article_perm:
+                        self._language_menu.add_break(ADD_ARTICLE_LANGUAGE_BREAK)
+
+                        if add:
+                            add_plugins_menu = self._language_menu.get_or_create_menu('{0}-add-trans'.format(LANGUAGE_MENU_IDENTIFIER), _('Add Translation'))
+                            for code, name in add:
+                                url_args = {}
+                                url = '%s?language=%s' % (get_admin_url('aldryn_newsblog_article_change',
+                                    [article.pk], **url_args), code)
+                                add_plugins_menu.add_modal_item(name, url=url)
+
+                        if len(remove) > 1:
+                            remove_plugins_menu = self._language_menu.get_or_create_menu('{0}-del-trans'.format(LANGUAGE_MENU_IDENTIFIER), _('Delete Translation'))
+                            for code, name in remove:
+                                url = get_admin_url('aldryn_newsblog_article_delete_translation', [article.pk, code])
+                                remove_plugins_menu.add_modal_item(name, url=url)
+
+                        if copy:
+                            copy_plugins_menu = self._language_menu.get_or_create_menu('{0}-copy-trans'.format(LANGUAGE_MENU_IDENTIFIER), _('Copy all plugins'))
+                            title = _('from %s')
+                            question = _('Are you sure you want to copy all plugins from %s?')
+                            url = get_admin_url('aldryn_newsblog_article_copy_language', [article.pk])
+                            for code, name in copy:
+                                copy_plugins_menu.add_ajax_item(
+                                    title % name, action=url,
+                                    data={'source_language': code, 'target_language': self.current_lang},
+                                    question=question % name, on_success=self.toolbar.REFRESH_PAGE
+                                )
