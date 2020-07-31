@@ -195,7 +195,7 @@ class ArticleAdmin(
     TranslatableAdmin
 ):
     def get_queryset(self, request):
-        return self.model.all_objects
+        return self.model.all_objects.distinct()
 
     form = ArticleAdminForm
     list_display = ('title_view', 'app_config', 'is_featured',

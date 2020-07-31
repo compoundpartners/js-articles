@@ -93,10 +93,14 @@ class NewsBlogToolbar(CMSToolbar):
 
             # If we're on an Article detail page, then get the article
             if view_name == '{0}:article-detail'.format(config.namespace):
-                article = get_object_from_request(Article, self.request)
+                kwargs = self.request.resolver_match.kwargs
+                if 'pk' in kwargs:
+                    article = Article.all_objects.filter(pk=kwargs['pk']).first()
+                elif 'slug' in kwargs:
+                    filter_kwargs = {'slug': kwargs['slug']}
+                    article = Article.all_objects.active_translations(language, **filter_kwargs).first()
             else:
                 article = None
-
             menu = self.toolbar.get_or_create_menu('newsblog-app',
                                                    config.get_app_title())
 
