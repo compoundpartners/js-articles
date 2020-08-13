@@ -37,7 +37,8 @@ except:
     class CustomFieldsFormMixin(object):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
-            self.fields['custom_fields'].widget = forms.HiddenInput()
+            if 'custom_fields' in self.fields:
+                self.fields['custom_fields'].widget = forms.HiddenInput()
 
     class CustomFieldsSettingsFormMixin(object):
         def __init__(self, *args, **kwargs):
