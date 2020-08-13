@@ -210,6 +210,7 @@ class ArticleAdmin(
         list_filter += [
             'locations',
         ]
+    search_fields = ['translations__title', 'translations__slug', 'translations__lead_in']
 
     actions = (
         make_featured, make_not_featured,
