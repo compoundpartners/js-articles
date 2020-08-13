@@ -43,7 +43,8 @@ except:
     class CustomFieldsSettingsFormMixin(object):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
-            self.fields['custom_fields_settings'].widget = forms.HiddenInput()
+            if 'custom_fields_settings' in self.fields:
+                self.fields['custom_fields_settings'].widget = forms.HiddenInput()
 
 from . import models, default_medium
 
@@ -60,6 +61,8 @@ from .constants import (
     TRANSLATE_IS_PUBLISHED,
     TRANSLATE_AUTHORS,
     ENABLE_FEEDS,
+    ARTICLE_CUSTOM_FIELDS,
+    ARTICLE_SECTION_CUSTOM_FIELDS,
 )
 if IS_THERE_COMPANIES:
     from js_companies.models import Company
@@ -185,8 +188,10 @@ class ArticleAdminForm(CustomFieldsFormMixin, TranslatableModelForm):
             del self.fields['companies']
 
     def get_custom_fields(self):
+        fields = ARTICLE_CUSTOM_FIELDS
         if self.instance and hasattr(self.instance, 'app_config'):
-            return self.instance.app_config.custom_fields_settings
+            fields.update(self.instance.app_config.custom_fields_settings)
+        return fields
 
 
 class ArticleAdmin(
@@ -412,8 +417,8 @@ class ArticleAdmin(
 admin.site.register(models.Article, ArticleAdmin)
 
 
-class NewsBlogConfigAdminForm(CustomFieldsSettingsFormMixin, TranslatableModelForm):
-    pass
+class NewsBlogConfigAdminForm(CustomFieldsFormMixin, CustomFieldsSettingsFormMixin, TranslatableModelForm):
+    custom_fields = ARTICLE_SECTION_CUSTOM_FIELDS
 
 
 class NewsBlogConfigAdmin(
@@ -430,7 +435,7 @@ class NewsBlogConfigAdmin(
             'pagination_pages_visible', 'exclude_featured',
             'create_authors', 'search_indexed', 'show_in_listing',
             'show_logo',
-            'config.default_published', 'custom_fields_settings',
+            'config.default_published', 'custom_fields_settings', 'custom_fields'
         )
 
 

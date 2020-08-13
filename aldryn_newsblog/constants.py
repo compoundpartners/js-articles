@@ -131,6 +131,16 @@ ENABLE_FEEDS = getattr(
     'ARTICLES_ENABLE_FEEDS',
     False,
 )
+ARTICLE_CUSTOM_FIELDS = getattr(
+    settings,
+    'ARTICLES_ARTICLE_CUSTOM_FIELDS',
+    {},
+)
+ARTICLE_SECTION_CUSTOM_FIELDS = getattr(
+    settings,
+    'ARTICLES_ARTICLE_SECTION_CUSTOM_FIELDS',
+    {},
+)
 
 try:
     IS_THERE_COMPANIES = True

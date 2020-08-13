@@ -160,6 +160,7 @@ class NewsBlogConfig(TranslatableModel, AppHookConfig):
         help_text=_('Uncheck to remove this section from the related articles listing filters.')
     )
     custom_fields_settings = JSONField(blank=True, null=True)
+    custom_fields = JSONField(blank=True, null=True)
 
     def get_app_title(self):
         return getattr(self, 'app_title', _('untitled'))
