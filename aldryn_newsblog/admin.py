@@ -189,7 +189,7 @@ class ArticleAdminForm(CustomFieldsFormMixin, TranslatableModelForm):
 
     def get_custom_fields(self):
         fields = ARTICLE_CUSTOM_FIELDS
-        if self.instance and hasattr(self.instance, 'app_config'):
+        if self.instance and hasattr(self.instance, 'app_config') and self.instance.app_config.custom_fields_settings:
             fields.update(self.instance.app_config.custom_fields_settings)
         return fields
 
