@@ -736,6 +736,7 @@ class NewsBlogJSRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
     related_types = SortedManyToManyField(NewsBlogConfig, verbose_name=_('related sections'), blank=True, symmetrical=False)
     related_mediums = SortedManyToManyField(ArticleMedium, verbose_name=_('medium'), blank=True, symmetrical=False)
     related_categories = SortedManyToManyField(Category, verbose_name=_('related categories'), blank=True, symmetrical=False)
+    related_service_sections = SortedManyToManyField('js_services.ServicesConfig', verbose_name=_('related service section'), blank=True, symmetrical=False)
     related_services = SortedManyToManyField('js_services.Service', verbose_name=_('related services'), blank=True, symmetrical=False)
     related_authors = SortedManyToManyField(Person, verbose_name=_('related authors'), blank=True, symmetrical=False)
     more_button_is_shown = models.BooleanField(blank=True, default=False, verbose_name=_('Show “See More Button”'))

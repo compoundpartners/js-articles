@@ -109,12 +109,18 @@ class NewsBlogJSRelatedPluginForm(forms.ModelForm):
     from aldryn_categories.models import Category
     related_categories = forms.ModelMultipleChoiceField(queryset=Category.objects.all(), required=False, widget=FilteredSelectMultiple("Related categories", is_stacked=False))
 
-    from js_services.models import Service
+    from js_services.models import Service, ServicesConfig
     related_services = forms.ModelMultipleChoiceField(
         queryset=Service.objects.all(),
         required=False,
         widget=FilteredSelectMultiple('Related services', False)
     )
+    related_service_sections = forms.ModelMultipleChoiceField(
+        queryset=ServicesConfig.objects.all(),
+        required=False,
+        widget=FilteredSelectMultiple('Related service sections', False)
+    )
+
     related_companies = forms.CharField(required=False, widget=forms.HiddenInput)
 
     class Meta:

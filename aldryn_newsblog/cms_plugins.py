@@ -263,6 +263,7 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
         related_mediums = instance.related_mediums
         related_authors = instance.related_authors
         related_categories = instance.related_categories
+        related_service_sections = instance.related_service_sections
         related_services = instance.related_services
         if IS_THERE_COMPANIES:
             related_companies = instance.related_companies.all()
@@ -289,6 +290,8 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
                 qs = qs.filter(author__in=related_authors.all())
         if related_categories.exists():
             qs = qs.filter(categories__in=related_categories.all())
+        if related_service_sections.exists():
+            qs = qs.filter(services__sections__in=related_service_sections.all())
         if related_services.exists():
             qs = qs.filter(services__in=related_services.all())
         if IS_THERE_COMPANIES and related_companies.exists():
