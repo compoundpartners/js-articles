@@ -1,0 +1,19 @@
+{% if authors|length %}
+
+  <section class="authors">
+
+    {% if authors|length > 1 %}
+      <h3>Authors</h3>
+    {% else %}
+      <h3>Author</h3>
+    {% endif %}
+
+    <ul>
+      {% for author in authors %}
+        {% include "aldryn_newsblog/includes/article_detail/author.html" with author=author %}
+      {% endfor %}
+    </ul>
+
+  </section>
+
+{% endif %}

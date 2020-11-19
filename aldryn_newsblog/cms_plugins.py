@@ -71,58 +71,6 @@ class AdjustableCacheMixin(object):
 
 
 @plugin_pool.register_plugin
-class NewsBlogArchivePlugin(AdjustableCacheMixin, NewsBlogPlugin):
-    render_template = 'aldryn_newsblog/plugins/archive.html'
-    name = _('Archive')
-    model = models.NewsBlogArchivePlugin
-    form = forms.NewsBlogArchivePluginForm
-
-    def render(self, context, instance, placeholder):
-        request = context.get('request')
-        context['instance'] = instance
-
-        queryset = models.Article.objects
-
-        context['dates'] = queryset.get_months(
-            request,
-            namespace=instance.app_config.namespace
-        )
-        return context
-
-
-@plugin_pool.register_plugin
-class NewsBlogArticleSearchPlugin(NewsBlogPlugin):
-    render_template = 'aldryn_newsblog/plugins/article_search.html'
-    name = _('Article Search')
-    model = models.NewsBlogArticleSearchPlugin
-    form = forms.NewsBlogArticleSearchPluginForm
-
-    def render(self, context, instance, placeholder):
-        context['instance'] = instance
-        context['query_url'] = default_reverse('{0}:article-search'.format(
-            instance.app_config.namespace), default=None)
-        return context
-
-
-@plugin_pool.register_plugin
-class NewsBlogAuthorsPlugin(NewsBlogPlugin):
-    render_template = 'aldryn_newsblog/plugins/authors.html'
-    name = _('Authors')
-    model = models.NewsBlogAuthorsPlugin
-    form = forms.NewsBlogAuthorsPluginForm
-
-    def render(self, context, instance, placeholder):
-        request = context.get('request')
-        context['instance'] = instance
-        context['authors_list'] = instance.get_authors(request)
-        context['article_list_url'] = default_reverse(
-            '{0}:article-list'.format(instance.app_config.namespace),
-            default=None)
-
-        return context
-
-
-@plugin_pool.register_plugin
 class NewsBlogCategoriesPlugin(NewsBlogPlugin):
     render_template = 'aldryn_newsblog/plugins/categories.html'
     name = _('Categories')
@@ -137,34 +85,6 @@ class NewsBlogCategoriesPlugin(NewsBlogPlugin):
         context['article_list_url'] = default_reverse(
             '{0}:article-list'.format(instance.app_config.namespace),
             default=None)
-        return context
-
-
-@plugin_pool.register_plugin
-class NewsBlogFeaturedArticlesPlugin(NewsBlogPlugin):
-    render_template = 'aldryn_newsblog/plugins/featured_articles.html'
-    name = _('Featured Articles')
-    model = models.NewsBlogFeaturedArticlesPlugin
-    form = forms.NewsBlogFeaturedArticlesPluginForm
-
-    def render(self, context, instance, placeholder):
-        request = context.get('request')
-        context['instance'] = instance
-        context['articles_list'] = instance.get_articles(request)
-        return context
-
-
-@plugin_pool.register_plugin
-class NewsBlogLatestArticlesPlugin(AdjustableCacheMixin, NewsBlogPlugin):
-    render_template = 'aldryn_newsblog/plugins/latest_articles.html'
-    name = _('Latest Articles')
-    model = models.NewsBlogLatestArticlesPlugin
-    form = forms.NewsBlogLatestArticlesPluginForm
-
-    def render(self, context, instance, placeholder):
-        request = context.get('request')
-        context['instance'] = instance
-        context['article_list'] = instance.get_articles(request)
         return context
 
 

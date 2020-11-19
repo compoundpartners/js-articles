@@ -1,0 +1,73 @@
+{% load i18n staticfiles thumbnail %}
+
+<li>
+  <article>
+
+    {% if author.visual %}
+      {% thumbnail author.visual "200x200" crop upscale subject_location=author.visual.subject_location as author_image %}
+      <img src="{{ author_image.url }}" width="200" height="200" alt="{{ author.name }}">
+    {% endif %}
+
+    {% if author.second_visual %}
+      {% thumbnail author.second_visual "200x200" crop upscale subject_location=author.second_visual.subject_location as second_author_image %}
+      <img src="{{ second_author_image.url }}" width="200" height="200" alt="{{ author.name }}">
+    {% endif %}
+
+    <h3>{{ author.name }}</h3>
+
+    <ul>
+      <li>
+        Metadata
+        <ul>
+          <li>{{ author.first_name }}</li>
+          <li>{{ author.last_name }}</li>
+          <li>{{ author.suffix }}</li>
+          <li>{{ author.function }}</li>
+          <li>{{ author.description }}</li>
+        </ul>
+       </li>
+      <li>Contact
+        <ul>
+          <li>{{ author.email }}</li>
+          <li>{{ author.mobile }}</li>
+          <li>{{ author.phone }}</li>
+          <li>{{ author.fax }}</li>
+          <li>{{ author.website }}</li>
+          <li>{{ author.facebook }}</li>
+          <li>{{ author.twitter }}</li>
+          <li>{{ author.linkedin }}</li>
+          <li>{{ author.xing }}</li>
+  		    <li>{{ author.get_vcard_url }}</li>
+        </ul>
+       </li>
+      <li>
+        Categorisation
+        <ul>
+          <li>{{ author.location }}</li>
+          <li>Groups
+            <ul>
+              {% for group in author.groups.all %}
+                <li>{{ group }}</li>
+              {% endfor %}
+            </ul>
+          </li>
+          <li>Categories
+            <ul>
+              {% for category in author.categories.all %}
+                <li>{{ category }}</li>
+              {% endfor %}
+            </ul>
+          </li>
+          <li>Serices
+            <ul>
+              {% for service in author.services.all %}
+                <li>{{ service }}</li>
+              {% endfor %}
+            </ul>
+          </li>
+        </ul>
+       </li>
+    </ul>
+
+  </article>
+</li>

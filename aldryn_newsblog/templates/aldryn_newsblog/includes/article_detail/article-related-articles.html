@@ -1,0 +1,30 @@
+{% load i18n apphooks_config_tags cms_tags sekizai_tags staticfiles thumbnail extra_cms_tags  %}
+
+<aside class="related-articles">
+
+  <h3>Related articles</h3>
+
+  <ul>
+    {% for article in related_articles_by_services %}
+      <li>
+        <article>
+
+            <h4>{{ article.title }}</h4>
+
+            {% if article.featured_image %}
+              {% thumbnail article.featured_image "500x300" crop="center" as im %}
+              <img src="{{ im.url }}">
+            {% endif %}
+
+            {% if article.lead_in %}
+              <p>{{ article.lead_in|striptags|safe }}</p>
+            {% endif %}
+
+
+            <button href="{{ article.get_absolute_url }}">
+
+        </article>
+      </li>
+    {% endfor %}
+  </ul>
+</aside>

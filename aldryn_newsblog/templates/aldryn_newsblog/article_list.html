@@ -1,5 +1,6 @@
 {% extends "aldryn_newsblog/base.html" %}
-{% load i18n cms_tags staticfiles %}
+
+{% load i18n cms_tags staticfiles extra_cms_tags %}
 
 {% block header_attributes %}
   <link rel="canonical" href="{{ ROOT_URL }}{{ request.path }}" />
@@ -38,27 +39,38 @@
   {% endif %}
   </h1>
 
+
+      <ul>
+        {% for key, val in this|get_fields %}
+          <li>{{ key }}: {{ val }}</li>
+        {% endfor %}
+      </ul>
+
+
   <div class="col-sm-8 col-lg-9 related-articles two-by-two">
     <ul class="row">
 
       {% for article in article_list %}
-          {% include "aldryn_newsblog/includes/article-item.html" %}
+          {% include "aldryn_newsblog/includes/article_list/article-item.html" %}
       {% empty %}
           {% trans "No items available" %}
       {% endfor %}
 
     </ul>
   </div>
-{% endblock %}
 
-{% block newsblog_sidebar %}
-  <nav class="filters col-sm-4 col-lg-3">
-    {% include "aldryn_newsblog/includes/sidebar.html" %}
-  </nav>
-{% endblock %}
 
-{% block newsblog_footer %}
-  <nav class="col-sm-8 col-lg-9">
-    {% include "aldryn_newsblog/includes/pagination.html" %}
-  </nav>
-{% endblock %}
+  {% block newsblog_sidebar %}
+    <nav class="filters col-sm-4 col-lg-3">
+      {% include "aldryn_newsblog/includes/article_list/sidebar.html" %}
+    </nav>
+  {% endblock %}
+
+  {% block newsblog_footer %}
+    <nav class="col-sm-8 col-lg-9">
+      {% include "aldryn_newsblog/includes/article_list/pagination.html" %}
+    </nav>
+  {% endblock %}
+
+
+{% endblock newsblog_content %}

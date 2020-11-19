@@ -1,0 +1,21 @@
+{% load i18n apphooks_config_tags cms_tags sekizai_tags staticfiles thumbnail extra_cms_tags %}
+
+{% if article.meta_title %}
+  <meta property="og:title" content="COMPANY NAME - {{ article.meta_title }} ">
+{% else %}
+  <meta property="og:title" content="COMPANY NAME - {{ article.title }} ">
+{% endif %}
+
+{% if article.meta_description %}
+  <meta property="og:description" content="{{ article.meta_description }}">
+{% else %}
+  <meta property="og:description" content="{{ article.lead_in }}">
+{% endif %}
+
+{% if article.share_image %}
+  <meta property="og:image" content="{% thumbnail article.share_image 1200x1200 crop subject_location=article.share_image.subject_location %}">
+{% elif article.featured_image %}
+  <meta property="og:image" content="{% thumbnail article.featured_image 1200x1200 crop subject_location=article.featured_image.subject_location %}">
+{% else %}
+  <meta property="og:image" content="https://{{ request.get_host }}/static/img/COMPANY-NAME-og.png">
+{% endif %}

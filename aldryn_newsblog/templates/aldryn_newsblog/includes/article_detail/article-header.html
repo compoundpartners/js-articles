@@ -1,0 +1,5 @@
+{% load cms_tags %}
+
+<h1>{% render_model article "title" %}</h1>
+
+{% render_placeholder article.article_carousel language placeholder_language %}

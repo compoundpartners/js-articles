@@ -1,26 +1,55 @@
 {% extends "aldryn_newsblog/base.html" %}
-{% load i18n cms_tags apphooks_config_tags %}
+
+{% load i18n cms_tags apphooks_config_tags thumbnail %}
 
 {% block header_attributes %}
-      <link rel="canonical" href="{{ ROOT_URL }}{% page_url 'articles' %}{{ article.type_slug }}/{{ article.slug }}" />
-{% endblock %}
+    <link rel="canonical" href="{{ ROOT_URL }}{% page_url 'articles' %}{{ article.type_slug }}/{{ article.slug }}" />
+{% endblock header_attributes %}
 
 {% block title %}
     {{ article.title }} - {{ block.super }}
-{% endblock %}
+{% endblock title %}
+
+{% block meta %}
+  {% include "aldryn_newsblog/includes/article_detail/article-meta.html" %}
+{% endblock meta %}
+
+{% block ograph %}
+  {% include "aldryn_newsblog/includes/article_detail/article-ograph.html" %}
+{% endblock ograph %}
 
 {% block newsblog_content %}
-    {% include "aldryn_newsblog/includes/article.html" with detail_view="true" %}
 
-    {% static_placeholder "newsblog_social" %}
+  <article class="container {% spaceless %}
+    {% if article.is_featured %} featured{% endif %}
+    {% if not article.published %} unpublished{% endif %}
+    {% if article.future %} future{% endif %}
+  {% endspaceless %}">
 
-    <ul>
-        {% if prev_article %}
-            <li><a href="{{ prev_article.get_absolute_url }}">{% trans "Previous Article" %}</a></li>
-        {% endif %}
-        <li><a href="{% namespace_url "article-list" %}">{% trans "Back to Overview" %}</a></li>
-        {% if next_article %}
-            <li><a href="{{ next_article.get_absolute_url }}">{% trans "Next Article" %}</a></li>
-        {% endif %}
-    </ul>
+    {% if article.featured_image_id %}
+      <header class="image" style="background-image:url({% thumbnail article.featured_image 1190x500 crop upscale subject_location=article.featured_image.subject_location %});">
+    {% else %}
+      <header>
+    {% endif %}
+      {% include "aldryn_newsblog/includes/article_detail/article-header.html" %}
+    </header>
+
+    <div class="row">
+
+      <section id="main-content" class="col-8" role="main">
+        {% include "aldryn_newsblog/includes/article_detail/article-content.html" %}
+      </section>
+
+      <aside id="sidebar" class="col-4" role="complementary" aria-label="Sidebar">
+        {% include "aldryn_newsblog/includes/article_detail/article-sidebar.html" %}
+      </aside>
+
+    </div>
+
+    <footer>
+      {% include "aldryn_newsblog/includes/article_detail/article-footer.html" %}
+    </footer>
+
+  </article>
+
 {% endblock %}

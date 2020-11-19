@@ -26,45 +26,10 @@ class AutoAppConfigFormMixin(object):
                 self.fields['app_config'].empty_label = None
 
 
-class NewsBlogArchivePluginForm(AutoAppConfigFormMixin, forms.ModelForm):
-    class Meta:
-        model = models.NewsBlogArchivePlugin
-        fields = ['app_config', 'cache_duration']
-
-
-class NewsBlogArticleSearchPluginForm(AutoAppConfigFormMixin, forms.ModelForm):
-    class Meta:
-        model = models.NewsBlogArticleSearchPlugin
-        fields = ['app_config', 'max_articles']
-
-
-class NewsBlogAuthorsPluginForm(AutoAppConfigFormMixin, forms.ModelForm):
-    class Meta:
-        model = models.NewsBlogAuthorsPlugin
-        fields = ['app_config']
-
-
 class NewsBlogCategoriesPluginForm(AutoAppConfigFormMixin, forms.ModelForm):
     class Meta:
         model = models.NewsBlogCategoriesPlugin
         fields = ['app_config']
-
-
-class NewsBlogFeaturedArticlesPluginForm(AutoAppConfigFormMixin,
-                                         forms.ModelForm):
-    class Meta:
-        model = models.NewsBlogFeaturedArticlesPlugin
-        fields = ['app_config', 'article_count']
-
-
-class NewsBlogLatestArticlesPluginForm(AutoAppConfigFormMixin,
-                                       forms.ModelForm):
-    class Meta:
-        model = models.NewsBlogLatestArticlesPlugin
-        fields = [
-            'app_config', 'latest_articles', 'exclude_featured',
-            'cache_duration'
-        ]
 
 
 class NewsBlogTagsPluginForm(AutoAppConfigFormMixin, forms.ModelForm):
@@ -134,4 +99,3 @@ class NewsBlogJSRelatedPluginForm(forms.ModelForm):
             self.fields['related_companies'].queryset = Company.objects.all()
             if self.instance.pk and self.instance.related_companies.count():
                 self.fields['related_companies'].initial = self.instance.related_companies.all()
-
