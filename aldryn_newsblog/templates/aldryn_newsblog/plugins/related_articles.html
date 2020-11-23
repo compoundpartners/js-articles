@@ -1,35 +1,84 @@
 {% load i18n thumbnail %}
 
-<div class="related-articles cols-layout">
-  {# <h3></h3>#}
-  <a href="#" class="btn btn-info">See all</a>
-  <ul class="row">
-    {% for article in related_articles %}
-        <li class="col-md-4">
-            <div class="image">
-            {% if article.featured_image %}
-              {% thumbnail article.featured_image "235x150" crop="center" as im %}
-              <img src="{{ im.url }}" alt="{{ article.featured_image_alt }}" class="img-responsive media-object">
-            {% endif %}
-            </div>
-            <h4><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h4>
-            <p>
-                {% if article.author %}
-                    {% trans "by" %} <a href="#">{{ article.author }}</a>
-                {% endif %}
-                {% if article.author_2 %}
-                    {% if article.author_3 %},{% else %}and{% endif %}
-                    <a href="#">{{ article.author_2 }}</a>
-                {% endif %}
-                {% if article.author_3 %}
-                    {% trans "and" %} <a href="#">{{ article.author_3 }}</a>
-                {% endif %}
-                 {{ article.publishing_date|date }}
-            </p>
-            <p>{% if article.lead_in %}{{ article.lead_in }}{% endif %}</p>
+{% if related_articles %}
+
+  <aside class="related-articles">
+
+    {% if title %}
+      <h3>{{ title }}</h3>
+    {% endif %}
+
+    {% if icon %}
+      {% with icon_class=icon instance=icon %}
+        {% include "djangocms_icon/includes/icon.html" %}
+      {% endwith %}
+    {% endif %}
+
+    <ul>
+
+      {% for article in related_articles %}
+        <li class="{{ article.type_slug|slugify }}">
+          <article>
+
+              <h4>{{ article.title }}</h4>
+
+              {% if article.featured_image %}
+                {% thumbnail article.featured_image "200x200" crop upscale subject_location=article.visual.subject_location as article_image %}
+                <img src="{{ article_image.url }}" width="200" height="200" alt="{{ article.title }}">
+              {% endif %}
+
+              <ul>
+                <li>Categories
+                  <ul>
+                    {% for category in article.categories.all %}
+                      <li>{{ category }}</li>
+                    {% endfor %}
+                  </ul>
+                </li>
+                <li>Serices
+                  <ul>
+                    {% for service in article.services.all %}
+                      <li>{{ service }}</li>
+                    {% endfor %}
+                  </ul>
+                </li>
+                <li>future: {{ article.future }}</li>
+                <li>get_current_language: {{ article.get_current_language }}</li>
+                <li>is_featured: {{ article.is_featured }}</li>
+                <li>language_code: {{ article. }}</li>
+                <li>lead_in: {{ article.lead_in }}</li>
+                <li>Locations
+                  <ul>
+                    {% for location in article.locations.all %}
+                      <li>{{ location }}</li>
+                    {% endfor %}
+                  </ul>
+                </li>
+                <li>logo_image: {{ article.logo_image }}</li>
+                <li>medium: {{ article.medium }}</li>
+                <li>published: {{ article.published }}</li>
+                <li>read_time: {{ article.read_time }}</li>
+                <li>type: {{ article.type }}</li>
+                <li>type_slug: {{ article.type_slug }}</li>
+              </ul>
+
+              <a href="{{ article.get_absolute_url }}">Read More</a>
+
+          </article>
         </li>
-    {% empty %}
-        <li class="col-md-4">{% trans "No related articles found" %}</li>
-    {% endfor %}
-  </ul>
-</div>
+      {% endfor %}
+    </ul>
+
+    {% if more_button_is_shown and more_button_text and more_button_link %}
+      <a href="{{ more_button_link }}">{{ more_button_text }}</a>
+    {% elif more_button_is_shown and more_button_link %}
+      <a href="{{ more_button_link }}" >View all articles</a>
+    {% elif more_button_is_shown and more_button_text %}
+      <a href="/insight/">{{ more_button_text }}</a>
+    {% elif more_button_is_shown %}
+      <a href="/insight/">View all articles</a>
+    {% endif %}
+
+  </aside>
+
+{% endif %}

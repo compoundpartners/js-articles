@@ -18,6 +18,24 @@
 
 {% block newsblog_content %}
 
+
+
+
+
+
+
+
+<ul>
+  {% for field in get_fields %}
+    <li>{{ field }}</li>
+  {% endfor %}
+</ul>
+
+
+
+
+
+
   {# Title #}
   <h1 class="col-md-12">
   {% if split_path|length == 1 %}

@@ -26,11 +26,7 @@
     {% if article.future %} future{% endif %}
   {% endspaceless %}">
 
-    {% if article.featured_image_id %}
-      <header class="image" style="background-image:url({% thumbnail article.featured_image 1190x500 crop upscale subject_location=article.featured_image.subject_location %});">
-    {% else %}
-      <header>
-    {% endif %}
+    <header>
       {% include "aldryn_newsblog/includes/article_detail/article_header.html" %}
     </header>
 

@@ -1,14 +1,76 @@
-{% load i18n %}
+{% load i18n thumbnail %}
 
 {% if article_list %}
+
+  <aside class="related-articles">
+
+    {% if title %}<h3>{{ title }}</h3>{% endif %}
+
     <ul>
-        {% for article in article_list %}
-            <li>
-                <h3><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h3>
-                <p>{% trans "by" %} <a href="#">{{ article.author }}</a> {{ article.publishing_date|date }}</p>
-            </li>
-        {% empty %}
-            <li>{% trans "No items available" %}</li>
-        {% endfor %}
+
+      {% for article in article_list %}
+        <li class="{{ article.type_slug|slugify }}">
+          <article>
+
+              <h4>{{ article.title }}</h4>
+
+              {% if article.featured_image %}
+                {% thumbnail article.featured_image "200x200" crop upscale subject_location=article.visual.subject_location as article_image %}
+                <img src="{{ article_image.url }}" width="200" height="200" alt="{{ article.title }}">
+              {% endif %}
+
+              <ul>
+                <li>Categories
+                  <ul>
+                    {% for category in article.categories.all %}
+                      <li>{{ category }}</li>
+                    {% endfor %}
+                  </ul>
+                </li>
+                <li>Serices
+                  <ul>
+                    {% for service in article.services.all %}
+                      <li>{{ service }}</li>
+                    {% endfor %}
+                  </ul>
+                </li>
+                <li>future: {{ article.future }}</li>
+                <li>get_current_language: {{ article.get_current_language }}</li>
+                <li>is_featured: {{ article.is_featured }}</li>
+                <li>language_code: {{ article. }}</li>
+                <li>lead_in: {{ article.lead_in }}</li>
+                <li>Locations
+                  <ul>
+                    {% for location in article.locations.all %}
+                      <li>{{ location }}</li>
+                    {% endfor %}
+                  </ul>
+                </li>
+                <li>logo_image: {{ article.logo_image }}</li>
+                <li>medium: {{ article.medium }}</li>
+                <li>published: {{ article.published }}</li>
+                <li>read_time: {{ article.read_time }}</li>
+                <li>type: {{ article.type }}</li>
+                <li>type_slug: {{ article.type_slug }}</li>
+              </ul>
+
+              <a href="{{ article.get_absolute_url }}">Read More</a>
+
+          </article>
+        </li>
+      {% endfor %}
     </ul>
+    
+    {% if more_button_is_shown and more_button_text and more_button_link %}
+      <a href="{{ more_button_link }}">{{ more_button_text }}</a>
+    {% elif more_button_is_shown and more_button_link %}
+      <a href="{{ more_button_link }}" >View all articles</a>
+    {% elif more_button_is_shown and more_button_text %}
+      <a href="/insight/">{{ more_button_text }}</a>
+    {% elif more_button_is_shown %}
+      <a href="/insight/">View all articles</a>
+    {% endif %}
+
+  </aside>
+
 {% endif %}
