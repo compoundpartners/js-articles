@@ -11,11 +11,11 @@
 {% endblock title %}
 
 {% block meta %}
-  {% include "aldryn_newsblog/includes/article_detail/article-meta.html" %}
+  {% include "aldryn_newsblog/includes/article_detail/article_meta.html" %}
 {% endblock meta %}
 
 {% block ograph %}
-  {% include "aldryn_newsblog/includes/article_detail/article-ograph.html" %}
+  {% include "aldryn_newsblog/includes/article_detail/article_ograph.html" %}
 {% endblock ograph %}
 
 {% block newsblog_content %}
@@ -31,23 +31,23 @@
     {% else %}
       <header>
     {% endif %}
-      {% include "aldryn_newsblog/includes/article_detail/article-header.html" %}
+      {% include "aldryn_newsblog/includes/article_detail/article_header.html" %}
     </header>
 
     <div class="row">
 
       <section id="main-content" class="col-8" role="main">
-        {% include "aldryn_newsblog/includes/article_detail/article-content.html" %}
+        {% include "aldryn_newsblog/includes/article_detail/article_content.html" %}
       </section>
 
       <aside id="sidebar" class="col-4" role="complementary" aria-label="Sidebar">
-        {% include "aldryn_newsblog/includes/article_detail/article-sidebar.html" %}
+        {% include "aldryn_newsblog/includes/article_detail/article_sidebar.html" %}
       </aside>
 
     </div>
 
     <footer>
-      {% include "aldryn_newsblog/includes/article_detail/article-footer.html" %}
+      {% include "aldryn_newsblog/includes/article_detail/article_footer.html" %}
     </footer>
 
   </article>

@@ -13,7 +13,7 @@
       <img src="{{ second_author_image.url }}" width="200" height="200" alt="{{ author.name }}">
     {% endif %}
 
-    <h3>{{ author.name }}</h3>
+    <h3><a href="{{ author.get_absolute_url }}">{{ author.name }}</a></h3>
 
     <ul>
       <li>
