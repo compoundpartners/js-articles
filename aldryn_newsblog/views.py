@@ -576,8 +576,7 @@ class ArticlesSitemap(Sitemap):
     priority = 0.7
 
     def items(self):
-        return Article.objects.all().filter(is_published=True).filter(
-            publishing_date__lte=datetime.now()).distinct()
+        return Article.objects.published()
 
     def lastmod(self, obj):
         return obj.publishing_date  # MOD date exists?  (e.g. when plugins are updated)

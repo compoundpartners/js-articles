@@ -450,6 +450,30 @@ class Article(CustomArticleMixin,
     def __str__(self):
         return self.safe_translation_getter('title', any_language=True)
 
+    def get_related_articles_by_services(self, article_category=None):
+        articles = self.__class__.objects.published().filter(services__in=self.services.all()).exclude(id=self.id)
+        if article_category:
+            return articles.namespace(article_category)
+        return articles.distinct()
+
+    def get_related_articles_by_categories(self, article_category=None):
+        articles = self.__class__.objects.published().filter(categories__in=self.categories.all()).exclude(id=self.id)
+        if article_category:
+            return articles.namespace(article_category)
+        return articles.distinct()
+
+    def related_articles_by_services(self):
+        return self.get_related_articles_by_services(self.app_config.namespace)
+
+    def related_articles_by_categories(self):
+        return self.get_related_articles_by_categories(self.app_config.namespace)
+
+    def related_articles_same_type_by_services(self):
+        return self.get_related_articles_by_services(self.app_config.namespace)
+
+    def related_articles_same_type_by_categories(self):
+        return self.get_related_articles_by_categories(self.app_config.namespace)
+
 
 class PluginEditModeMixin(object):
     def get_edit_mode(self, request):
