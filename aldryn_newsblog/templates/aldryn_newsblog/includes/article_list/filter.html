@@ -1,5 +1,5 @@
 {% load crispy_forms_field querystring_tags %}
-
+{% if input %}
 <div class="input-container">
   {% if input.value %}
     <div class="input-group read-only">
@@ -13,3 +13,4 @@
       {% crispy_field input %}
   {% endif %}
 </div>
+{% endif %}
