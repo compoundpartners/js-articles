@@ -373,38 +373,6 @@ class TestImages(NewsBlogTestCase):
 
 
 class TestVariousViews(NewsBlogTestCase):
-    def test_articles_by_tag(self):
-        """
-        Tests that TagArticleList view properly filters articles by their tags.
-
-        This uses ANY of the languages articles are translated to.
-        """
-
-        untagged_articles = []
-        for _ in range(5):
-            article = self.create_article()
-            untagged_articles.append(article)
-
-        articles = self.create_tagged_articles(
-            3, tags=(self.rand_str(), self.rand_str()))
-
-        # tags are created in previous loop on demand, we need their slugs
-        tag_slug1, tag_slug2 = articles.keys()
-        url = reverse('aldryn_newsblog:article-list-by-tag',
-                      kwargs={'tag': tag_slug2})
-        response = self.client.get(url)
-        for article in articles[tag_slug2]:
-            self.assertContains(response, article.title)
-        for article in articles[tag_slug1]:
-            self.assertNotContains(response, article.title)
-        for article in untagged_articles:
-            self.assertNotContains(response, article.title)
-
-    def test_articles_by_unknown_tag(self):
-        response = self.client.get(reverse(
-            'aldryn_newsblog:article-list-by-tag',
-            kwargs={'tag': 'unknown'}))
-        self.assertEqual(response.status_code, 404)
 
     def test_articles_count_by_month(self):
         months = [
@@ -452,35 +420,6 @@ class TestVariousViews(NewsBlogTestCase):
                         'pk', 'num_articles'),
                 key=itemgetter(1)),
             authors)
-
-    def test_articles_count_by_tags(self):
-        tags = Article.objects.get_tags(
-            request=None, namespace=self.app_config.namespace)
-        self.assertEquals(tags, [])
-
-        untagged_articles = []
-        for _ in range(5):
-            article = self.create_article()
-            untagged_articles.append(article)
-
-        # Tag objects are created on attaching tag name to Article,
-        # so this looks not very DRY
-        tag_names = ('tag foo', 'tag bar', 'tag buzz')
-        # create unpublished article to test that it is not counted
-        self.create_tagged_articles(
-            1, tags=(tag_names[0],), is_published=False)
-        tag_slug2 = list(self.create_tagged_articles(
-            3, tags=(tag_names[1],)).keys())[0]
-        tag_slug3 = list(self.create_tagged_articles(
-            5, tags=(tag_names[2],)).keys())[0]
-        tags_expected = [
-            (tag_slug3, 5),
-            (tag_slug2, 3),
-        ]
-        tags = Article.objects.get_tags(
-            request=None, namespace=self.app_config.namespace)
-        tags = [(tag.slug, tag.num_articles) for tag in tags]
-        self.assertEquals(tags, tags_expected)
 
     def test_articles_by_date(self):
         in_articles = [
@@ -559,8 +498,6 @@ class TestIndex(NewsBlogTestCase):
         article = self.create_article(content=content0, lead_in='lead in text',
                                       title='a title')
         article.categories.add()
-        for tag_name in ('tag 1', 'tag2'):
-            article.tags.add(tag_name)
         for category in (self.category1, self.category2):
             article.categories.add(category)
         article.update_search_on_save = True
@@ -571,8 +508,6 @@ class TestIndex(NewsBlogTestCase):
         self.assertTrue('lead in text' in self.index.get_search_data(
             article, 'en', self.request))
         self.assertTrue(content0 in self.index.get_search_data(
-            article, 'en', self.request))
-        self.assertTrue('tag 1' in self.index.get_search_data(
             article, 'en', self.request))
         self.assertTrue(self.category1.name in self.index.get_search_data(
             article, 'en', self.request))
@@ -587,8 +522,6 @@ class TestIndex(NewsBlogTestCase):
         article_2 = self.create_article(
             content=content0, lead_in=u'lead in text', title=u'second title')
         for article in (article_1, article_2):
-            for tag_name in ('tag 1', 'tag2'):
-                article.tags.add(tag_name)
             for category in (self.category1, self.category2):
                 article.categories.add(category)
         with switch_language(article_2, 'de'):
@@ -653,7 +586,6 @@ class ViewLanguageFallbackMixin(object):
             )
         if categories:
             de_article.categories = categories
-        de_article.tags.add('tag1')
         de_article.save()
         return de_article
 
@@ -674,7 +606,6 @@ class ViewLanguageFallbackMixin(object):
                                               app_config=app_config)
                 if categories:
                     article.categories = categories
-                article.tags.add('tag1')
                 article.save()
                 articles.append(article)
         return articles
@@ -799,27 +730,5 @@ class CategoryFeedListLanguageFallback(ViewLanguageFallbackMixin,
     def get_view_kwargs(self):
         kwargs = {
             'category': self.category1.slug
-        }
-        return kwargs
-
-
-class TagArticleListLanguageFallback(ViewLanguageFallbackMixin,
-                                     NewsBlogTestCase):
-    view_name = 'article-list-by-tag'
-
-    def get_view_kwargs(self):
-        kwargs = {
-            'tag': 'tag1'
-        }
-        return kwargs
-
-
-class TagFeedLanguageFallback(ViewLanguageFallbackMixin,
-                              NewsBlogTestCase):
-    view_name = 'article-list-by-tag-feed'
-
-    def get_view_kwargs(self):
-        kwargs = {
-            'tag': 'tag1'
         }
         return kwargs

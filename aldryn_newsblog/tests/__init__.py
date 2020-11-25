@@ -121,21 +121,6 @@ class NewsBlogTestsMixin(object):
                            self.language, body=content)
         return article
 
-    def create_tagged_articles(self, num_articles=3, tags=('tag1', 'tag2'),
-                               **kwargs):
-        """Create num_articles Articles for each tag"""
-        articles = {}
-        for tag_name in tags:
-            tagged_articles = []
-            for _ in range(num_articles):
-                article = self.create_article(**kwargs)
-                article.save()
-                article.tags.add(tag_name)
-                tagged_articles.append(article)
-            tag_slug = tagged_articles[0].tags.slugs()[0]
-            articles[tag_slug] = tagged_articles
-        return articles
-
     def setup_categories(self):
         """
         Sets-up i18n categories (self.category_root, self.category1 and

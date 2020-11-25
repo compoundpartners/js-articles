@@ -8,11 +8,6 @@ class Form(forms.BaseForm):
         required=False,
         initial=True)
 
-    hide_tags = forms.CheckboxField(
-        "Hide Tags",
-        required=False,
-        initial=True)
-
     hide_user = forms.CheckboxField(
         'Hide owner', required=False, initial=False
     )
@@ -50,9 +45,6 @@ class Form(forms.BaseForm):
 
         if data['hide_related_articles']:
             settings['ARTICLES_HIDE_RELATED'] = int(data['hide_related_articles'])
-
-        if data['hide_tags']:
-            settings['ARTICLES_HIDE_TAGS'] = int(data['hide_tags'])
 
         if data['hide_user']:
             settings['ARTICLES_HIDE_USER'] = int(data['hide_user'])

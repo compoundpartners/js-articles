@@ -13,7 +13,7 @@ from django.test import TransactionTestCase
 from django.utils.timezone import now
 from django.utils.translation import override
 
-from aldryn_newsblog.feeds import LatestArticlesFeed, TagFeed, CategoryFeed
+from aldryn_newsblog.feeds import LatestArticlesFeed, CategoryFeed
 
 from . import NewsBlogTestsMixin
 
@@ -35,23 +35,6 @@ class TestFeeds(NewsBlogTestsMixin, TransactionTestCase):
 
         self.assertContains(feed, article.title)
         self.assertNotContains(feed, future_article.title)
-
-    def test_tag_feed(self):
-        articles = self.create_tagged_articles()
-
-        url = reverse(
-            '{0}:article-list-by-tag-feed'.format(self.app_config.namespace),
-            args=['tag1']
-        )
-        self.request = self.get_request('en', url)
-        if getattr(self.request, 'current_page', None) is None:
-            self.request.current_page = self.page
-        feed = TagFeed()(self.request, 'tag1')
-
-        for article in articles['tag1']:
-            self.assertContains(feed, article.title)
-        for different_tag_article in articles['tag2']:
-            self.assertNotContains(feed, different_tag_article.title)
 
     def test_category_feed(self):
         lang = self.category1.get_current_language()

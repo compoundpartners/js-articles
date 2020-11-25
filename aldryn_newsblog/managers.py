@@ -16,7 +16,6 @@ from django.utils.timezone import now
 from aldryn_apphooks_config.managers.base import ManagerMixin, QuerySetMixin
 from aldryn_people.models import Person
 from parler.managers import TranslatableManager, TranslatableQuerySet
-from taggit.models import Tag, TaggedItem
 
 from .constants import (
     TRANSLATE_IS_PUBLISHED,
@@ -103,35 +102,6 @@ class AllManager(ManagerMixin, TranslatableManager):
             article__app_config__namespace=namespace,
             article__is_published=True).annotate(
                 num_articles=models.Count('article')).order_by('-num_articles')
-
-    def get_tags(self, request, namespace):
-        """
-        Get tags with articles count for given namespace string.
-
-        Return list of Tag objects ordered by custom 'num_articles' attribute.
-        """
-        if (request and hasattr(request, 'toolbar') and
-                request.toolbar and request.toolbar.edit_mode_active):
-            articles = self.namespace(namespace)
-        else:
-            articles = self.published().namespace(namespace)
-        if not articles:
-            # return empty iterable early not to perform useless requests
-            return []
-        kwargs = TaggedItem.bulk_lookup_kwargs(articles)
-
-        # aggregate and sort
-        counted_tags = dict(TaggedItem.objects
-                            .filter(**kwargs)
-                            .values('tag')
-                            .annotate(tag_count=models.Count('tag'))
-                            .values_list('tag', 'tag_count'))
-
-        # and finally get the results
-        tags = Tag.objects.filter(pk__in=counted_tags.keys())
-        for tag in tags:
-            tag.num_articles = counted_tags[tag.pk]
-        return sorted(tags, key=attrgetter('num_articles'), reverse=True)
 
 
 class RelatedManager(AllManager):

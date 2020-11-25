@@ -24,7 +24,6 @@ HELPER_SETTINGS = {
         'mptt',
         'parler',
         'sortedm2m',
-        'taggit',
     ],
     'TEMPLATE_DIRS': (
         os.path.join(

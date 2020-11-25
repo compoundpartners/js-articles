@@ -389,26 +389,3 @@ class TestRelatedArticlesPlugin(TestPluginLanguageHelperMixin,
             self.create_article() for _ in range(2)]
         main_article.related.add(related_article)
         self._test_plugin_languages_with_article(related_article)
-
-
-class TestTagsPlugin(TestAppConfigPluginsBase):
-    plugin_to_test = 'NewsBlogTagsPlugin'
-
-    def test_tags_plugin(self):
-        # Published, tag1-tagged articles in our current namespace
-        self.create_tagged_articles(3, tags=['tag1'])['tag1']
-        other_articles = self.create_tagged_articles(5, tags=['tag2'])['tag2']
-        # Some tag1, but unpublished articles
-        other_articles += self.create_tagged_articles(
-            7, tags=['tag1'], is_published=False)['tag1']
-        # Some tag1 articles in another namespace
-        other_articles += self.create_tagged_articles(
-            1, tags=['tag1'], app_config=self.another_app_config)['tag1']
-
-        # REQUIRED DUE TO USE OF RAW QUERIES
-        time.sleep(1)
-
-        response = self.client.get(self.plugin_page.get_absolute_url())
-        response_content = force_text(response.content)
-        self.assertRegexpMatches(response_content, 'tag1\s*<span[^>]*>3</span>')
-        self.assertRegexpMatches(response_content, 'tag2\s*<span[^>]*>5</span>')

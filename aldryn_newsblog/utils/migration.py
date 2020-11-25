@@ -22,7 +22,6 @@ default_cms_plugin_table_mapping = (
         'aldryn_newsblog_newsbloglatestarticlesplugin'),
     ('cmsplugin_newsblogrelatedplugin',
         'aldryn_newsblog_newsblogrelatedplugin'),
-    ('cmsplugin_newsblogtagsplugin', 'aldryn_newsblog_newsblogtagsplugin'),
 )
 
 

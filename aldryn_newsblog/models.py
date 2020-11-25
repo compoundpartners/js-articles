@@ -34,8 +34,6 @@ from djangocms_text_ckeditor.fields import HTMLField
 from filer.fields.image import FilerImageField
 from parler.models import TranslatableModel, TranslatedFields
 from sortedm2m.fields import SortedManyToManyField
-from taggit.managers import TaggableManager
-from taggit.models import Tag
 
 from .cms_appconfig import NewsBlogConfig, NewsBlogFeed
 from .managers import RelatedManager, AllManager, SearchManager
@@ -234,7 +232,6 @@ class Article(CustomArticleMixin,
         on_delete=models.SET_NULL,
         related_name='+'
     )
-    tags = TaggableManager(blank=True)
     medium = models.ForeignKey(ArticleMedium, on_delete=models.SET_NULL, verbose_name=_('medium'),
                               null=True, blank=True)
 
@@ -403,8 +400,6 @@ class Article(CustomArticleMixin,
         for service in self.services.all():
             text_bits.append(
                 force_unicode(service.safe_translation_getter('title')))
-        for tag in self.tags.all():
-            text_bits.append(force_unicode(tag.name))
         if self.content:
             plugins = self.content.cmsplugin_set.filter(language=language)
             for base_plugin in plugins:
@@ -644,48 +639,6 @@ class NewsBlogJSRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
 
     def __str__(self):
         return ugettext('Related articles')
-
-
-@python_2_unicode_compatible
-class NewsBlogTagsPlugin(PluginEditModeMixin, NewsBlogCMSPlugin):
-
-    def get_tags(self, request):
-        """
-        Returns a queryset of tags, annotated by the number of articles
-        (article_count) that are visible to the current user. If this user is
-        anonymous, then this will be all articles that are published and whose
-        publishing_date has passed. If the user is a logged-in cms operator,
-        then it will be all articles.
-        """
-
-        article_content_type = ContentType.objects.get_for_model(Article)
-
-        subquery = """
-            SELECT COUNT(*)
-            FROM aldryn_newsblog_article, taggit_taggeditem
-            WHERE
-                taggit_taggeditem.tag_id = taggit_tag.id AND
-                taggit_taggeditem.content_type_id = %d AND
-                taggit_taggeditem.object_id = aldryn_newsblog_article.id AND
-                aldryn_newsblog_article.app_config_id = %d"""
-
-        if not self.get_edit_mode(request):
-            subquery += """ AND
-                aldryn_newsblog_article.is_published %s AND
-                aldryn_newsblog_article.publishing_date <= %s
-            """ % (SQL_IS_TRUE, SQL_NOW_FUNC, )
-
-        query = """
-            SELECT (%s) as article_count, taggit_tag.*
-            FROM taggit_tag
-        """ % (subquery % (article_content_type.id, self.app_config.pk), )
-
-        raw_tags = list(Tag.objects.raw(query))
-        tags = [tag for tag in raw_tags if tag.article_count]
-        return sorted(tags, key=lambda x: x.article_count, reverse=True)
-
-    def __str__(self):
-        return ugettext('%s tags') % (self.app_config.get_app_title(), )
 
 
 @receiver(post_save, dispatch_uid='article_update_search_data')

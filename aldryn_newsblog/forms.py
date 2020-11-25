@@ -32,11 +32,6 @@ class NewsBlogCategoriesPluginForm(AutoAppConfigFormMixin, forms.ModelForm):
         fields = ['app_config']
 
 
-class NewsBlogTagsPluginForm(AutoAppConfigFormMixin, forms.ModelForm):
-    class Meta:
-        fields = ['app_config']
-
-
 class NewsBlogRelatedPluginForm(forms.ModelForm):
     layout = forms.ChoiceField(choices=SPECIFIC_ARTICLES_LAYOUTS)
     related_articles = SortedMultipleChoiceField(
@@ -45,7 +40,6 @@ class NewsBlogRelatedPluginForm(forms.ModelForm):
         required=False,
         widget=SortedFilteredSelectMultiple(attrs={'verbose_name':'article', 'verbose_name_plural':'articles'})
     )
-
 
     class Meta:
         fields = '__all__'

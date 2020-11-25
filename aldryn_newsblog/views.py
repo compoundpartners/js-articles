@@ -20,7 +20,6 @@ from django.views.generic.detail import DetailView
 
 from menus.utils import set_language_changer
 from parler.views import TranslatableSlugMixin, ViewUrlMixin
-from taggit.models import Tag
 
 from aldryn_apphooks_config.mixins import AppConfigMixin
 from aldryn_apphooks_config.utils import get_app_instance
@@ -433,22 +432,6 @@ class ServiceArticleList(ArticleListBase):
         ctx = super(ServiceArticleList, self).get_context_data(**kwargs)
         ctx['newsblog_service'] = self.service
         return ctx
-
-
-class TagArticleList(ArticleListBase):
-    """A list of articles filtered by tags."""
-    def get_queryset(self):
-        return super(TagArticleList, self).get_queryset().filter(
-            tags=self.tag
-        )
-
-    def get(self, request, tag):
-        self.tag = get_object_or_404(Tag, slug=tag)
-        return super(TagArticleList, self).get(request)
-
-    def get_context_data(self, **kwargs):
-        kwargs['newsblog_tag'] = self.tag
-        return super(TagArticleList, self).get_context_data(**kwargs)
 
 
 class DateRangeArticleList(ArticleListBase):

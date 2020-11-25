@@ -50,7 +50,6 @@ from . import models, default_medium
 
 from .constants import (
     HIDE_RELATED_ARTICLES,
-    HIDE_TAGS,
     HIDE_USER,
     ENABLE_LOCATIONS,
     ENABLE_READTIME,
@@ -234,11 +233,6 @@ class ArticleAdmin(
     if IS_THERE_COMPANIES:
         advanced_settings_fields += (
             'companies',
-        )
-
-    if HIDE_TAGS == 0:
-        advanced_settings_fields += (
-            'tags',
         )
 
     if HIDE_RELATED_ARTICLES == 0:

@@ -20,12 +20,6 @@ HIDE_RELATED_ARTICLES = getattr(
     False,
 )
 
-HIDE_TAGS = getattr(
-    settings,
-    'ARTICLES_HIDE_TAGS',
-    False,
-)
-
 HIDE_USER = getattr(
     settings,
     'ARTICLES_HIDE_USER',

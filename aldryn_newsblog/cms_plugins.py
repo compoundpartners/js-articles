@@ -269,20 +269,3 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
             except TemplateDoesNotExist:
                 pass
         return self.render_template
-
-
-@plugin_pool.register_plugin
-class NewsBlogTagsPlugin(NewsBlogPlugin):
-    render_template = 'aldryn_newsblog/plugins/tags.html'
-    name = _('Tags')
-    model = models.NewsBlogTagsPlugin
-    form = forms.NewsBlogTagsPluginForm
-
-    def render(self, context, instance, placeholder):
-        request = context.get('request')
-        context['instance'] = instance
-        context['tags'] = instance.get_tags(request)
-        context['article_list_url'] = default_reverse(
-            '{0}:article-list'.format(instance.app_config.namespace),
-            default=None)
-        return context

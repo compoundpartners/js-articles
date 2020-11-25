@@ -59,15 +59,6 @@ class LatestArticlesFeed(Feed):
         return item.publishing_date
 
 
-class TagFeed(LatestArticlesFeed):
-
-    def get_object(self, request, tag):
-        return tag
-
-    def items(self, obj):
-        return self.get_queryset().filter(tags__slug=obj)[:10]
-
-
 class CategoryFeed(LatestArticlesFeed):
 
     def get_object(self, request, category):

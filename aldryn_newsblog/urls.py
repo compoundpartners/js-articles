@@ -2,9 +2,9 @@ from django.conf.urls import url
 
 from aldryn_newsblog.views import (
     ArticleDetail, ArticleList, AuthorArticleList, CategoryArticleList,
-    YearArticleList, MonthArticleList, DayArticleList, TagArticleList,
+    YearArticleList, MonthArticleList, DayArticleList,
     ArticleSearchResultsList, ServiceArticleList)
-from aldryn_newsblog.feeds import LatestArticlesFeed, TagFeed, CategoryFeed
+from aldryn_newsblog.feeds import LatestArticlesFeed, CategoryFeed
 
 urlpatterns = [
     url(r'^$',
@@ -48,10 +48,4 @@ urlpatterns = [
         CategoryFeed(), name='article-list-by-category-feed'),
     url(r'^service/(?P<service>\w[-\w]*)/$',
         ServiceArticleList.as_view(), name='article-list-by-service'),
-
-    url(r'^tag/(?P<tag>\w[-\w]*)/$',
-        TagArticleList.as_view(), name='article-list-by-tag'),
-    url(r'^tag/(?P<tag>\w[-\w]*)/feed/$',
-        TagFeed(), name='article-list-by-tag-feed'),
-
 ]
