@@ -1,0 +1,7 @@
+{% load querystring_tags %}
+
+{% for input in inputs|if_value %}
+  {% if input and input.value %}
+    {% display_choice input %}{% if not forloop.last %},{% endif %}
+  {% endif %}
+{% endfor %}

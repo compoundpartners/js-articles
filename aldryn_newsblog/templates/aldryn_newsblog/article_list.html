@@ -1,13 +1,21 @@
 {% extends "aldryn_newsblog/base.html" %}
 
-{% load i18n cms_tags staticfiles extra_cms_tags %}
+{% load i18n cms_tags staticfiles querystring_tags %}
 
 {% block header_attributes %}
   <link rel="canonical" href="{{ ROOT_URL }}{{ request.path }}" />
 {% endblock %}
 
 {% block title %}
-    {% if type_filter_active %}{{ type_filter_active.0 }}{% endif %}{% if category_filter_active %} | {{ category_filter_active.0 }}{% endif %} | {% page_attribute page_title %} | {{ request.site.name }}
+    {% page_attribute page_title as page_title %}
+    {% display_choice filter.form.section as section %}
+    {% firstof newsblog_service newsblog_author as articles_by %}
+    {% firstof section page_title|capfirst %}{% if articles_by %} by {{ articles_by }}{% endif %}
+    {% to_list filter.form.q filter.form.medium filter.form.location filter.form.company filter.form.service as selected %}
+    {% if selected|if_value %}
+        filtered by
+        {% include "aldryn_newsblog/includes/article_list/search_title.html" with inputs=selected|if_value %}
+    {% endif %}
 {% endblock title %}
 
 {% block meta %}
@@ -23,16 +31,20 @@
   <article class="container">
 
     <header>
-      {% include "aldryn_newsblog/includes/article_list/article_header.html" %}
+      <h1>
+          {% page_attribute page_title as page_title %}
+          {% display_choice filter.form.section as section %}
+          {% firstof newsblog_service newsblog_author as articles_by %}
+          {% firstof section page_title|capfirst %}{% if articles_by %} by {{ articles_by }}{% endif %}
+          {% to_list filter.form.q filter.form.medium filter.form.location filter.form.company filter.form.service as selected %}
+          {% if selected|if_value %}
+              filtered by
+              {% include "aldryn_newsblog/includes/article_list/search_title.html" with inputs=selected|if_value %}
+          {% endif %}
+      </h1>
     </header>
 
     <div class="row">
-
-      <aside id="search" class="col-12">
-
-        {% include "aldryn_newsblog/includes/article_list/search_form.html" %}
-
-      </aside>
 
       <section id="main-content" class="col-8" role="main">
 
@@ -47,7 +59,7 @@
       </section>
 
       <aside id="sidebar" class="col-4" role="complementary" aria-label="Sidebar">
-        {% include "aldryn_newsblog/includes/article_list/sidebar.html" %}
+        {% include "aldryn_newsblog/includes/article_list/search_form.html" %}
       </aside>
 
     </div>

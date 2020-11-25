@@ -1,16 +1,21 @@
 {% load crispy_forms_field querystring_tags %}
+
 {% if input %}
-<div class="input-container">
-  {% if input.value %}
-    <div class="input-group read-only">
-      <input type="text" class="form-control" value="{% display_choice input %}" readonly>
-      <a href="?{% querystring_remove input.name %}" class="btn-clear" aria-label="Remove">
-        <span aria-hidden="true">&times;</span>
-      </a>
-      <input type="hidden" name="{{ input.name }}" value="{{ input.value }}">
-    </div>
-  {% else %}
-      {% crispy_field input %}
-  {% endif %}
-</div>
+
+  <li>
+
+    {% if input.value %}
+      <div class="input-group read-only">
+        <input type="text" class="form-control" value="{% display_choice input %}" readonly>
+        <a href="?{% querystring_remove input.name %}" class="btn-clear" aria-label="Remove">
+          <span aria-hidden="true">&times;</span>
+        </a>
+        <input type="hidden" name="{{ input.name }}" value="{{ input.value }}">
+      </div>
+    {% else %}
+        {% crispy_field input %}
+    {% endif %}
+
+  </li>
+
 {% endif %}

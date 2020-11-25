@@ -4,47 +4,46 @@
 
   {% crispy_field filter.form.q 'class' 'form-control' %}
 
-  <button class="btn-search" type="submit"><span class="sr-only">Search</span><img src="/static/img/magnify-glass.svg"></button>
+  <button type="submit">Search</button>
 
-  {% if request.current_app == 'all-articles' %}
-      <div">{% include "aldryn_newsblog/includes/article_list/filter.html" with input=filter.form.section %}</div>
-  {% endif %}
+  <ul>
+    {% if request.current_app == 'all-articles' %}
+      {% include "aldryn_newsblog/includes/article_list/filter.html" with input=filter.form.section %}
+    {% endif %}
 
-  <div>{% include "aldryn_newsblog/includes/article_list/filter.html" with input=filter.form.medium %}</div>
+    {% include "aldryn_newsblog/includes/article_list/filter.html" with input=filter.form.category %}
 
-  {% if not newsblog_service %}
-      <div>{% include "aldryn_newsblog/includes/article_list/filter.html" with input=filter.form.service %}</div>
-  {% endif %}
+    {% include "aldryn_newsblog/includes/article_list/filter.html" with input=filter.form.medium %}
 
-  <div>{% include "aldryn_newsblog/includes/article_list/filter.html" with input=filter.form.location %}</div>
+    {% include "aldryn_newsblog/includes/article_list/filter.html" with input=filter.form.service %}
 
-  <div>{% include "aldryn_newsblog/includes/article_list/filter.html" with input=filter.form.company %}</div>
+    {% include "aldryn_newsblog/includes/article_list/filter.html" with input=filter.form.location %}
+  </ul>
 
   {% if filter.form.q.value or filter.form.medium.value or filter.form.location.value or filter.form.company.value or filter.form.service.value or filter.form.section.value %}
-    <a href="?" class="btn btn-reset">Reset search</a>
+    <a href="?">Reset search</a>
   {% endif %}
 
 </form>
 
 {% if filter.form.q.value %}
-    <script>
-      var dataLayer = window.dataLayer = window.dataLayer || [];
-      dataLayer.push({
-        "event": "event",
-        "eventCategory": "Listing search",
-        "eventAction": "Search",
-        "eventLabel": "{{ filter.form.q.value }}"
-      });
-    </script>
+  <script>
+    var dataLayer = window.dataLayer = window.dataLayer || [];
+    dataLayer.push({
+      "event": "event",
+      "eventCategory": "Listing search",
+      "eventAction": "Search",
+      "eventLabel": "{{ filter.form.q.value }}"
+    });
+  </script>
 {% endif %}
 
 {% addtoblock "js" %}
   <script>
     $(function(){
-        $('#articles-search-form select')
-          .change(function () {
-            $('#articles-search-form').submit();
-         });
+      $('#articles-search-form select').change(function () {
+          $('#articles-search-form').submit();
+       });
     });
   </script>
 {% endaddtoblock %}
