@@ -619,6 +619,7 @@ class NewsBlogJSRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
         self.related_types.set(oldinstance.related_types.all())
         self.related_mediums.set(oldinstance.related_mediums.all())
         self.related_categories.set(oldinstance.related_categories.all())
+        self.related_service_sections.set(oldinstance.related_service_sections.all())
         self.related_services.set(oldinstance.related_services.all())
         self.related_authors.set(oldinstance.related_authors.all())
         if IS_THERE_COMPANIES:
