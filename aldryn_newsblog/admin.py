@@ -428,7 +428,7 @@ class NewsBlogConfigAdmin(
             'template_prefix', 'paginate_by', 'pagination_pages_start',
             'pagination_pages_visible', 'exclude_featured',
             'create_authors', 'search_indexed', 'show_in_listing',
-            'show_logo',
+            'show_logo', 'auto_read_time',
             'config.default_published', 'custom_fields_settings', 'custom_fields'
         )
 

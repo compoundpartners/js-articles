@@ -118,6 +118,10 @@ class Article(CustomArticleMixin,
         settings,
         'ALDRYN_NEWSBLOG_UPDATE_SEARCH_DATA_ON_SAVE',
         False
+    ) or getattr(
+        settings,
+        'ALDRYN_NEWSBLOG_AUTO_CALCULATE_READ_TIME',
+        False
     )
 
     translations = TranslatedFields(
@@ -400,6 +404,7 @@ class Article(CustomArticleMixin,
         for service in self.services.all():
             text_bits.append(
                 force_unicode(service.safe_translation_getter('title')))
+        text_bits.append('=c=o=n=t=e=n=t=')
         if self.content:
             plugins = self.content.cmsplugin_set.filter(language=language)
             for base_plugin in plugins:
@@ -412,7 +417,17 @@ class Article(CustomArticleMixin,
         # Update the search index
         if self.update_search_on_save:
             self.search_data = self.get_search_data()
-
+            auto_read_time = getattr(
+                settings,
+                'ALDRYN_NEWSBLOG_AUTO_CALCULATE_READ_TIME',
+                False
+            )
+            if callable(auto_read_time):
+                auto_read_time = auto_read_time(self)
+            if auto_read_time and self.app_config.auto_read_time:
+                read_time = self.get_read_time()
+                if read_time:
+                    self.read_time = read_time
         # Ensure there is an owner.
         if self.app_config.create_authors and self.owner and self.author is None:
             if hasattr(Person, 'first_name') and hasattr(Person, 'last_name'):
@@ -433,6 +448,13 @@ class Article(CustomArticleMixin,
         #if not self.medium:
             #self.medium = ArticleMedium.objects.first()
         super(Article, self).save(*args, **kwargs)
+
+    def get_read_time(self):
+        if '=c=o=n=t=e=n=t=' in self.search_data:
+           read_time_function = getattr(settings,
+                'ALDRYN_NEWSBLOG_READ_TIME_FUNCTION',
+                lambda x : x // 200 + (0 if x % 200 == 0 else 1) )
+           return read_time_function(len(self.search_data.split('=c=o=n=t=e=n=t=')[1].split()))
 
     def get_placeholders(self):
         return [
@@ -655,8 +677,8 @@ def update_search_data(sender, instance, **kwargs):
         placeholder = (getattr(instance, '_placeholder_cache', None) or
                        instance.placeholder)
         if hasattr(placeholder, '_attached_model_cache'):
-            if placeholder._attached_model_cache == Article and placeholder.slot == 'content':
+            if placeholder._attached_model_cache == Article and placeholder.slot == 'newsblog_article_content':
                 article = placeholder._attached_model_cache.objects.language(
                     instance.language).get(content=placeholder.pk)
-                article.search_data = article.get_search_data(instance.language)
+                #article.search_data = article.get_search_data(instance.language)
                 article.save()

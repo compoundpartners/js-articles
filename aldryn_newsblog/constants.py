@@ -136,6 +136,16 @@ ARTICLE_SECTION_CUSTOM_FIELDS = getattr(
     {},
 )
 
+FILTER_EMPTY_LABELS = getattr(
+    settings,
+    'SEARCH_FILTER_EMPTY_LABELS',
+    {}
+)
+FILTER_EMPTY_LABELS.update(getattr(
+    settings,
+    'ARTICLES_FILTER_EMPTY_LABELS',
+    {}
+))
 try:
     IS_THERE_COMPANIES = True
     from js_companies.models import Company

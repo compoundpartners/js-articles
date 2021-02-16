@@ -108,6 +108,12 @@ class NewsBlogConfig(TranslatableModel, AppHookConfig):
         help_text=_('Include articles in search indexes?'),
     )
 
+    auto_read_time = models.BooleanField(
+        _("Calculate read time"),
+        default=True,
+        help_text=_('If set then article read time calculated automatic.'),
+    )
+
     show_in_listing = models.BooleanField(
         _('Include in Listings?'),
         default=True,
