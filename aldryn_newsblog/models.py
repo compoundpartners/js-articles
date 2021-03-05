@@ -468,22 +468,22 @@ class Article(CustomArticleMixin,
         return self.safe_translation_getter('title', any_language=True)
 
     def get_related_articles_by_services(self, article_category=None):
-        articles = self.__class__.objects.published().filter(services__in=self.services.all()).exclude(id=self.id)
+        articles = self.__class__.objects.published().filter(services__in=self.services.all()).distinct().exclude(id=self.id)
         if article_category:
             return articles.namespace(article_category)
-        return articles.distinct()
+        return articles
 
     def get_related_articles_by_categories(self, article_category=None):
-        articles = self.__class__.objects.published().filter(categories__in=self.categories.all()).exclude(id=self.id)
+        articles = self.__class__.objects.published().filter(categories__in=self.categories.all()).distinct().exclude(id=self.id)
         if article_category:
             return articles.namespace(article_category)
-        return articles.distinct()
+        return articles
 
     def related_articles_by_services(self):
-        return self.get_related_articles_by_services(self.app_config.namespace)
+        return self.get_related_articles_by_services()
 
     def related_articles_by_categories(self):
-        return self.get_related_articles_by_categories(self.app_config.namespace)
+        return self.get_related_articles_by_categories()
 
     def related_articles_same_type_by_services(self):
         return self.get_related_articles_by_services(self.app_config.namespace)
