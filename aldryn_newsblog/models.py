@@ -623,7 +623,7 @@ class NewsBlogJSRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
     title = models.CharField(max_length=255, blank=True, verbose_name=_('Title'))
     icon = Icon(blank=False, default='')
     image = FilerImageField(on_delete=models.SET_NULL, null=True, blank=True, related_name="title_image")
-    number_of_articles = models.PositiveSmallIntegerField(verbose_name=_('Number of articles'), validators=[django.core.validators.MaxValueValidator(120)])
+    number_of_articles = models.PositiveSmallIntegerField(verbose_name=_('Number of articles'), validators=[django.core.validators.MaxValueValidator(150)])
     layout = models.CharField(max_length=30, verbose_name=_('layout'))
     featured = models.BooleanField(blank=True, default=False)
     exclude_current_article = models.BooleanField(blank=True, default=False)
