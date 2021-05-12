@@ -198,6 +198,7 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
                 qs = qs.filter(medium__isnull=True)
             else:
                 qs = qs.filter(medium__in=related_mediums.all())
+            context['related_mediums'] = related_mediums.all()
         if related_authors.exists():
             if related_authors.count() == 1:
                 self.author = related_authors.first()
@@ -208,14 +209,19 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
                 )
             else:
                 qs = qs.filter(author__in=related_authors.all())
+            context['related_authors'] = related_authors.all()
         if related_categories.exists():
             qs = qs.filter(categories__in=related_categories.all())
+            context['related_categories'] = related_categories.all()
         if related_service_sections.exists():
             qs = qs.filter(services__sections__in=related_service_sections.all())
+            context['related_service_sections'] = related_service_sections.all()
         if related_services.exists():
             qs = qs.filter(services__in=related_services.all())
+            context['related_services'] = related_services.all()
         if IS_THERE_COMPANIES and related_companies.exists():
             qs = qs.filter(companies__in=related_companies.all())
+            context['related_companies'] = related_companies.all()
         if exclude_current_article:
             current_article = self.get_article(request)
             if current_article is not None:
