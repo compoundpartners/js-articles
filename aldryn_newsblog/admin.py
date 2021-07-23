@@ -328,10 +328,18 @@ class ArticleAdmin(
 
     def get_fieldsets(self, request, obj=None):
         fieldsets = super(ArticleAdmin, self).get_fieldsets(request, obj)
-        if SHOW_LOGO and obj and obj.app_config.show_logo and 'logo_image' not in fieldsets[0][1]['fields']:
-            fieldsets[0][1]['fields'] += [
-                'logo_image',
-            ]
+        if SHOW_LOGO and obj and obj.app_config.show_logo:
+            index = fieldsets[0][1]['fields'].index('featured_image')
+            if 'svg_image' not in fieldsets[0][1]['fields']:
+                fieldsets[0][1]['fields'].insert(
+                    index + 1,
+                    'svg_image',
+                )
+            if 'logo_image' not in fieldsets[0][1]['fields']:
+                fieldsets[0][1]['fields'].insert(
+                    index + 2,
+                    'logo_image',
+                )
         for fieldset in fieldsets:
             if len(fieldset) == 2 and 'fields' in fieldset[1]:
                 fields = []

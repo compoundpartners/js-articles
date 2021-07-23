@@ -32,6 +32,7 @@ from django.utils.translation import override, ugettext
 from djangocms_icon.fields import Icon
 from djangocms_text_ckeditor.fields import HTMLField
 from filer.fields.image import FilerImageField
+from filer.fields.file import FilerFileField
 from parler.models import TranslatableModel, TranslatedFields
 from sortedm2m.fields import SortedManyToManyField
 
@@ -235,6 +236,13 @@ class Article(CustomArticleMixin,
         blank=True,
         on_delete=models.SET_NULL,
         related_name='+'
+    )
+    svg_image = FilerFileField(
+        verbose_name=_('logo SVG'),
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
     )
     medium = models.ForeignKey(ArticleMedium, on_delete=models.SET_NULL, verbose_name=_('medium'),
                               null=True, blank=True)
