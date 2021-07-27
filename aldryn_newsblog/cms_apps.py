@@ -4,10 +4,14 @@ from __future__ import unicode_literals
 
 from aldryn_apphooks_config.app_base import CMSConfigApp
 from cms.apphook_pool import apphook_pool
+from django.conf.urls import url, include
 from django.utils.translation import ugettext_lazy as _
 
 from .models import NewsBlogConfig, NewsBlogFeed
 from .constants import ENABLE_FEEDS
+from .feeds import CustomFeed
+from .views import RelatedArticles
+
 
 class NewsBlogApp(CMSConfigApp):
     name = _('NewsBlog')
@@ -34,7 +38,7 @@ class NewsBlogFeedApp(CMSConfigApp):
     app_config = NewsBlogFeed
 
     def get_urls(self, *args, **kwargs):
-        return ['aldryn_newsblog.urls_feed']
+        return [url(r'^$', CustomFeed(), name='articles-feed')]
 
 if ENABLE_FEEDS:
     apphook_pool.register(NewsBlogFeedApp)
@@ -46,4 +50,11 @@ class RelatedArticlesApp(CMSConfigApp):
     app_name = 'related_articles'
 
     def get_urls(self, *args, **kwargs):
-        return ['aldryn_newsblog.urls_related_articles']
+        return [
+            url(r'^$',
+                RelatedArticles.as_view(), name='related_articles'),
+            url(r'^(?P<type>\w[-\w]*)/$',
+                RelatedArticles.as_view(), name='related_articles'),
+            url(r'^(?P<type>\w[-\w]*)/(?P<category>\w[-\w]*)/$',
+                RelatedArticles.as_view(), name='related_articles'),
+        ]

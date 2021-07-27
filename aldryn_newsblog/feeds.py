@@ -18,7 +18,11 @@ from aldryn_apphooks_config.utils import get_app_instance
 from aldryn_categories.models import Category
 from aldryn_newsblog.models import Article
 from aldryn_newsblog.utils.utilities import get_valid_languages
-
+try:
+    from custom.aldryn_newsblog.feeds import CustomFeedMixin
+except ImportError:
+    class CustomFeedMixin(object):
+        pass
 
 class LatestArticlesFeed(Feed):
 
@@ -70,7 +74,7 @@ class CategoryFeed(LatestArticlesFeed):
         return self.get_queryset().filter(categories=obj)[:10]
 
 
-class CustomFeed(LatestArticlesFeed):
+class CustomFeed(CustomFeedMixin, LatestArticlesFeed):
 
     def link(self):
         return reverse('{0}:articles-feed'.format(self.namespace))
