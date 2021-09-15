@@ -2,19 +2,17 @@
 from __future__ import unicode_literals
 
 from aldryn_apphooks_config.admin import BaseAppHookConfig, ModelAppHookConfig
-from aldryn_people.models import Person
 from aldryn_translation_tools.admin import AllTranslationsMixin
 from cms.admin.placeholderadmin import FrontendEditableAdminMixin
+from cms.admin.placeholderadmin import PlaceholderAdminMixin
 from cms.utils.i18n import get_current_language, get_language_list
 from cms.utils import copy_plugins, get_current_site
 
 from django.db import transaction
 from django.db.models.query import EmptyQuerySet
-from django import forms
 from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.sites.models import Site
-from django.forms import widgets
 from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext_lazy as _
 from django.utils.decorators import method_decorator
@@ -28,46 +26,31 @@ from django.http import (
     HttpResponseForbidden,
 )
 from parler.admin import TranslatableAdmin
-from parler.forms import TranslatableModelForm
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
 
-try:
-    from js_custom_fields.forms import CustomFieldsFormMixin, CustomFieldsSettingsFormMixin
-except:
-    class CustomFieldsFormMixin(object):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            if 'custom_fields' in self.fields:
-                self.fields['custom_fields'].widget = forms.HiddenInput()
 
-    class CustomFieldsSettingsFormMixin(object):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            if 'custom_fields_settings' in self.fields:
-                self.fields['custom_fields_settings'].widget = forms.HiddenInput()
-
-from . import models, default_medium
+from . import models, forms, default_medium
 
 from .constants import (
     HIDE_RELATED_ARTICLES,
     HIDE_USER,
     ENABLE_LOCATIONS,
     ENABLE_READTIME,
-    SUMMARY_RICHTEXT,
     IS_THERE_COMPANIES,
-    ARTICLE_LAYOUT_CHOICES,
     SHOW_LOGO,
     TRANSLATE_IS_PUBLISHED,
     TRANSLATE_AUTHORS,
     ENABLE_FEEDS,
-    ARTICLE_CUSTOM_FIELDS,
-    ARTICLE_SECTION_CUSTOM_FIELDS,
 )
 if IS_THERE_COMPANIES:
     from js_companies.models import Company
 
+try:
+    from custom.aldryn_newsblog.admin import CusomArticleAdminMixin
+except ImportError:
+    class CusomArticleAdminMixin(object):
+        pass
 
-from cms.admin.placeholderadmin import PlaceholderAdminMixin
 
 require_POST = method_decorator(require_POST)
 
@@ -132,68 +115,8 @@ make_not_featured.short_description = _(
     "Mark selected articles as not featured")
 
 
-class ArticleAdminForm(CustomFieldsFormMixin, TranslatableModelForm):
-    companies = forms.CharField()
-    layout = forms.ChoiceField(choices=ARTICLE_LAYOUT_CHOICES, required=False)
-
-    custom_fields = 'get_custom_fields'
-
-    class Meta:
-        model = models.Article
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        #if 'initial' in kwargs:
-            #kwargs['initial']['medium'] = models.ArticleMedium.objects.first().pk if models.ArticleMedium.objects.first() else None
-        super(ArticleAdminForm, self).__init__(*args, **kwargs)
-
-        qs = models.Article.objects
-        if self.instance.app_config_id:
-            qs = models.Article.objects.filter(
-                app_config=self.instance.app_config)
-        elif 'initial' in kwargs and 'app_config' in kwargs['initial']:
-            qs = models.Article.objects.filter(
-                app_config=kwargs['initial']['app_config'])
-
-        author_fileds = ['author', 'author_trans', 'author_2', 'author_2_trans', 'author_3', 'author_3_trans', ]
-        for field in author_fileds:
-            if field in self.fields:
-                self.fields[field].queryset = Person.objects.all().order_by('last_name')
-
-        if self.instance.pk:
-            qs = qs.exclude(pk=self.instance.pk)
-
-        if 'related' in self.fields:
-            self.fields['related'].queryset = qs
-
-        # Don't allow app_configs to be added here. The correct way to add an
-        # apphook-config is to create an apphook on a cms Page.
-        self.fields['app_config'].widget.can_add_related = False
-        # Don't allow related articles to be added here.
-        # doesn't makes much sense to add articles from another article other
-        # than save and add another.
-        if ('related' in self.fields and
-                hasattr(self.fields['related'], 'widget')):
-            self.fields['related'].widget.can_add_related = False
-        if not SUMMARY_RICHTEXT:
-            self.fields['lead_in'].widget = widgets.Textarea()
-        if IS_THERE_COMPANIES:
-            self.fields['companies'] = forms.ModelMultipleChoiceField(queryset=Company.objects.all(), required=False)# self.instance.companies
-            self.fields['companies'].widget = SortedFilteredSelectMultiple()
-            self.fields['companies'].queryset = Company.objects.all()
-            if self.instance.pk and self.instance.companies.count():
-                self.fields['companies'].initial = self.instance.companies.all()
-        else:
-            del self.fields['companies']
-
-    def get_custom_fields(self):
-        fields = ARTICLE_CUSTOM_FIELDS
-        if self.instance and hasattr(self.instance, 'app_config') and self.instance.app_config.custom_fields_settings:
-            fields.update(self.instance.app_config.custom_fields_settings)
-        return fields
-
-
 class ArticleAdmin(
+    CusomArticleAdminMixin,
     PlaceholderAdminMixin,
     FrontendEditableAdminMixin,
     ModelAppHookConfig,
@@ -202,7 +125,7 @@ class ArticleAdmin(
     def get_queryset(self, request):
         return self.model.all_objects.distinct()
 
-    form = ArticleAdminForm
+    form = forms.ArticleAdminForm
     list_display = ('title_view', 'app_config', 'is_featured',
                     'is_published', 'publishing_date')
     list_filter = [
@@ -419,16 +342,12 @@ class ArticleAdmin(
 admin.site.register(models.Article, ArticleAdmin)
 
 
-class NewsBlogConfigAdminForm(CustomFieldsFormMixin, CustomFieldsSettingsFormMixin, TranslatableModelForm):
-    custom_fields = ARTICLE_SECTION_CUSTOM_FIELDS
-
-
 class NewsBlogConfigAdmin(
     PlaceholderAdminMixin,
     BaseAppHookConfig,
     TranslatableAdmin
 ):
-    form = NewsBlogConfigAdminForm
+    form = forms.NewsBlogConfigAdminForm
 
     def get_config_fields(self):
         return (
@@ -444,23 +363,11 @@ class NewsBlogConfigAdmin(
 admin.site.register(models.NewsBlogConfig, NewsBlogConfigAdmin)
 
 
-class NewsBlogFeedAdminForm(TranslatableModelForm):
-    articles = forms.ModelMultipleChoiceField(queryset=models.Article.objects.all(), required=False)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields['articles'].widget = SortedFilteredSelectMultiple()
-        self.fields['articles'].queryset = models.Article.objects.all()
-        if self.instance.pk and self.instance.article_set.count():
-            self.fields['articles'].initial = self.instance.article_set.all()
-
-
 class NewsBlogFeedAdmin(
     BaseAppHookConfig,
     TranslatableAdmin
 ):
-    form = NewsBlogFeedAdminForm
+    form = forms.NewsBlogFeedAdminForm
 
     def get_fieldsets(self, request, obj=None):
         fieldsets = super().get_fieldsets(request, obj)
