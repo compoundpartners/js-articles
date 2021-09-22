@@ -9,7 +9,6 @@ import filer.fields.file
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('filer', '0012_file_mime_type'),
         ('aldryn_newsblog', '0062_newsblogconfig_auto_read_time'),
     ]
 

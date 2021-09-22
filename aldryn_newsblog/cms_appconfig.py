@@ -119,6 +119,16 @@ class NewsBlogConfig(TranslatableModel, AppHookConfig):
         default=True,
         help_text=_('Include articles in listing pages and admin selects?'),
     )
+    show_in_related = models.BooleanField(
+        _('Show in Related Articles'),
+        default=True,
+        help_text=_('Show articles in Related Articles plugin'),
+    )
+    show_in_specific = models.BooleanField(
+        _('Show in Specific Articles'),
+        default=True,
+        help_text=_('Show articles in Specific Articles plugin'),
+    )
 
     show_logo = models.BooleanField(
         _('Show Logo'),

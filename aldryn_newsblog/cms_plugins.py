@@ -17,6 +17,7 @@ from .constants import (
     IS_THERE_COMPANIES,
     ADDITIONAL_CHILD_CLASSES,
     TRANSLATE_IS_PUBLISHED,
+    TRANSLATE_AUTHORS,
 )
 if IS_THERE_COMPANIES:
     from js_companies.models import Company
@@ -124,12 +125,15 @@ class NewsBlogRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
         context['more_button_text'] = instance.more_button_text
         context['more_button_link'] = instance.more_button_link
         if instance.related_articles.count():
-            context['article_list'] = instance.related_articles.all()
+            article_list = instance.related_articles.all()
         else:
             request = context.get('request')
             article = self.get_article(request)
             if article:
-                context['article_list'] = instance.get_articles(article, request)
+                article_list = instance.get_articles(article, request)
+            else:
+                article_list = Article.objects.none()
+        context['article_list'] = article_list.filter(app_config__show_in_specific=True)
         return context
 
     def get_render_template(self, context, instance, placeholder):
@@ -200,15 +204,26 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
                 qs = qs.filter(medium__in=related_mediums.all())
             context['related_mediums'] = related_mediums.all()
         if related_authors.exists():
-            if related_authors.count() == 1:
-                self.author = related_authors.first()
-                qs = qs.filter(
-                    Q(author=self.author) |
-                    Q(author_2=self.author) |
-                    Q(author_3=self.author)
-                )
+            if TRANSLATE_AUTHORS:
+                if related_authors.count() == 1:
+                    self.author = related_authors.first()
+                    qs = qs.translated(
+                        Q(author_trans=self.author) |
+                        Q(author_2_trans=self.author) |
+                        Q(author_3_trans=self.author)
+                    )
+                else:
+                    qs = qs.translated(author_trans__in=related_authors.all())
             else:
-                qs = qs.filter(author__in=related_authors.all())
+                if related_authors.count() == 1:
+                    self.author = related_authors.first()
+                    qs = qs.filter(
+                        Q(author=self.author) |
+                        Q(author_2=self.author) |
+                        Q(author_3=self.author)
+                    )
+                else:
+                    qs = qs.filter(author__in=related_authors.all())
             context['related_authors'] = related_authors.all()
         if related_categories.exists():
             qs = qs.filter(categories__in=related_categories.all())
@@ -231,15 +246,20 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
                 qs = qs.translated(is_featured_trans=True)
             else:
                 qs = qs.filter(is_featured=True)
-        related_articles = qs[:int(instance.number_of_articles)]
+        related_articles = qs.filter(app_config__show_in_related=True)
         articles_with_images = qs.exclude(featured_image__isnull=True)
 
+        for a in related_articles:
+            print(list(a.)
+
+        context['related_articles'] = related_articles[:int(instance.number_of_articles)]
+        context['related_articles_all'] = related_articles
+
         context['show_images'] = True
-        for article in related_articles:
+        for article in context['related_articles']:
             if not article.featured_image:
                 context['show_images'] = False
                 break
-        context['related_articles'] = related_articles
 
         related_types_first = instance.related_types.first()
         if related_types_first is not None:
