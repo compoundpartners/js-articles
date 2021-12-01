@@ -100,6 +100,7 @@ class NewsBlogRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
     child_classes = ADDITIONAL_CHILD_CLASSES.get('NewsBlogRelatedPlugin', [])
     fields = [
         'title',
+        'description',
         'layout',
         'more_button_is_shown',
         'more_button_text',
@@ -121,6 +122,7 @@ class NewsBlogRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
     def render(self, context, instance, placeholder):
         context['instance'] = instance
         context['title'] = instance.title
+        context['description'] = instance.description
         context['more_button_is_shown'] = instance.more_button_is_shown
         context['more_button_text'] = instance.more_button_text
         context['more_button_link'] = instance.more_button_link
@@ -175,6 +177,7 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
         context['instance'] = instance
 
         context['title'] = instance.title
+        context['description'] = instance.description
         context['icon'] = instance.icon
         context['image'] = instance.image
         context['more_button_is_shown'] = instance.more_button_is_shown
@@ -248,9 +251,6 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
                 qs = qs.filter(is_featured=True)
         related_articles = qs.filter(app_config__show_in_related=True)
         articles_with_images = qs.exclude(featured_image__isnull=True)
-
-        for a in related_articles:
-            print(list(a.)
 
         context['related_articles'] = related_articles[:int(instance.number_of_articles)]
         context['related_articles_all'] = related_articles

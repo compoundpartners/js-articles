@@ -593,6 +593,7 @@ class NewsBlogRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
     cmsplugin_ptr = models.OneToOneField(
         CMSPlugin, on_delete=models.CASCADE, related_name='+', parent_link=True)
     title = models.CharField(max_length=255, blank=True, verbose_name=_('Title'))
+    description = models.TextField(verbose_name=_('description'), blank=True, default='')
     layout = models.CharField(max_length=30, verbose_name=_('layout'), blank=True, null=True)
     related_articles = SortedManyToManyField(Article, verbose_name=_('related articles'), blank=True, symmetrical=False)
     more_button_is_shown = models.BooleanField(blank=True, default=False, verbose_name=_('Show “See More Button”'))
@@ -629,6 +630,7 @@ class NewsBlogJSRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
         CMSPlugin, on_delete=models.CASCADE, related_name='+', parent_link=True)
 
     title = models.CharField(max_length=255, blank=True, verbose_name=_('Title'))
+    description = models.TextField(verbose_name=_('description'), blank=True, default='')
     icon = Icon(blank=False, default='')
     image = FilerImageField(on_delete=models.SET_NULL, null=True, blank=True, related_name="title_image")
     number_of_articles = models.PositiveSmallIntegerField(verbose_name=_('Number of articles'), validators=[django.core.validators.MaxValueValidator(500)])
