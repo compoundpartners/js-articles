@@ -12,6 +12,7 @@ from django.db import transaction
 from django.db.models.query import EmptyQuerySet
 from django.conf.urls import url
 from django.contrib import admin
+from django.contrib.admin.templatetags.admin_list import _boolean_icon
 from django.contrib.sites.models import Site
 from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext_lazy as _
@@ -38,9 +39,11 @@ from .constants import (
     ENABLE_READTIME,
     IS_THERE_COMPANIES,
     SHOW_LOGO,
+    SHOW_RELATED_IMAGE,
     TRANSLATE_IS_PUBLISHED,
     TRANSLATE_AUTHORS,
     ENABLE_FEEDS,
+    ADMIN_LIST_FILTERS,
 )
 if IS_THERE_COMPANIES:
     from js_companies.models import Company
@@ -126,18 +129,11 @@ class ArticleAdmin(
         return self.model.all_objects.distinct()
 
     form = forms.ArticleAdminForm
-    list_display = ('title_view', 'app_config', 'is_featured',
-                    'is_published', 'publishing_date')
-    list_filter = [
-        'app_config',
-        'categories',
-        'services',
-    ]
-    if ENABLE_LOCATIONS:
-        list_filter += [
-            'locations',
-        ]
+    list_display = ('title_view', 'app_config', 'is__published',
+                    'is__featured', 'publishing_date')
     search_fields = ['translations__title', 'translations__slug', 'translations__lead_in']
+
+    list_filter = []
 
     actions = (
         make_featured, make_not_featured,
@@ -187,6 +183,7 @@ class ArticleAdmin(
         'is_published',
         'is_featured',
         'featured_image',
+        'related_image' if SHOW_RELATED_IMAGE else (),
         'lead_in',
     ]
     if ENABLE_READTIME:
@@ -240,14 +237,32 @@ class ArticleAdmin(
     app_config_selection_title = ''
     app_config_selection_desc = ''
 
-    def get_list_display(self, request):
-        fields = []
-        list_display = super(ArticleAdmin, self).get_list_display(request)
-        for field in list_display:
-            if field  in ['is_published', 'is_featured'] and TRANSLATE_IS_PUBLISHED:
-                field += '_trans'
-            fields.append(field)
-        return fields
+    def get_list_filter(self, request):
+        filters = []
+        for f in ADMIN_LIST_FILTERS + self.list_filter:
+            if f == 'is_published' and TRANSLATE_IS_PUBLISHED:
+                filters.append('translations__is_published_trans')
+            else:
+                filters.append(f)
+        return filters
+
+    # def get_list_display(self, request):
+        # fields = []
+        # list_display = super(ArticleAdmin, self).get_list_display(request)
+        # for field in list_display:
+            # if field  in ['is_published', 'is_featured'] and TRANSLATE_IS_PUBLISHED:
+                # field += '_trans'
+            # fields.append(field)
+        # return fields
+    def is__published(self, obj):
+        if TRANSLATE_IS_PUBLISHED:
+          return _boolean_icon(obj.is_published_trans)
+        return _boolean_icon(obj.is_published)
+
+    def is__featured(self, obj):
+        if TRANSLATE_IS_PUBLISHED:
+          return _boolean_icon(obj.is_featured_trans)
+        return _boolean_icon(obj.is_featured)
 
     def get_fieldsets(self, request, obj=None):
         fieldsets = super(ArticleAdmin, self).get_fieldsets(request, obj)
@@ -351,7 +366,7 @@ class NewsBlogConfigAdmin(
 
     def get_config_fields(self):
         return (
-            'app_title', 'allow_post', 'permalink_type', 'non_permalink_handling',
+            'app_title', 'show_landing_page', 'allow_post', 'permalink_type', 'non_permalink_handling',
             'template_prefix', 'paginate_by', 'pagination_pages_start',
             'pagination_pages_visible', 'exclude_featured',
             'create_authors', 'search_indexed', 'show_in_listing',

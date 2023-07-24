@@ -5,7 +5,8 @@ from django.core.cache import cache
 from django.utils.translation import ugettext_lazy as _
 from django.utils.timezone import now
 from aldryn_categories.models import Category
-from js_services.models import Service
+from aldryn_people.models import Person
+from js_services.models import Service, ServicesConfig
 from js_locations.models import Location
 import django_filters
 import datetime
@@ -26,6 +27,8 @@ from .constants import (
     ADD_FILTERED_CATEGORIES,
     ADDITIONAL_EXCLUDE,
     FILTER_EMPTY_LABELS,
+    TRANSLATE_AUTHORS,
+    TRANSLATE_IS_PUBLISHED,
 )
 if IS_THERE_COMPANIES:
     from js_companies.models import Company
@@ -44,11 +47,11 @@ class SearchFilter(django_filters.Filter):
 
 class ArticleFilters(CustomFilterMixin, django_filters.FilterSet):
     q = django_filters.CharFilter('translations__title', 'icontains', label='Search the directory')
-    medium = django_filters.ModelChoiceFilter('medium', label='medium', empty_label='by medium', queryset=models.ArticleMedium.objects.exclude(title=default_medium, **ADDITIONAL_EXCLUDE.get('medium', {})))
+    medium = django_filters.ModelChoiceFilter('medium', label='medium', empty_label='by medium', queryset=models.ArticleMedium.objects.exclude(title=default_medium).exclude(**ADDITIONAL_EXCLUDE.get('medium', {})))
     location = django_filters.ModelChoiceFilter('locations', label='location', empty_label='by location', queryset=Location.objects.published().exclude(**ADDITIONAL_EXCLUDE.get('location', {})))
     category = django_filters.ModelChoiceFilter('categories', label='category', empty_label='by category', queryset=Category.objects.exclude(**ADDITIONAL_EXCLUDE.get('category', {})))
     service = django_filters.ModelChoiceFilter('services', label='service', empty_label='by service', queryset=Service.objects.published().exclude(**ADDITIONAL_EXCLUDE.get('service', {})))
-    section = django_filters.ModelChoiceFilter('app_config', label='section', empty_label='by section', queryset=NewsBlogConfig.objects.filter(show_in_listing=True).exclude(namespace=NewsBlogConfig.default_namespace, **ADDITIONAL_EXCLUDE.get('section', {})))
+    section = django_filters.ModelChoiceFilter('app_config', label='section', empty_label='by section', queryset=NewsBlogConfig.objects.filter(show_in_listing=True).exclude(namespace=NewsBlogConfig.default_namespace).exclude(**ADDITIONAL_EXCLUDE.get('section', {})))
 
 
     class Meta:
@@ -171,3 +174,42 @@ def get_archive(namespace, **filters):
                 output.append(out)
         cache.set(key, output, 3600)
     return output
+
+
+class ModeFilter(django_filters.Filter):
+    field_class = django_filters.fields.ChoiceField
+
+    def filter(self, qs, values):
+        return qs
+
+
+class NoneFilter(django_filters.Filter):
+
+    def filter(self, qs, values):
+        return qs
+
+
+class RelatedArticlesFilters(django_filters.FilterSet):
+    mode = ModeFilter(label='mode', choices=[['json', 'json']])
+    count = NoneFilter(label='count', required=True)
+    is_featured = django_filters.BooleanFilter('is_featured', label='is featured')
+    exclude_current = NoneFilter(label='exclude current article')
+    mediums = django_filters.ModelMultipleChoiceFilter('medium', label='medium', queryset=models.ArticleMedium.objects.all())
+    locations = django_filters.ModelMultipleChoiceFilter('locations', label='location', queryset=Location.objects.all())
+    categories = django_filters.ModelMultipleChoiceFilter('categories', label='category', queryset=Category.objects.all())
+    services = django_filters.ModelMultipleChoiceFilter('services', label='service', queryset=Service.objects.all())
+    service_sections = django_filters.ModelMultipleChoiceFilter('services__sections', label='service section', queryset=ServicesConfig.objects.all())
+    sections = django_filters.ModelMultipleChoiceFilter('app_config', label='section', queryset=NewsBlogConfig.objects.all())
+    authors = django_filters.ModelMultipleChoiceFilter('author', label='author', queryset=Person.objects.all())
+    image = NoneFilter(label='image')
+
+    class Meta:
+        model = models.Article
+        fields = ['count', 'is_featured', 'exclude_current', 'mediums',
+                  'locations', 'categories', 'services',
+                  'service_sections', 'sections', 'authors', 'mode']
+
+    def __init__(self, values, *args, **kwargs):
+        super().__init__(values, *args, **kwargs)
+        if TRANSLATE_AUTHORS:
+            self.filters['authors'].field_name = 'author_trans'

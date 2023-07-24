@@ -59,10 +59,10 @@ class ArticleAdminForm(CustomFieldsFormMixin, TranslatableModelForm):
             qs = models.Article.objects.filter(
                 app_config=kwargs['initial']['app_config'])
 
-        author_fileds = ['author', 'author_trans', 'author_2', 'author_2_trans', 'author_3', 'author_3_trans', ]
-        for field in author_fileds:
-            if field in self.fields:
-                self.fields[field].queryset = Person.objects.all().order_by('last_name')
+        # author_fileds = ['author', 'author_trans', 'author_2', 'author_2_trans', 'author_3', 'author_3_trans', ]
+        # for field in author_fileds:
+            # if field in self.fields:
+                # self.fields[field].queryset = Person.objects.all().order_by('last_name')
 
         if self.instance.pk:
             qs = qs.exclude(pk=self.instance.pk)
@@ -89,6 +89,8 @@ class ArticleAdminForm(CustomFieldsFormMixin, TranslatableModelForm):
                 self.fields['companies'].initial = self.instance.companies.all()
         else:
             del self.fields['companies']
+
+
 
     def get_custom_fields(self):
         fields = ARTICLE_CUSTOM_FIELDS

@@ -49,6 +49,11 @@ SHOW_LOGO = getattr(
     'ARTICLES_SHOW_LOGO',
     False,
 )
+SHOW_RELATED_IMAGE = getattr(
+    settings,
+    'ARTICLES_SHOW_RELATED_IMAGE',
+    False,
+)
 
 SPECIFIC_ARTICLES_LAYOUTS = getattr(
     settings,
@@ -146,8 +151,35 @@ FILTER_EMPTY_LABELS.update(getattr(
     'ARTICLES_FILTER_EMPTY_LABELS',
     {}
 ))
+RELATED_ARTICLES_NEW_STYLE = getattr(
+    settings,
+    'ARTICLES_RELATED_ARTICLES_NEW_STYLE',
+    False
+)
+RELATED_ARTICLES_NEVER_CACHE = getattr(
+    settings,
+    'ARTICLES_RELATED_ARTICLES_NEVER_CACHE',
+    False
+)
 try:
     IS_THERE_COMPANIES = True
     from js_companies.models import Company
 except:
     IS_THERE_COMPANIES = False
+
+ADMIN_LIST_FILTERS = getattr(
+    settings,
+    'ARTICLES_ADMIN_LIST_FILTERS',
+    [
+        'is_published',
+        'app_config',
+        'categories',
+        'services',
+    ]
+)
+
+USE_CACHE = getattr(
+    settings,
+    'JUMPSUITE_USE_CACHE',
+    {}
+)

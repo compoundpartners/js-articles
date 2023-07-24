@@ -10,7 +10,6 @@ from django import forms
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from parler.models import TranslatableModel, TranslatedFields
 
@@ -35,7 +34,6 @@ TEMPLATE_PREFIX_CHOICES = getattr(
     settings, 'ALDRYN_NEWSBLOG_TEMPLATE_PREFIXES', [])
 
 
-@python_2_unicode_compatible
 class NewsBlogConfig(TranslatableModel, AppHookConfig):
     """Adds some translatable, per-app-instance fields."""
     translations = TranslatedFields(
@@ -44,6 +42,10 @@ class NewsBlogConfig(TranslatableModel, AppHookConfig):
 
     allow_post = models.BooleanField(
         _('Allow POST requests'),
+        default=False,
+    )
+    show_landing_page = models.BooleanField(
+        _('Show landing page'),
         default=False,
     )
     permalink_type = models.CharField(
@@ -202,7 +204,6 @@ class NewsBlogConfigForm(AppDataForm):
 setup_config(NewsBlogConfigForm, NewsBlogConfig)
 
 
-@python_2_unicode_compatible
 class NewsBlogFeed(TranslatableModel, AppHookConfig):
     """Adds some translatable, per-app-instance fields."""
     translations = TranslatedFields(

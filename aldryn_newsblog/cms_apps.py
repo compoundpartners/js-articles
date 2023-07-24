@@ -5,12 +5,17 @@ from __future__ import unicode_literals
 from aldryn_apphooks_config.app_base import CMSConfigApp
 from cms.apphook_pool import apphook_pool
 from django.conf.urls import url, include
+from django.views.decorators.cache import never_cache
 from django.utils.translation import ugettext_lazy as _
 
 from .models import NewsBlogConfig, NewsBlogFeed
-from .constants import ENABLE_FEEDS
+from .constants import (
+    ENABLE_FEEDS,
+    RELATED_ARTICLES_NEW_STYLE,
+    RELATED_ARTICLES_NEVER_CACHE,
+)
 from .feeds import CustomFeed
-from .views import RelatedArticles
+from .views import RelatedArticles, ArticleRelatedView
 
 
 class NewsBlogApp(CMSConfigApp):
@@ -50,11 +55,23 @@ class RelatedArticlesApp(CMSConfigApp):
     app_name = 'related_articles'
 
     def get_urls(self, *args, **kwargs):
-        return [
-            url(r'^$',
-                RelatedArticles.as_view(), name='related_articles'),
-            url(r'^(?P<type>\w[-\w]*)/$',
-                RelatedArticles.as_view(), name='related_articles'),
-            url(r'^(?P<type>\w[-\w]*)/(?P<category>\w[-\w]*)/$',
-                RelatedArticles.as_view(), name='related_articles'),
-        ]
+        if RELATED_ARTICLES_NEW_STYLE:
+            if RELATED_ARTICLES_NEVER_CACHE:
+                return [
+                    url(r'^$',
+                        never_cache(ArticleRelatedView.as_view()), name='related-articles'),
+                ]
+            else:
+                return [
+                    url(r'^$',
+                        ArticleRelatedView.as_view(), name='related-articles'),
+                ]
+        else:
+            return [
+                url(r'^$',
+                    RelatedArticles.as_view(), name='related_articles'),
+                url(r'^(?P<type>\w[-\w]*)/$',
+                    RelatedArticles.as_view(), name='related_articles'),
+                url(r'^(?P<type>\w[-\w]*)/(?P<category>\w[-\w]*)/$',
+                    RelatedArticles.as_view(), name='related_articles'),
+            ]

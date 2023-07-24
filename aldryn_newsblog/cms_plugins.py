@@ -134,7 +134,7 @@ class NewsBlogRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
             if article:
                 article_list = instance.get_articles(article, request)
             else:
-                article_list = Article.objects.none()
+                article_list = models.Article.objects.none()
         context['article_list'] = article_list.filter(app_config__show_in_specific=True)
         return context
 

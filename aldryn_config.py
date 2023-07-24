@@ -8,20 +8,13 @@ class Form(forms.BaseForm):
         required=False,
         initial=True)
 
+    hide_tags = forms.CheckboxField(
+        "Hide Tags",
+        required=False,
+        initial=True)
+
     hide_user = forms.CheckboxField(
         'Hide owner', required=False, initial=False
-    )
-
-    enable_locations = forms.CheckboxField(
-        'Enable Locations', required=False, initial=False
-    )
-
-    enable_readtime = forms.CheckboxField(
-        'Enable Read time', required=False, initial=False
-    )
-
-    enable_feeds = forms.CheckboxField(
-        'Enable Feeds', required=False, initial=False
     )
 
     summary_richtext = forms.CheckboxField(
@@ -29,42 +22,19 @@ class Form(forms.BaseForm):
         required=False,
         initial=False)
 
-    show_logo = forms.CheckboxField(
-        "Show Logo",
-        required=False,
-        initial=False,
-    )
-    translate_is_published = forms.CheckboxField(
-        'Translate Is published and Is featured fields', required=False, initial=False
-    )
-    translate_authors = forms.CheckboxField(
-        'Translate Authors', required=False, initial=False
-    )
-
     def to_settings(self, data, settings):
 
         if data['hide_related_articles']:
-            settings['ARTICLES_HIDE_RELATED'] = int(data['hide_related_articles'])
+            settings['HIDE_RELATED_ARTICLES'] = int(data['hide_related_articles'])
+
+        if data['hide_tags']:
+            settings['HIDE_TAGS'] = int(data['hide_tags'])
 
         if data['hide_user']:
-            settings['ARTICLES_HIDE_USER'] = int(data['hide_user'])
-
-        if data['enable_locations']:
-            settings['ARTICLES_ENABLE_LOCATIONS'] = int(data['enable_locations'])
-
-        if data['enable_readtime']:
-            settings['ARTICLES_ENABLE_READTIME'] = int(data['enable_readtime'])
-
-        if data['enable_feeds']:
-            settings['ARTICLES_ENABLE_FEEDS'] = int(data['enable_feeds'])
+            settings['HIDE_USER'] = int(data['hide_user'])
 
         if data['summary_richtext']:
-            settings['ARTICLES_SUMMARY_RICHTEXT'] = int(data['summary_richtext'])
-
-        if data['show_logo']:
-            settings['ARTICLES_SHOW_LOGO'] = int(data['show_logo'])
-        settings['ARTICLES_TRANSLATE_IS_PUBLISHED'] = int(data['translate_is_published'])
-        settings['ARTICLES_TRANSLATE_AUTHORS'] = int(data['translate_authors'])
+            settings['SUMMARY_RICHTEXT'] = int(data['summary_richtext'])
 
 
         settings['INSTALLED_APPS'].extend([

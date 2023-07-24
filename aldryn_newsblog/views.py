@@ -2,6 +2,9 @@
 
 from __future__ import unicode_literals
 
+import base64
+import hashlib
+
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 
@@ -10,14 +13,22 @@ from django.db.models import Q
 from django.db.models.functions import Lower
 from django.http import (
     Http404,
+    HttpResponse,
     HttpResponseRedirect,
     HttpResponsePermanentRedirect,
 )
 from django.shortcuts import get_object_or_404
 from django.utils import translation
+from django.utils.cache import patch_cache_control
+from django.utils.timezone import now
 from django.views.generic import ListView
-from django.views.generic.detail import DetailView
+from django.views.generic.detail import DetailView, SingleObjectMixin
 
+from easy_thumbnails.options import ThumbnailOptions
+from easy_thumbnails.alias import aliases
+
+from cms.cache.page import set_page_cache, get_page_cache
+from cms.utils.compat import DJANGO_2_2, DJANGO_3_0
 from menus.utils import set_language_changer
 from parler.views import TranslatableSlugMixin, ViewUrlMixin
 
@@ -31,8 +42,13 @@ from aldryn_newsblog.utils.utilities import get_valid_languages_from_request
 from .cms_appconfig import NewsBlogConfig
 from .models import Article
 from .utils import add_prefix_to_path
-from .filters import ArticleFilters
-from .constants import IS_THERE_COMPANIES, SHOW_CONTER_FILTERS, GET_NEXT_ARTICLE
+from .filters import ArticleFilters, RelatedArticlesFilters
+from .constants import (
+    IS_THERE_COMPANIES, 
+    SHOW_CONTER_FILTERS, 
+    GET_NEXT_ARTICLE,
+    USE_CACHE,
+)
 
 class NoneMixin(object):
     pass
@@ -45,6 +61,47 @@ try:
     from custom.aldryn_newsblog.views import CustomDetailMixin
 except:
     CustomDetailMixin = NoneMixin
+
+
+class CachedMixin():
+    def use_cache(self, request):
+        is_authenticated = request.user.is_authenticated
+        model_name = str(self.model.__name__ if self.model else self.queryset.model.__name__)
+        return request.method.lower() == 'get' and model_name in USE_CACHE and USE_CACHE[model_name] and (
+            not hasattr(request, 'toolbar') or (
+                not request.toolbar.edit_mode_active and not request.toolbar.show_toolbar and not is_authenticated
+            )
+        )
+
+    def dispatch(self, request, *args, **kwargs):
+        # Try to dispatch to the right method; if a method doesn't exist,
+        # defer to the error handler. Also defer to the error handler if the
+        # request method isn't on the approved list.
+        response_timestamp = now()
+        if self.use_cache(request):
+            cache_content = get_page_cache(request)
+            if cache_content is not None:
+                content, headers, expires_datetime = cache_content
+                response = HttpResponse(content)
+                response.xframe_options_exempt = True
+                if DJANGO_2_2 or DJANGO_3_0:
+                    response._headers = headers
+                else:
+                    #  for django3.2 and above. response.headers replaces response._headers in earlier versions of django
+                    response.headers = headers
+                # Recalculate the max-age header for this cached response
+                max_age = int(
+                    (expires_datetime - response_timestamp).total_seconds() + 0.5)
+                patch_cache_control(response, max_age=max_age)
+                return response
+        return super().dispatch(request, *args, **kwargs)
+
+    def render_to_response(self, context, **response_kwargs):
+        response = super().render_to_response(context, **response_kwargs)
+        if self.use_cache(self.request):
+            response.add_post_render_callback(set_page_cache)
+        return response
+
 
 class TemplatePrefixMixin(object):
 
@@ -115,7 +172,7 @@ class AppHookCheckMixin(object):
         return qs#.translated(*self.valid_languages)
 
 
-class ArticleDetail(CustomDetailMixin, AppConfigMixin, AppHookCheckMixin, EditModeMixin,
+class ArticleDetail(CustomDetailMixin, CachedMixin, AppConfigMixin, AppHookCheckMixin, EditModeMixin,
                     TranslatableSlugMixin, TemplatePrefixMixin, DetailView):
     queryset = Article.all_objects
     slug_field = 'slug'
@@ -255,6 +312,9 @@ class ArticleListBase(CustomListMixin, AppConfigMixin, AppHookCheckMixin, Templa
     strict = False
 
     def get(self, request, *args, **kwargs):
+        if self.config.show_landing_page:
+            from cms.page_rendering import render_page
+            return render_page(request, request.current_page, translation.get_language(), None)
         self.edit_mode = (request.toolbar and request.toolbar.edit_mode_active)
         self.filterset = ArticleFilters(self.request.GET, queryset=self.get_queryset())
         if not self.filterset.is_bound or self.filterset.is_valid() or not self.get_strict():
@@ -563,3 +623,84 @@ class ArticlesSitemap(Sitemap):
 
     def lastmod(self, obj):
         return obj.publishing_date  # MOD date exists?  (e.g. when plugins are updated)
+
+
+class ArticleRelatedView(TranslatableSlugMixin, ListView):
+    model = Article
+    strict = True
+
+    def get(self, request, *args, **kwargs):
+        import json
+        data = request.GET
+        if 'json' in request.GET:
+            try:
+                data = json.loads(request.GET['json'])
+                if not 'mode' in data:
+                    data['mode'] = 'json'
+            except:
+                pass
+        self.filterset = RelatedArticlesFilters(data, queryset=self.get_queryset().published())
+        if not self.filterset.is_bound or self.filterset.is_valid() or not self.get_strict():
+            self.object_list = self.filterset.qs
+        else:
+            self.object_list = self.filterset.queryset.none()
+        try:
+            exclude_current = bool(self.filterset.form['count'].value())
+            if self.object and exclude_current:
+                self.object_list = self.exclude(pk=self.object.pk)
+        except:
+            pass
+
+        try:
+            exclude_current = int(self.filterset.form['exclude_current'].value())
+            self.object_list = self.object_list.exclude(pk=exclude_current)
+        except:
+            pass
+
+        try:
+            count = int(self.filterset.form['count'].value())
+            self.object_list = self.object_list.distinct()[:count]
+        except:
+            pass
+
+        try:
+            thumb_opts = self.filterset.form['image'].value() or {}
+            width = thumb_opts.pop('width', 200)
+            height = thumb_opts.pop('height', 150)
+            subject_location = thumb_opts.pop('subject_location', False)
+            thumb_opts['size'] = [width, height]
+            thumb_opts = ThumbnailOptions(thumb_opts)
+
+            parts = list(thumb_opts.items())
+            parts.sort()
+            parts = '.'.join('%s:%s' % (k,v) for k,v in parts)
+            short_sha = hashlib.sha1(parts.encode('utf-8')).digest()
+            thumb_opts_name = base64.urlsafe_b64encode(short_sha[:9]).decode('utf-8')
+
+
+            if not aliases.get(thumb_opts_name):
+                aliases.set(thumb_opts_name, thumb_opts)
+        except:
+            thumb_opts_name = None
+            width = 200
+            height = 150
+            subject_location = False
+
+        context = super().get_context_data(
+            filter=self.filterset,
+            object_list=self.object_list,
+            thumb_opts=thumb_opts_name,
+            image_size=f"{width}x{height}",
+            image_subject_location=subject_location,
+        )
+        return self.render_to_response(context)
+
+    def get_strict(self):
+        return self.strict
+
+    @property
+    def template_name_suffix(self):
+        mode = self.filterset.form['mode'].data
+        return '_%s' %  ('related_%s' % mode if mode else 'related' )
+
+

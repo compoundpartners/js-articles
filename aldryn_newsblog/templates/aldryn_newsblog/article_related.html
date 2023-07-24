@@ -1,0 +1,45 @@
+{% extends "aldryn_newsblog/base.html" %}
+
+{% load i18n cms_tags static querystring_tags %}
+
+{% block header_attributes %}
+  <link rel="canonical" href="{{ ROOT_URL }}{{ request.path }}" />
+{% endblock %}
+
+{% block meta %}
+  {% include "aldryn_newsblog/includes/article_list/article_meta.html" %}
+{% endblock meta %}
+
+{% block ograph %}
+  {% include "aldryn_newsblog/includes/article_list/article_ograph.html" %}
+{% endblock ograph %}
+
+{% block newsblog_content %}
+
+  <article class="container">
+
+    <header>
+      <h1>
+          {% trans 'Related Articles' %}
+      </h1>
+    </header>
+
+    <div class="row">
+
+      <section id="main-content" class="col-8" role="main">
+        <form>{{ filter.form }}<button type="submit">submit</submit></form>
+        <ul class="row">
+          {% for article in article_list %}
+              {% include "aldryn_newsblog/includes/article_list/article_item.html" %}
+          {% empty %}
+              {% trans "No items available" %}
+          {% endfor %}
+        </ul>
+
+      </section>
+
+    </div>
+
+  </article>
+
+{% endblock newsblog_content %}

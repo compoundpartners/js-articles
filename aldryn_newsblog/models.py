@@ -24,7 +24,6 @@ from django.contrib.postgres.fields import JSONField
 from django.db import connection, models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
@@ -85,7 +84,6 @@ except:
         pass
 
 
-@python_2_unicode_compatible
 class ArticleMedium(models.Model):
     title = models.CharField(_('title'), max_length=255)
     position = models.PositiveSmallIntegerField(
@@ -103,7 +101,6 @@ class ArticleMedium(models.Model):
 
 
 
-@python_2_unicode_compatible
 class Article(CustomArticleMixin,
               TranslatedAutoSlugifyMixin,
               TranslationHelperMixin,
@@ -198,7 +195,7 @@ class Article(CustomArticleMixin,
         verbose_name=_('Section'),
         help_text='',
     )
-    locations = SortedManyToManyField('js_locations.location',
+    locations = SortedManyToManyField('js_locations.Location',
                                        verbose_name=_('locations'),
                                        blank=True)
     categories = CategoryManyToManyField('aldryn_categories.Category',
@@ -243,6 +240,13 @@ class Article(CustomArticleMixin,
         null=True,
         on_delete=models.SET_NULL,
         related_name='+',
+    )
+    related_image = FilerImageField(
+        verbose_name=_('Related Image'),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
     )
     medium = models.ForeignKey(ArticleMedium, on_delete=models.SET_NULL, verbose_name=_('medium'),
                               null=True, blank=True)
@@ -542,7 +546,6 @@ class NewsBlogCMSPlugin(CMSPlugin):
         self.app_config = old_instance.app_config
 
 
-@python_2_unicode_compatible
 class NewsBlogCategoriesPlugin(PluginEditModeMixin, NewsBlogCMSPlugin):
     def __str__(self):
         return ugettext('%s categories') % (self.app_config.get_app_title(), )
@@ -585,7 +588,6 @@ class NewsBlogCategoriesPlugin(PluginEditModeMixin, NewsBlogCMSPlugin):
 
 
 
-@python_2_unicode_compatible
 class NewsBlogRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
                             CMSPlugin):
     # NOTE: This one does NOT subclass NewsBlogCMSPlugin. This is because this
@@ -620,8 +622,6 @@ class NewsBlogRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
         return ugettext('Specific articles')
 
 
-
-@python_2_unicode_compatible
 class NewsBlogJSRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
                             CMSPlugin):
     # NOTE: This one does NOT subclass NewsBlogCMSPlugin. This is because this
@@ -686,9 +686,12 @@ def update_search_data(sender, instance, **kwargs):
     if Article.update_search_on_save and is_cms_plugin:
         placeholder = (getattr(instance, '_placeholder_cache', None) or
                        instance.placeholder)
-        if hasattr(placeholder, '_attached_model_cache'):
-            if placeholder._attached_model_cache == Article and placeholder.slot == 'newsblog_article_content':
-                article = placeholder._attached_model_cache.objects.language(
-                    instance.language).get(content=placeholder.pk)
-                #article.search_data = article.get_search_data(instance.language)
-                article.save()
+        if hasattr(placeholder, '_attached_model_cache') and hasattr(placeholder, '_attached_field_cache'):
+            field = placeholder._attached_field_cache
+            model = placeholder._attached_model_cache
+            if field and model == Article:
+                placeholder.clear_cache(instance.language)
+                filters = {}
+                filters[field.name] = placeholder.pk
+                obj = model.objects.language(instance.language).get(**filters)
+                obj.save()

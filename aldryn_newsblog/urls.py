@@ -3,7 +3,7 @@ from django.conf.urls import url
 from aldryn_newsblog.views import (
     ArticleDetail, ArticleList, AuthorArticleList, CategoryArticleList,
     YearArticleList, MonthArticleList, DayArticleList,
-    ArticleSearchResultsList, ServiceArticleList)
+    ArticleSearchResultsList, ServiceArticleList, ArticleRelatedView)
 from aldryn_newsblog.feeds import LatestArticlesFeed, CategoryFeed
 
 urlpatterns = [

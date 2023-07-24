@@ -1,87 +1,11 @@
-Metadata-Version: 1.1
+Metadata-Version: 2.1
 Name: js-articles
-Version: 3.13.24
+Version: 3.15.5
 Summary: Adds blogging and newsing capabilities to django CMS
 Home-page: https://github.com/aldryn/aldryn-newsblog
 Author: Divio AG
 Author-email: info@divio.ch
 License: LICENSE.txt
-Description: #################################
-        JumpSuite Articles for django CMS
-        #################################
-        
-        |PyPI Version| |Build Status| |Coverage Status| |codeclimate| |requires_io|
-        
-        JumpSuite Articles is an `Aldryn <http://aldryn.com>`_-compatible news and
-        weblog application for `django CMS <http://django-cms.org>`_.
-        
-        **Content editors** looking for documentation on how to use the editing
-        interface should refer to our `user manual`_ section.
-        
-        **Django developers** who want to learn more about django CMS, as well as
-        how to install, configure and customize it for their own projects should
-        refer to the `documentation`_ sections.
-        
-        JumpSuite Articles is intended to serve as a model of good practice for
-        development of django CMS and Aldryn applications.
-        
-        .. _user manual: http://aldryn-newsblog.readthedocs.io/en/latest/
-        
-        
-        ======================
-        Installation & Updates
-        ======================
-        
-        Please head over to our `documentation`_ for all the details on how to install,
-        configure and use JumpSuite Articles.
-        
-        You can also find instructions on `how to upgrade`_ from earlier versions.
-        
-        .. _documentation: http://aldryn-newsblog.readthedocs.io/en/latest/
-        .. _how to upgrade: http://aldryn-newsblog.readthedocs.io/en/latest/upgrade.html
-        
-        
-        
-        ========================
-        Related Articles Apphook
-        ========================
-        
-        The Related Articles Apphook page features a full directory of the site's articles, along
-        with filters on the right-side for type, category, and author.
-        
-        The Related Articles Apphook works in tandem with the Related Articles Plugin.
-        The plugin will display a "See All" button in the top right if the Apphook page
-        is setup correctly.
-        Assign the Related Articles Apphook to a page, and set it's ID to: "related_articles".
-        If this is not done; the "See All" button will be disabled and will not appear.
-        
-        
-        ============
-        Contributing
-        ============
-        
-        This is a community project. We love to get any feedback in the form of
-        `issues`_ and `pull requests`_. Before submitting your pull request, please
-        review our guidelines for `Aldryn addons`_.
-        
-        .. _issues: https://github.com/aldryn/aldryn-newsblog/issues
-        .. _pull requests: https://github.com/aldryn/aldryn-newsblog/pulls
-        .. _Aldryn addons: http://docs.aldryn.com/en/latest/reference/addons/index.html
-        
-        
-        .. |PyPI Version| image:: http://img.shields.io/pypi/v/aldryn-newsblog.svg
-           :target: https://pypi.python.org/pypi/aldryn-newsblog
-        .. |Build Status| image:: http://img.shields.io/travis/aldryn/aldryn-newsblog/master.svg
-           :target: https://travis-ci.org/aldryn/aldryn-newsblog
-        .. |Coverage Status| image:: http://img.shields.io/coveralls/aldryn/aldryn-newsblog/master.svg
-           :target: https://coveralls.io/r/aldryn/aldryn-newsblog?branch=master
-        .. |codeclimate| image:: https://codeclimate.com/github/aldryn/aldryn-newsblog/badges/gpa.svg
-           :target: https://codeclimate.com/github/aldryn/aldryn-newsblog
-           :alt: Code Climate
-        .. |requires_io| image:: https://requires.io/github/aldryn/aldryn-newsblog/requirements.svg?branch=master
-           :target: https://requires.io/github/aldryn/aldryn-newsblog/requirements/?branch=master
-           :alt: Requirements Status
-        
 Platform: OS Independent
 Classifier: Development Status :: 5 - Production/Stable
 Classifier: Environment :: Web Environment
@@ -103,3 +27,80 @@ Classifier: Topic :: Internet :: WWW/HTTP :: Dynamic Content
 Classifier: Topic :: Internet :: WWW/HTTP :: Dynamic Content :: News/Diary
 Classifier: Topic :: Software Development
 Classifier: Topic :: Software Development :: Libraries :: Application Frameworks
+License-File: LICENSE.txt
+
+#################################
+JumpSuite Articles for django CMS
+#################################
+
+|PyPI Version| |Build Status| |Coverage Status| |codeclimate| |requires_io|
+
+JumpSuite Articles is an `Aldryn <http://aldryn.com>`_-compatible news and
+weblog application for `django CMS <http://django-cms.org>`_.
+
+**Content editors** looking for documentation on how to use the editing
+interface should refer to our `user manual`_ section.
+
+**Django developers** who want to learn more about django CMS, as well as
+how to install, configure and customize it for their own projects should
+refer to the `documentation`_ sections.
+
+JumpSuite Articles is intended to serve as a model of good practice for
+development of django CMS and Aldryn applications.
+
+.. _user manual: http://aldryn-newsblog.readthedocs.io/en/latest/
+
+
+======================
+Installation & Updates
+======================
+
+Please head over to our `documentation`_ for all the details on how to install,
+configure and use JumpSuite Articles.
+
+You can also find instructions on `how to upgrade`_ from earlier versions.
+
+.. _documentation: http://aldryn-newsblog.readthedocs.io/en/latest/
+.. _how to upgrade: http://aldryn-newsblog.readthedocs.io/en/latest/upgrade.html
+
+
+
+========================
+Related Articles Apphook
+========================
+
+The Related Articles Apphook page features a full directory of the site's articles, along
+with filters on the right-side for type, category, and author.
+
+The Related Articles Apphook works in tandem with the Related Articles Plugin.
+The plugin will display a "See All" button in the top right if the Apphook page
+is setup correctly.
+Assign the Related Articles Apphook to a page, and set it's ID to: "related_articles".
+If this is not done; the "See All" button will be disabled and will not appear.
+
+
+============
+Contributing
+============
+
+This is a community project. We love to get any feedback in the form of
+`issues`_ and `pull requests`_. Before submitting your pull request, please
+review our guidelines for `Aldryn addons`_.
+
+.. _issues: https://github.com/aldryn/aldryn-newsblog/issues
+.. _pull requests: https://github.com/aldryn/aldryn-newsblog/pulls
+.. _Aldryn addons: http://docs.aldryn.com/en/latest/reference/addons/index.html
+
+
+.. |PyPI Version| image:: http://img.shields.io/pypi/v/aldryn-newsblog.svg
+   :target: https://pypi.python.org/pypi/aldryn-newsblog
+.. |Build Status| image:: http://img.shields.io/travis/aldryn/aldryn-newsblog/master.svg
+   :target: https://travis-ci.org/aldryn/aldryn-newsblog
+.. |Coverage Status| image:: http://img.shields.io/coveralls/aldryn/aldryn-newsblog/master.svg
+   :target: https://coveralls.io/r/aldryn/aldryn-newsblog?branch=master
+.. |codeclimate| image:: https://codeclimate.com/github/aldryn/aldryn-newsblog/badges/gpa.svg
+   :target: https://codeclimate.com/github/aldryn/aldryn-newsblog
+   :alt: Code Climate
+.. |requires_io| image:: https://requires.io/github/aldryn/aldryn-newsblog/requirements.svg?branch=master
+   :target: https://requires.io/github/aldryn/aldryn-newsblog/requirements/?branch=master
+   :alt: Requirements Status
