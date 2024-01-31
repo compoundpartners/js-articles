@@ -172,6 +172,11 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
                     return article[0]
         return None
 
+    def if_search_page(self, request):
+        if request and request.resolver_match:
+            return request.resolver_match.func.__name__ == 'SearchView'
+        return False
+
     def render(self, context, instance, placeholder):
         request = context.get('request')
         context['instance'] = instance
@@ -195,7 +200,11 @@ class NewsBlogJSRelatedPlugin(AdjustableCacheMixin, NewsBlogPlugin):
         if IS_THERE_COMPANIES:
             related_companies = instance.related_companies.all()
 
-        if related_types.exists():
+        if self.if_search_page(request):
+            qs = context['object_list']
+            if related_types.exists():
+                qs = qs.filter(app_config__in=related_types.all())
+        elif related_types.exists():
             qs = models.Article.all_objects.published().distinct()
             qs = qs.filter(app_config__in=related_types.all())
         else:

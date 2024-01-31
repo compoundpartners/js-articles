@@ -17,10 +17,34 @@ class Form(forms.BaseForm):
         'Hide owner', required=False, initial=False
     )
 
+    enable_locations = forms.CheckboxField(
+        'Enable Locations', required=False, initial=False
+    )
+
+    enable_readtime = forms.CheckboxField(
+        'Enable Read time', required=False, initial=False
+    )
+
+    enable_feeds = forms.CheckboxField(
+        'Enable Feeds', required=False, initial=False
+    )
+
     summary_richtext = forms.CheckboxField(
         "Use rich text for Summary",
         required=False,
         initial=False)
+
+    show_logo = forms.CheckboxField(
+        "Show Logo",
+        required=False,
+        initial=False,
+    )
+    translate_is_published = forms.CheckboxField(
+        'Translate Is published and Is featured fields', required=False, initial=False
+    )
+    translate_authors = forms.CheckboxField(
+        'Translate Authors', required=False, initial=False
+    )
 
     def to_settings(self, data, settings):
 
@@ -31,10 +55,24 @@ class Form(forms.BaseForm):
             settings['HIDE_TAGS'] = int(data['hide_tags'])
 
         if data['hide_user']:
-            settings['HIDE_USER'] = int(data['hide_user'])
+            settings['ARTICLES_HIDE_USER'] = int(data['hide_user'])
+
+        if data['enable_locations']:
+            settings['ARTICLES_ENABLE_LOCATIONS'] = int(data['enable_locations'])
+
+        if data['enable_readtime']:
+            settings['ARTICLES_ENABLE_READTIME'] = int(data['enable_readtime'])
+
+        if data['enable_feeds']:
+            settings['ARTICLES_ENABLE_FEEDS'] = int(data['enable_feeds'])
 
         if data['summary_richtext']:
-            settings['SUMMARY_RICHTEXT'] = int(data['summary_richtext'])
+            settings['ARTICLES_SUMMARY_RICHTEXT'] = int(data['summary_richtext'])
+
+        if data['show_logo']:
+            settings['ARTICLES_SHOW_LOGO'] = int(data['show_logo'])
+        settings['ARTICLES_TRANSLATE_IS_PUBLISHED'] = int(data['translate_is_published'])
+        settings['ARTICLES_TRANSLATE_AUTHORS'] = int(data['translate_authors'])
 
 
         settings['INSTALLED_APPS'].extend([

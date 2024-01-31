@@ -106,7 +106,7 @@ class CachedMixin():
 class TemplatePrefixMixin(object):
 
     def prefix_template_names(self, template_names):
-        if (hasattr(self.config, 'template_prefix') and
+        if self.config and (hasattr(self.config, 'template_prefix') and
                 self.config.template_prefix):
             prefix = self.config.template_prefix
             return [
@@ -200,23 +200,26 @@ class ArticleDetail(CustomDetailMixin, CachedMixin, AppConfigMixin, AppHookCheck
                 raise Http404('Object not found.')
         set_language_changer(request, self.object.get_public_url)
         url = self.object.get_absolute_url()
-        if (self.config.non_permalink_handling == 200 or request.path == url):
-            # Continue as normal
-            #return super(ArticleDetail, self).get(request, *args, **kwargs)
-            context = self.get_context_data(object=self.object)
-            return self.render_to_response(context)
+        if self.config:
+            if (self.config.non_permalink_handling == 200 or request.path == url):
+                # Continue as normal
+                #return super(ArticleDetail, self).get(request, *args, **kwargs)
+                context = self.get_context_data(object=self.object)
+                return self.render_to_response(context)
 
-        # Check to see if the URL path matches the correct absolute_url of
-        # the found object
-        if self.config.non_permalink_handling == 302:
-            return HttpResponseRedirect(url)
-        elif self.config.non_permalink_handling == 301:
-            return HttpResponsePermanentRedirect(url)
+            # Check to see if the URL path matches the correct absolute_url of
+            # the found object
+            if self.config.non_permalink_handling == 302:
+                return HttpResponseRedirect(url)
+            elif self.config.non_permalink_handling == 301:
+                return HttpResponsePermanentRedirect(url)
+            else:
+                raise Http404('This is not the canonical uri of this object.')
         else:
             raise Http404('This is not the canonical uri of this object.')
 
     def post(self, request, *args, **kwargs):
-        if self.config.allow_post:
+        if self.config and self.config.allow_post:
             return super(ArticleDetail, self).get(request, *args, **kwargs)
         else:
             return super(ArticleDetail, self).http_method_not_allowed(request, *args, **kwargs)
@@ -312,7 +315,7 @@ class ArticleListBase(CustomListMixin, AppConfigMixin, AppHookCheckMixin, Templa
     strict = False
 
     def get(self, request, *args, **kwargs):
-        if self.config.show_landing_page:
+        if self.config and self.config.show_landing_page:
             from cms.page_rendering import render_page
             return render_page(request, request.current_page, translation.get_language(), None)
         self.edit_mode = (request.toolbar and request.toolbar.edit_mode_active)
@@ -377,7 +380,7 @@ class ArticleList(ArticleListBase):
         qs = super(ArticleList, self).get_queryset()
         # exclude featured articles from queryset, to allow featured article
         # plugin on the list view page without duplicate entries in page qs.
-        exclude_count = self.config.exclude_featured
+        exclude_count = self.config.exclude_featured if self.config else 0
         if exclude_count:
             featured_qs = Article.objects.all().filter(is_featured=True)
             if not self.edit_mode:
