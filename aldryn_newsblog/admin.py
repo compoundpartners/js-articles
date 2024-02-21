@@ -231,9 +231,8 @@ class ArticleAdmin(
     filter_horizontal = [
         'categories',
     ]
-    app_config_values = {
-        'default_published': 'is_published'
-    }
+
+
     app_config_selection_title = ''
     app_config_selection_desc = ''
 
@@ -359,20 +358,32 @@ admin.site.register(models.Article, ArticleAdmin)
 
 class NewsBlogConfigAdmin(
     PlaceholderAdminMixin,
-    BaseAppHookConfig,
+    #BaseAppHookConfig,
     TranslatableAdmin
 ):
     form = forms.NewsBlogConfigAdminForm
+    readonly_fields = ("type",)
 
-    def get_config_fields(self):
-        return (
+    def get_fieldsets(self, request, obj):
+        return [
+            (None, {"fields": ("type", "namespace")}),
+            ("Config", {"fields": self.fields}),
+        ]
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj and obj.pk:
+            return tuple(self.readonly_fields) + ("namespace",)
+        else:
+            return self.readonly_fields
+
+    fields = (
             'app_title', 'show_landing_page', 'allow_post', 'permalink_type', 'non_permalink_handling',
             'template_prefix', 'paginate_by', 'pagination_pages_start',
             'pagination_pages_visible', 'exclude_featured',
             'create_authors', 'search_indexed', 'show_in_listing',
             'show_in_related', 'show_in_specific',
             'show_logo', 'auto_read_time',
-            'config.default_published', 'custom_fields_settings', 'custom_fields'
+            'custom_fields_settings', 'custom_fields'
         )
 
 

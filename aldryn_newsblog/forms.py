@@ -102,6 +102,10 @@ class ArticleAdminForm(CustomFieldsFormMixin, TranslatableModelForm):
 class NewsBlogConfigAdminForm(CustomFieldsFormMixin, CustomFieldsSettingsFormMixin, TranslatableModelForm):
     custom_fields = ARTICLE_SECTION_CUSTOM_FIELDS
 
+    class Meta:
+        model = models.NewsBlogConfig
+        fields = '__all__'
+
 
 class NewsBlogFeedAdminForm(TranslatableModelForm):
     articles = forms.ModelMultipleChoiceField(queryset=models.Article.objects.all(), required=False)

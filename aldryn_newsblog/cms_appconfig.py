@@ -34,6 +34,9 @@ TEMPLATE_PREFIX_CHOICES = getattr(
     settings, 'ALDRYN_NEWSBLOG_TEMPLATE_PREFIXES', [])
 
 
+
+
+
 class NewsBlogConfig(TranslatableModel, AppHookConfig):
     """Adds some translatable, per-app-instance fields."""
     translations = TranslatedFields(
@@ -193,15 +196,6 @@ class NewsBlogConfig(TranslatableModel, AppHookConfig):
     default_namespace = 'all-articles'
     default_app_title = 'All articles'
 
-
-
-class NewsBlogConfigForm(AppDataForm):
-    default_published = forms.BooleanField(
-        label=_(u'Post published by default'), required=False,
-        initial=getattr(settings, 'ALDRYN_NEWSBLOG_DEFAULT_PUBLISHED', False))
-
-
-setup_config(NewsBlogConfigForm, NewsBlogConfig)
 
 
 class NewsBlogFeed(TranslatableModel, AppHookConfig):
