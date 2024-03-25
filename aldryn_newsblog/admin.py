@@ -37,6 +37,7 @@ from .constants import (
     HIDE_USER,
     ENABLE_LOCATIONS,
     ENABLE_READTIME,
+    ENABLE_SUMMARY,
     IS_THERE_COMPANIES,
     SHOW_LOGO,
     SHOW_RELATED_IMAGE,
@@ -186,6 +187,10 @@ class ArticleAdmin(
         'related_image' if SHOW_RELATED_IMAGE else (),
         'lead_in',
     ]
+    if ENABLE_SUMMARY:
+        main_fields += [
+            'summary',
+        ]
     if ENABLE_READTIME:
         main_fields += [
             'read_time',

@@ -142,6 +142,8 @@ class Article(CustomArticleMixin,
             ),
             blank=True,
         ),
+        summary=models.TextField(
+            verbose_name=_('Long summary'), blank=True, default=''),
         read_time=models.CharField(
             max_length=255, verbose_name=_('Read time'),
             blank=True, default=''),
@@ -179,6 +181,8 @@ class Article(CustomArticleMixin,
                                 related_name='newsblog_article_carousel')
     article_sidebar = PlaceholderField('newsblog_article_sidebar',
                                 related_name='newsblog_article_sidebar')
+    bottom_article_sidebar = PlaceholderField('newsblog_bottom_article_sidebar',
+                                related_name='newsblog_bottom_article_sidebar')
     hide_authors = models.BooleanField(_('Hide Authors'),
                                 default=False,)
     author = models.ForeignKey(Person, on_delete=models.SET_NULL, null=True, blank=True,

@@ -38,6 +38,12 @@ ENABLE_READTIME = getattr(
     False,
 )
 
+ENABLE_SUMMARY = getattr(
+    settings,
+    'ARTICLES_ENABLE_SUMMARY',
+    False,
+)
+
 SUMMARY_RICHTEXT = getattr(
     settings,
     'ARTICLES_SUMMARY_RICHTEXT',
